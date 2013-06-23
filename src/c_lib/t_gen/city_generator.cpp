@@ -28,6 +28,21 @@ void init_cities()
     battery = t_map::get_cube_type("battery2");
     stone = t_map::get_cube_type("rock");
     regolith = t_map::get_cube_type("regolith");
+    temple[0] = t_map::get_cube_type("temple_runes1");
+    temple[1] = t_map::get_cube_type("temple_runes2");
+    temple[2] = t_map::get_cube_type("temple_runes3");
+    temple[3] = t_map::get_cube_type("temple_runes4");
+    temple[4] = t_map::get_cube_type("temple_runes5");
+    temple[5] = t_map::get_cube_type("temple_runes6");
+    temple[6] = t_map::get_cube_type("temple_runes7");
+    temple[7] = t_map::get_cube_type("temple_runes8");
+    temple[8] = t_map::get_cube_type("temple_runes9");
+    temple[9] = t_map::get_cube_type("temple_runes10");
+    temple[10] = t_map::get_cube_type("temple_runes11");
+    temple[11] = t_map::get_cube_type("temple_runes12");
+    temple[12] = t_map::get_cube_type("temple_runes13");
+    temple[13] = t_map::get_cube_type("temple_runes14");
+    temple[14] = t_map::get_cube_type("tile_floor");
 
     prevsubway.x = 256;
     prevsubway.y = 256;
@@ -327,16 +342,23 @@ void generate_temple(int x, int y)
 {
     int z = get_highest_area_block(x, y, x + TEMPLE_SIZE, y + TEMPLE_SIZE);
     printf ("Generating a temple at %d, %d, %d \n", x, y, z);
-    CubeType TempleBlock[2] = {glowgreen, glowblue};
-    CubeType WallBlock = TempleBlock[randrange(0, 1)];
-    generate_area(x, y, z, x + TEMPLE_SIZE, y + TEMPLE_SIZE, z, TempleBlock[randrange(0, 1)]);
+    CubeType FloorBlock = temple[14];
+    generate_area(x, y, z, x + TEMPLE_SIZE, y + TEMPLE_SIZE, z, FloorBlock);
     for(int StepsMade=1; StepsMade <= TEMPLE_SIZE; StepsMade++)
     {
-        generate_area(x + StepsMade, y + StepsMade, z + StepsMade, x + StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, WallBlock);
-        generate_area(x + StepsMade, y + StepsMade, z + StepsMade, x + TEMPLE_SIZE - StepsMade, y + StepsMade, z + StepsMade, WallBlock);
-        generate_area(x + TEMPLE_SIZE - StepsMade, y + StepsMade, z + StepsMade, x + TEMPLE_SIZE - StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, WallBlock);
-        generate_area(x + StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, x + TEMPLE_SIZE - StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, WallBlock);
+        for(int i = x + StepsMade; i <= x + TEMPLE_SIZE - StepsMade; i++)
+        {
+            t_map::set(i, y + StepsMade, z + StepsMade, temple[randrange(0, 13)]);
+            t_map::set(i, y + TEMPLE_SIZE - StepsMade, z + StepsMade, temple[randrange(0, 13)]);
+        }
+        for(int j = y + StepsMade; j <= y + TEMPLE_SIZE - StepsMade; j++)
+        {
+            t_map::set(x + StepsMade, j, z + StepsMade, temple[randrange(0, 13)]);
+            t_map::set(x + TEMPLE_SIZE - StepsMade, j, z + StepsMade, temple[randrange(0, 13)]);
+        }
     }
+    generate_area(x + TEMPLE_SIZE / 2 - 2, y, z + 1, x + TEMPLE_SIZE /2 + 2, y + 3, z + 4, stone);
+    degenerate_area(x + TEMPLE_SIZE / 2 - 1, y, z + 1, x + TEMPLE_SIZE /2 + 1, y + 3, z + 3);
 }
 
 void generate_bunker(int x, int y)
@@ -638,7 +660,7 @@ void find_closest_road_spot(int x, int y)
 
 bool isArtificial(int x, int y)
 {
-    if (t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == steelA || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == steelB || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == steelC || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == gray || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == purple || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == green || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == red || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == glowgreen)
+    if (t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) != stone && t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) != regolith)
     return true;
     else return false;
 }

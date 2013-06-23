@@ -71,6 +71,7 @@ namespace t_gen
     CubeType battery;
     CubeType stone;
     CubeType regolith;
+    CubeType temple[15];
 
 void generate_city();
 void generate_lab(int x, int y);

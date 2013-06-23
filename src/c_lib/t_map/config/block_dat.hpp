@@ -455,6 +455,81 @@ void load_block_dat()
     push_texture();
     set_max_damage(48);
 
+    cube_def(SolidCube, "temple_runes1");
+    iso_texture(iceflame, 3, 7);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes2");
+    iso_texture(iceflame, 3, 8);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes3");
+    iso_texture(iceflame, 3, 9);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes4");
+    iso_texture(iceflame, 3, 10);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes5");
+    iso_texture(iceflame, 4, 1);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes6");
+    iso_texture(iceflame, 4, 2);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes7");
+    iso_texture(iceflame, 4, 3);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes8");
+    iso_texture(iceflame, 4, 4);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes9");
+    iso_texture(iceflame, 4, 5);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes10");
+    iso_texture(iceflame, 4, 6);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes11");
+    iso_texture(iceflame, 4, 7);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes12");
+    iso_texture(iceflame, 4, 8);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes13");
+    iso_texture(iceflame, 4, 9);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "temple_runes14");
+    iso_texture(iceflame, 4, 10);
+    push_texture();
+    set_max_damage(56);
+
+    cube_def(SolidCube, "tile_floor");
+    iso_texture(iceflame, 5, 1);
+    push_texture();
+    set_max_damage(64);
+
 /*
 
 */
