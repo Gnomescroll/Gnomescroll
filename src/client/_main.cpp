@@ -542,7 +542,6 @@ void network_tick()
 
 int run()
 {
-
     setting_export_test();
     // parse ip address and connect
     int address[4];

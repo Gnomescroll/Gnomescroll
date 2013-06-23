@@ -134,6 +134,7 @@ void init()
 void teardown()
 {
     delete star_vlist;
+    delete[] star_list;
 }
 
 void pack_vertex_list()

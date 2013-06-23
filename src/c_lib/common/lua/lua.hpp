@@ -2,8 +2,6 @@
 
 int run_lua_test();
 
-int lua_load_block_dat();
-
 namespace LUA
 {
 
@@ -11,6 +9,7 @@ void set_options_file(const char* lua_name);
 
 void init_options();
 void load_options();
+void teardown();
 
 void register_int_option(const char* name, int* var);
 void register_uint_option(const char* name, unsigned int* var);

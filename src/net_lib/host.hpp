@@ -5,11 +5,12 @@ void teardown_network();
 
 struct _ENetHost;
 
-//extern struct _ENetHost* enet_host; //the host
-
-//extern ENetAddress address;
+#if DC_SERVER
 extern struct _ENetHost* server_host;
+#endif
+#if DC_CLIENT
 extern struct _ENetHost* client_host;
+#endif
 
 #if DC_SERVER
 namespace NetServer

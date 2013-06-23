@@ -12,9 +12,23 @@ ModelLoader::~ModelLoader()
     delete[] this->nl;
     if (this->_nl != NULL)
         for (int i=0; i<this->_nlm; i++)
+        {
             free(this->_nl[i].name);
+            delete[] this->_nl[i].c;
+        }
     delete[] this->_nl;
+    if (this->_ml != NULL)
+        for (int i=0; i<this->_mlm; i++)
+        {
+            delete[] this->_ml[i].bvl;
+            delete[] this->_ml[i].vwl;
+            delete[] this->_ml[i].via;
+        }
     delete[] this->_ml;
+    if (this->bnl != NULL)
+        for (int i=0; i<this->bnlm; i++)
+            free(this->bnl[i].name);
+
     delete[] this->bnl;
 }
 
@@ -420,6 +434,7 @@ void ModelLoader::init_node_list()
             if (this->_nl[j].p == node)
                 child_count++;
 
+        delete[] node->c;
         node->c = new Node*[child_count];
         node->cn = child_count;
 

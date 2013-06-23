@@ -5,6 +5,7 @@
 #include <t_map/t_map_class.hpp>
 #include <t_map/glsl/texture.hpp>
 #include <t_map/lighting.hpp>
+#include <t_map/light_cycle.hpp>
 #include <physics/vec3.hpp>
 #include <common/defines.h>
 #include <t_map/common/types.hpp>
@@ -164,11 +165,14 @@ void end_t_map()
     end_client_compressors();
     teardown_t_vbo();
     control_node_render_teardown();
+    teardown_light_texture();
+    teardown_cache();
     #endif
 
     #if DC_SERVER
     delete map_history;
     teardown_env_process();
+    teardown_day_cycle();
     #endif
 
     teardown_textures();

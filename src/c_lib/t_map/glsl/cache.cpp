@@ -25,10 +25,10 @@ void init_cache()
     static int init = 0;
     IF_ASSERT(init++) return;
 
-    if (quad_cache == NULL) quad_cache = (struct Vertex*) malloc(MAX_CUBES*6*4 * sizeof(struct Vertex));
+    quad_cache = (struct Vertex*) malloc(MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
-    if (quad_cache_compatibility == NULL) quad_cache_compatibility = (struct Vertex*) malloc(MAX_CUBES*6*4 * sizeof(struct Vertex));
+    quad_cache_compatibility = (struct Vertex*) malloc(MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache_compatibility, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
     //init_quad_cache_normals();
@@ -38,7 +38,12 @@ void init_cache()
 
     init_quad_cache_texture_cordinates_compatibility();
     init_quad_cache_vertex_cordinates_compatibility();
+}
 
+void teardown_cache()
+{
+    free(quad_cache);
+    free(quad_cache_compatibility);
 }
 
 static const int v_index[72] =

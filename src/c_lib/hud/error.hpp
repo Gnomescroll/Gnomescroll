@@ -79,8 +79,7 @@ bool has_error()
 
 bool update_error_text(class HudText::Text* t)
 {
-    GS_ASSERT(t != NULL);
-    if (t == NULL) return false;
+    IF_ASSERT(t == NULL) return false;
 
     GSError err = get_primary_error();
     if (err == GS_ERROR_NONE) return false;
@@ -92,10 +91,12 @@ bool update_error_text(class HudText::Text* t)
         // if there was a known token failure that has not recovered,
         // and we are disconnected for an auth reason, say that the auth server failed
         if (Auth::token_failure &&
-            (NetClient::Server.disconnect_code == DISCONNECT_AUTH_EXPIRED
-        || NetClient::Server.disconnect_code == DISCONNECT_AUTH_LIMIT
-        || NetClient::Server.disconnect_code == DISCONNECT_AUTH_TIMEOUT))
+            (NetClient::Server.disconnect_code == DISCONNECT_AUTH_EXPIRED ||
+             NetClient::Server.disconnect_code == DISCONNECT_AUTH_LIMIT ||
+             NetClient::Server.disconnect_code == DISCONNECT_AUTH_TIMEOUT))
+        {
             t->set_text(auth_server_failed_msg);
+        }
         else
         {
             if (disconnect_msg != NULL)

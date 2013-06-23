@@ -282,7 +282,6 @@ void print_working_directory()
 
 void create_system_data_dir()
 {
-    #if 1
     char* home = NULL;
     get_home_directory(home);
     if (home == NULL)
@@ -291,9 +290,7 @@ void create_system_data_dir()
         home = (char*)calloc(sizeof(_home), sizeof(*home));
         strcpy(home, _home);
     }
-    #else
-    const char home[] = ".";
-    #endif
+
     char* data_path = (char*)calloc(NAME_MAX+1, sizeof(char));
     size_t ret = snprintf(data_path, NAME_MAX+1, "%s/%s", home, SYSTEM_DATA_FOLDER);
     GS_ASSERT(ret < NAME_MAX + 1);
@@ -303,9 +300,7 @@ void create_system_data_dir()
         create_path(data_path);
     printf("Active system data path set to: %s\n", ClientState::active_system_data_path);
 
-    #if PRODUCTION
     free(home);
-    #endif
 }
 
 void register_signals()
@@ -514,6 +509,7 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::end_t_properties();
     t_map::end_t_map();
+    t_map::teardown_block_drop_dat();
 
     if (TEARDOWN_DEBUG) printf("HudContainer draw teardown\n");
     HudContainer::draw_teardown();
@@ -531,11 +527,11 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("skybox teardown\n");
     Skybox::teardown();
 
+    if (TEARDOWN_DEBUG) printf("Rayleigh scattering teardown\n");
+    Skybox::teardown_rayleigh_scattering();
+
     if (TEARDOWN_DEBUG) printf("texture sheet loader teardown\n");
     TextureSheetLoader::teardown();
-
-    if (TEARDOWN_DEBUG) printf("netclient shutdown\n");
-    NetClient::shutdown_net_client();
 
     if (TEARDOWN_DEBUG) printf("camera teardown\n");
     teardown_cameras();
@@ -617,6 +613,9 @@ void close_c_lib()
 
     if (TEARDOWN_DEBUG) printf("client state teardown\n");
     ClientState::teardown();
+
+    if (TEARDOWN_DEBUG) printf("LUA teardown\n");
+    LUA::teardown();
 
     if (TEARDOWN_DEBUG) printf("logger teardown\n");
     Log::teardown();

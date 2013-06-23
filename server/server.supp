@@ -15,4 +15,35 @@
    fun:_ZN4Main3runEv
    fun:main
 }
-
+{
+   luajit
+   Memcheck:Cond
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:lua_pushlstring
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:luaL_pushresult
+   fun:luaL_gsub
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:lua_pcall
+   fun:_ZN3LUA12load_optionsEv
+}
+{
+   dlsym
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlsym
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:lua_pcall
+   fun:_ZN3LUA12load_optionsEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}

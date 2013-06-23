@@ -121,6 +121,7 @@ const size_t PRETTY_NAME_MAX_LENGTH = 63;
 #define DATA_PATH "./data/"
 #define SCREENSHOT_PATH "./screenshot/"
 #define MEDIA_PATH "./media/"
+#define SETTINGS_PATH "./settings/"
 
 #ifdef _WIN32
 # define SYSTEM_DATA_FOLDER "Gnomescroll/"

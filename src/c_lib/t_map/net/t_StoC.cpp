@@ -16,6 +16,7 @@ namespace t_map
 
 #if DC_CLIENT
 
+static int inited = 0;
 
 int client_chunk_alias_list[1024] = {0};
 
@@ -30,6 +31,7 @@ char* decompression_buffer = NULL;
 
 void init_client_compressors()
 {
+    IF_ASSERT(inited++) return;
     // Init the z_stream
     decompression_buffer = (char*) malloc(DECOMPRESSION_BUFFER_SIZE);
 
@@ -48,6 +50,8 @@ void init_client_compressors()
 void end_client_compressors()
 {
     free(decompression_buffer);
+    if (inited)
+        mz_inflateEnd(&stream);
 }
 
 void map_chunk_compressed_StoC::handle(char* buff, size_t byte_num)

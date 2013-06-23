@@ -292,16 +292,17 @@ VoxDat::~VoxDat()
     if (this->vox_part != NULL)
         for (int i=0; i<n_parts; i++)
             delete vox_part[i];
-    delete[] vox_part;
+    delete[] this->vox_part;
     delete[] this->vox_skeleton_local_matrix;
     delete[] this->vox_volume_local_matrix;
     if (this->vox_skeleton_local_matrix_reference != NULL)
         for (int i=0; i<this->n_skeleton_nodes; i++)
             free(this->vox_skeleton_local_matrix_reference[i]);
     free(this->vox_skeleton_local_matrix_reference);
+    delete[] this->vox_skeleton_transveral_list;
 }
 
-void VoxDat::save(char* fn)
+void VoxDat::save(const char* fn)
 {
     IF_ASSERT(fn == NULL) return;
 

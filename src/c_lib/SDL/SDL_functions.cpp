@@ -126,8 +126,8 @@ int _fullscreen = 0;
 SDL_Surface *pSDLSurface;
 SDL_VideoInfo *pSDLVideoInfo;
 
-void _del_video() {
-
+void _del_video()
+{
     static int SDL_CLOSED = 0;
     if (SDL_CLOSED++)
     {

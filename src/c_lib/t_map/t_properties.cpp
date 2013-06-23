@@ -34,6 +34,7 @@ void end_t_properties()
 {
     delete cube_properties;
     free(fast_cube_properties);
+    free(fast_cube_attributes);
     delete cube_name_map;
 }
 

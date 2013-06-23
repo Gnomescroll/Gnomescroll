@@ -824,6 +824,7 @@ class SkyboxRender
         }
         glDisable(GL_TEXTURE_2D);
 
+        GS_ASSERT(sun0.dim != 0);
         for (int i=0; i<6; i++)
         {
             this->texture_array[i] = 0;
@@ -848,7 +849,7 @@ class SkyboxRender
     {
         if (_v < 0.0) _v = 0.0f;
         if (_v > 1.0) _v = 1.0f;
-        unsigned char v = ((int) 255.0f*_v);
+        unsigned char v = ((int) (255.0f*_v));
         return (unsigned char) gamma_correction[v];
     }
 
@@ -1136,20 +1137,20 @@ class _PerlinField3D
 
     public:
 
-    unsigned char* ga;  //gradient array
-    float* grad; //gradient vector array
-    //static const int ssize = 64*64*32;
-    //static const int xsize = 64;
+        unsigned char* ga;  //gradient array
+        float* grad; //gradient vector array
+        //static const int ssize = 64*64*32;
+        //static const int xsize = 64;
 
-    int ssize;  //number of gradients
+        int ssize;  //number of gradients
 
-    int xsize; int xsize2;
-    int zsize;
+        int xsize; int xsize2;
+        int zsize;
 
-    float xscale;   //scale multiplier
-    float zscale;
+        float xscale;   //scale multiplier
+        float zscale;
 
-    static const int grad_max = 12;   //number of gradients
+        static const int grad_max = 12;   //number of gradients
 
     //xsize is number of gradients
     _PerlinField3D() : ga(NULL), grad(NULL) {}
@@ -1541,9 +1542,8 @@ void init_rayleigh_scattering()
                 //S.save(filename);
                 S.blit_to_buffer(fbuffer, i);
             }
-
             save_png("sky", fbuffer, 6*dim, dim*max_div);
-
+            delete[] fbuffer;
         }
         else
         {
@@ -1552,11 +1552,17 @@ void init_rayleigh_scattering()
         }
     }
 
-/*
-    Load cloudblur texture
-*/
+    /*
+        Load cloudblur texture
+    */
     int ret = create_texture_from_file(MEDIA_PATH "sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
     GS_ASSERT(!ret);
+}
+
+void teardown_rayleigh_scattering()
+{
+    delete SR;
+    delete PC;
 }
 
 void tick_rayleigh_scattering()

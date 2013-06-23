@@ -46,6 +46,12 @@ void teardown_logger()
 
 void set_log_paths(const char* save_folder)
 {
+    GS_ASSERT(player_log == NULL);
+    GS_ASSERT(container_log == NULL);
+    GS_ASSERT(map_log == NULL);
+    GS_ASSERT(mech_log == NULL);
+    GS_ASSERT(entity_log == NULL);
+
     int wrote = 0;
 
     wrote = snprintf(log_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER);
@@ -78,32 +84,28 @@ void set_log_paths(const char* save_folder)
 
 void log_map_load_error(const char* msg)
 {
-    GS_ASSERT(map_log != NULL);
-    if (map_log == NULL) return;
+    IF_ASSERT(map_log == NULL) return;
     fprintf(map_log, "LoadError: %s\n", msg);
     fprintf(container_log, LOG_LINE_SEPARATOR);
 }
 
 void log_map_save_error(const char* msg)
 {
-    GS_ASSERT(map_log != NULL);
-    if (map_log == NULL) return;
+    IF_ASSERT(map_log == NULL) return;
     fprintf(map_log, "SaveError: %s\n", msg);
     fprintf(container_log, LOG_LINE_SEPARATOR);
 }
 
 void log_mech_load_error(const char* msg)
 {
-    GS_ASSERT(mech_log != NULL);
-    if (mech_log == NULL) return;
+    IF_ASSERT(mech_log == NULL) return;
     fprintf(mech_log, "LoadError: %s\n", msg);
     fprintf(mech_log, LOG_LINE_SEPARATOR);
 }
 
 void log_mech_load_error(const char* msg, const Vec3i& position, MechType mech_type, int subtype)
 {
-    GS_ASSERT(mech_log != NULL);
-    if (mech_log == NULL) return;
+    IF_ASSERT(mech_log == NULL) return;
     fprintf(mech_log, "LoadError: %s\n", msg);
     fprintf(mech_log, "Position: %d, %d, %d\n", position.x, position.y, position.z);
     fprintf(mech_log, "Mech type: %d\n", mech_type);
@@ -113,19 +115,18 @@ void log_mech_load_error(const char* msg, const Vec3i& position, MechType mech_t
 
 void log_mech_save_error(const char* msg)
 {
-    GS_ASSERT(mech_log != NULL);
-    if (mech_log == NULL) return;
+    IF_ASSERT(mech_log == NULL) return;
     fprintf(mech_log, "SaveError: %s\n", msg);
     fprintf(mech_log, LOG_LINE_SEPARATOR);
 }
 
 #if GS_SERIALIZER
-void log_container_load_error(const char* msg, const char* data_str,
+void log_container_load_error(
+    const char* msg, const char* data_str,
     class ParsedContainerFileData* file_data, class ParsedContainerData* container_data,
     class ParsedItemData* item_data)
 {
-    GS_ASSERT(container_log != NULL);
-    if (container_log == NULL) return;
+    IF_ASSERT(container_log == NULL) return;
     fprintf(container_log, "LoadError: %s\n", msg);
 
     if (data_str != NULL)
@@ -157,18 +158,16 @@ void log_container_load_error(const char* msg, const char* data_str,
 
 void log_container_save_error(const char* msg)
 {
-    GS_ASSERT(container_log != NULL);
-    if (container_log == NULL) return;
+    IF_ASSERT(container_log == NULL) return;
     fprintf(container_log, "SaveError: %s\n", msg);
     fprintf(container_log, LOG_LINE_SEPARATOR);
 }
 
-void log_player_save_error(const char* msg,
-    UserID user_id, AgentID agent_id,
+void log_player_save_error(
+    const char* msg, UserID user_id, AgentID agent_id,
     class ItemContainer::ItemContainerInterface* container)
 {
-    GS_ASSERT(player_log != NULL);
-    if (player_log == NULL) return;
+    IF_ASSERT(player_log == NULL) return;
     fprintf(player_log, "SaveError: %s\n", msg);
 
     if (user_id != NULL_USER_ID)
@@ -190,13 +189,13 @@ void log_player_save_error(const char* msg)
     log_player_save_error(msg, NULL_USER_ID, NULL_AGENT, NULL);
 }
 
-void log_player_load_error(const char* msg, const char* data_str,
+void log_player_load_error(
+    const char* msg, const char* data_str,
     class PlayerLoadData* load_data, class PlayerContainerLoadData* container_load_data,
     class ParsedPlayerData* player_data, class ParsedPlayerContainerData* container_data,
     class ParsedItemData* item_data)
 {
-    GS_ASSERT(player_log != NULL);
-    if (player_log == NULL) return;
+    IF_ASSERT(player_log == NULL) return;
     fprintf(player_log, "LoadError: %s\n", msg);
 
     if (data_str != NULL)
@@ -237,8 +236,7 @@ void log_player_load_error(const char* msg)
 
 void log_entity_save_error(const char* msg, const char* entity_name, int entity_id)
 {
-    GS_ASSERT(entity_log != NULL);
-    if (entity_log == NULL) return;
+    IF_ASSERT(entity_log == NULL) return;
 
     fprintf(entity_log, "SaveError: %s\n", msg);
 
@@ -258,8 +256,7 @@ void log_entity_save_error(const char* msg)
 
 void log_entity_load_error(const char* msg)
 {
-    GS_ASSERT(entity_log != NULL);
-    if (entity_log == NULL) return;
+    IF_ASSERT(entity_log == NULL) return;
     fprintf(entity_log, "LoadError: %s\n", msg);
 }
 #endif

@@ -267,4 +267,1624 @@
    fun:_ZN4Main3runEv
    fun:main
 }
-
+{
+   luajit
+   Memcheck:Cond
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:lua_pushlstring
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:luaL_pushresult
+   fun:luaL_gsub
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:lua_pcall
+   fun:_ZN3LUA12load_optionsEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:X11_SetKeyboardState
+   fun:X11_DispatchEvent
+   fun:X11_PumpEvents
+   fun:SDL_PumpEvents
+   fun:_Z10poll_mousev
+   fun:_ZN4Main3runEv
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XlcDefaultMapModifiers
+   fun:XSetLocaleModifiers
+   fun:create_aux_windows
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XrmInitParseInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XGetDefault
+   fun:_XcursorGetDisplayInfo
+   fun:XcursorSupportsARGB
+   fun:XcursorNoticeCreateBitmap
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_tls_new
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_run_once
+   fun:pa_thread_self
+   fun:pa_threaded_mainloop_lock
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:pthread_once
+   fun:alcOpenDevice
+   fun:_ZN11OpenALSound4initEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_tls_new
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_run_once
+   fun:pa_cstrerror
+   fun:pa_authkey_load
+   fun:pa_authkey_load_auto
+   fun:pa_client_conf_load_cookie
+   fun:pa_client_conf_load
+   fun:pa_context_new_with_proplist
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_log_set_ident
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_log_levelv_meta
+   fun:pa_log_level_meta
+   fun:pa_authkey_load
+   fun:pa_authkey_load_auto
+   fun:pa_client_conf_load_cookie
+   fun:pa_client_conf_load
+   fun:pa_context_new_with_proplist
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XimOpenIM
+   fun:create_aux_windows
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4llvm14object_creatorINS_12PassRegistryEEEPvv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm12PassRegistry15getPassRegistryEv
+   fun:_ZN4llvm24PassRegistrationListenerC1Ev
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4llvm14object_creatorISsEEPvv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:cso_hash_create
+   fun:util_hash_table_create
+   fun:radeon_drm_winsys_create
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XrmInitParseInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XGetDefault
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4llvm14object_creatorINS_3sys10SmartMutexILb1EEEEEPvv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm12PassRegistry23addRegistrationListenerEPNS_24PassRegistrationListenerE
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSt6vectorIPN4llvm24PassRegistrationListenerESaIS2_EE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPS2_S4_EERKS2_
+   fun:_ZN4llvm12PassRegistry23addRegistrationListenerEPNS_24PassRegistrationListenerE
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_mainloop_dispatch
+   fun:pa_mainloop_iterate
+   fun:pa_mainloop_run
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   fun:pa_context_get_sink_info_by_name
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:alcCreateContext
+   fun:_ZN11OpenALSound4initEv
+   fun:_ZN5Sound4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   fun:pa_stream_update_timing_info
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   fun:pa_stream_cork
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   fun:pa_stream_cork
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   fun:pa_stream_update_timing_info
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   fun:pa_stream_cork
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XrmInitParseInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XGetDefault
+   fun:_XcursorGetDisplayInfo
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   fun:XSetLocaleModifiers
+   fun:create_aux_windows
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4llvm12PassRegistry12registerPassERKNS_8PassInfoEb
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:XextCreateExtension
+   obj:/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+   fun:XextAddDisplay
+   fun:XShmQueryExtension
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XrmInitParseInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XGetDefault
+   fun:_XcursorGetDisplayInfo
+   fun:XcursorSupportsARGB
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XOpenLC
+   fun:_XrmInitParseInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XGetDefault
+   fun:_XcursorGetDisplayInfo
+   fun:XcursorSupportsARGB
+   fun:XcursorNoticeCreateBitmap
+   fun:XCreatePixmap
+   fun:X11_CreateWMCursor
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:XextCreateExtension
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:util_hash_table_create
+   fun:radeon_drm_winsys_create
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_cstrerror
+   fun:pa_authkey_load
+   fun:pa_authkey_load_auto
+   fun:pa_client_conf_load_cookie
+   fun:pa_client_conf_load
+   fun:pa_context_new_with_proplist
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_xmemdup
+   fun:pa_flist_new_with_name
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_run_once
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_mainloop_dispatch
+   fun:pa_mainloop_iterate
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_xmemdup
+   fun:pa_flist_new_with_name
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_run_once
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_mainloop_dispatch
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_xmemdup
+   fun:pa_flist_new_with_name
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_run_once
+   fun:pa_hashmap_put
+   fun:pa_proplist_sets
+   fun:pa_context_new_with_proplist
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_xmemdup
+   fun:pa_flist_new_with_name
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   fun:pa_run_once
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   fun:pa_context_get_sink_info_by_name
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:alcOpenDevice
+   fun:_ZN11OpenALSound4initEv
+   fun:_ZN5Sound4initEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlsym
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   obj:/usr/local/lib/libluajit-5.1.so.2.0.2
+   fun:lua_pcall
+   fun:_ZN3LUA12load_optionsEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4llvm12PassRegistry12registerPassERKNS_8PassInfoEb
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:cso_hash_create
+   fun:util_hash_table_create
+   fun:radeon_drm_winsys_create
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:decompose_rpath
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_xmemdup
+   fun:pa_flist_new_with_name
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_run_once
+   fun:pa_pdispatch_register_reply
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_mainloop_dispatch
+   fun:pa_mainloop_iterate
+   fun:pa_mainloop_run
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_error
+   fun:_mesa_lookup_shader_err
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_Z21print_shader_info_logj
+   fun:_ZN6Shader11load_shaderEPKcS1_S1_
+   fun:_ZN5t_map9MapShader11init_shaderEv
+   fun:_ZN5t_map12init_shadersEv
+   fun:_ZN5t_map13init_for_drawEv
+   fun:_Z12init_configsv
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_error
+   fun:_mesa_lookup_shader_err
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_Z21print_shader_info_logj
+   fun:_ZN6Shader11load_shaderEPKcS1_S1_
+   fun:_ZN6t_mech14MechListShader11init_shaderEv
+   fun:_ZN6t_mech14MechListShaderC2Ev
+   fun:_ZN6t_mech14MechListShaderC1Ev
+   fun:_ZN6t_mech16MechListRendererC2Ev
+   fun:_ZN6t_mech16MechListRendererC1Ev
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_error
+   fun:_mesa_lookup_shader_err
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_Z21print_shader_info_logj
+   fun:_ZN6Shader11load_shaderEPKcS1_S1_
+   fun:_ZN6t_mech18MechListMeshShader11init_shaderEv
+   fun:_ZN6t_mech18MechListMeshShaderC2Ev
+   fun:_ZN6t_mech18MechListMeshShaderC1Ev
+   fun:_ZN6t_mech20MechListMeshRendererC2Ev
+   fun:_ZN6t_mech20MechListMeshRendererC1Ev
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_error
+   fun:_mesa_lookup_shader_err
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_Z21print_shader_info_logj
+   fun:_ZN6Shader11load_shaderEPKcS1_S1_
+   fun:_ZN10Animations21init_sprite_voxelizerEv
+   fun:_ZN10Animations4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_error
+   fun:_mesa_lookup_shader_err
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_Z21print_shader_info_logj
+   fun:_ZN6Shader11load_shaderEPKcS1_S1_
+   fun:_ZN10Animations19init_voxel_particleEv
+   fun:_ZN10Animations4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_error
+   fun:_mesa_lookup_shader_err
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_Z21print_shader_info_logj
+   fun:_ZN6Shader11load_shaderEPKcS1_S1_
+   fun:_ZN10Animations19init_voxel_particleEv
+   fun:_ZN10Animations4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:SDL_CreateMutex
+   fun:SDL_ThreadsInit
+   fun:SDL_CreateThread
+   fun:SDL_SYS_TimerInit
+   fun:SDL_TimerInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:_XrmInitParseInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:XGetDefault
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4llvm3sys9MutexImplC1Eb
+   fun:_ZN4llvm14object_creatorINS_3sys10SmartMutexILb1EEEEEPvv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm12PassRegistry23addRegistrationListenerEPNS_24PassRegistrationListenerE
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   fun:pa_init_i18n
+   fun:pa_threaded_mainloop_new
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:pthread_once
+   fun:alcOpenDevice
+   fun:_ZN11OpenALSound4initEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   fun:pa_run_once
+   fun:pa_thread_self
+   fun:pa_threaded_mainloop_lock
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:pthread_once
+   fun:alcOpenDevice
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:pa_xmalloc0
+   fun:pa_thread_self
+   fun:pa_threaded_mainloop_lock
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:pthread_once
+   fun:alcOpenDevice
+   fun:_ZN11OpenALSound4initEv
+   fun:_ZN5Sound4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   fun:pa_run_once
+   fun:pa_hashmap_put
+   fun:pa_proplist_sets
+   fun:pa_context_new_with_proplist
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   fun:pa_run_once
+   fun:pa_cstrerror
+   fun:pa_authkey_load
+   fun:pa_authkey_load_auto
+   fun:pa_client_conf_load_cookie
+   fun:pa_client_conf_load
+   fun:pa_context_new_with_proplist
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_log_levelv_meta
+   fun:pa_log_level_meta
+   fun:pa_authkey_load
+   fun:pa_authkey_load_auto
+   fun:pa_client_conf_load_cookie
+   fun:pa_client_conf_load
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   fun:pa_run_once
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_mainloop_dispatch
+   fun:pa_mainloop_iterate
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:pa_xmalloc
+   fun:pa_mutex_new
+   fun:pa_static_mutex_get
+   fun:pa_once_begin
+   fun:pa_run_once
+   fun:pa_queue_push
+   fun:pa_pstream_send_packet
+   fun:pa_pstream_send_tagstruct_with_creds
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+   fun:pa_mainloop_dispatch
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libpulse.so.0.15.3
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-3.0.so
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_mesa_strdup
+   fun:_mesa_init_program
+   fun:_mesa_initialize_context
+   fun:_mesa_create_context
+   fun:st_create_context
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:dri_create_context
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_init_eval
+   fun:_mesa_initialize_context
+   fun:_mesa_create_context
+   fun:st_create_context
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:dri_create_context
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_mesa_program_cache_insert
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:st_validate_state
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:_ZN5t_map21blit_block_item_sheetEv
+   fun:_Z12init_configsv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:X11_CreateWMCursor
+   fun:SDL_CreateCursor
+   fun:SDL_CursorInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+   fun:XextAddDisplay
+   fun:XShmQueryExtension
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:X11_CreateWMCursor
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+   fun:XextAddDisplay
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:cso_hash_create
+   fun:util_hash_table_create
+   fun:radeon_bomgr_create
+   fun:radeon_drm_winsys_create
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:driParseOptionInfo
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/lib/x86_64-linux-gnu/libexpat.so.1.6.0
+   obj:/lib/x86_64-linux-gnu/libexpat.so.1.6.0
+   obj:/lib/x86_64-linux-gnu/libexpat.so.1.6.0
+   obj:/lib/x86_64-linux-gnu/libexpat.so.1.6.0
+   fun:XML_ParseBuffer
+   fun:driParseOptionInfo
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:driParseConfigFiles
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_init_eval
+   fun:_mesa_initialize_context
+   fun:_mesa_create_context
+   fun:st_create_context
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:dri_create_context
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libdricore9.1.3.so.1.0.0
+   fun:_mesa_init_eval
+   fun:_mesa_initialize_context
+   fun:_mesa_create_context
+   fun:st_create_context
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:dri_create_context
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:cso_hash_create
+   fun:translate_cache_create
+   fun:u_vbuf_create
+   fun:cso_create_context
+   fun:st_create_context
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+   fun:dri_create_context
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libgallium.so.0.0.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   fun:_dlerror_run
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   fun:_dl_check_map_versions
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   fun:open_path
+   fun:_dl_map_object
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   fun:_dl_new_object
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:open_path
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:open_path
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:util_format_s3tc_init
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:util_format_s3tc_init
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XNoticeCreateBitmap
+   fun:XCreatePixmap
+   fun:X11_CreateWMCursor
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:expand_dynamic_string_token
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:util_format_s3tc_init
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/r600_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XNoticeCreateBitmap
+   fun:XCreatePixmap
+   fun:X11_CreateWMCursor
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:add_to_global
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:X11_GL_LoadLibrary
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:pthread_once
+   fun:alcOpenDevice
+   fun:_ZN11OpenALSound4initEv
+   fun:_ZN5Sound4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glxewContextInit
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   obj:/usr/lib/x86_64-linux-gnu/libopenal.so.1.14.0
+   fun:pthread_once
+   fun:alcOpenDevice
+   fun:_ZN11OpenALSound4initEv
+   fun:_ZN5Sound4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNK4llvm12PassRegistry7getImplEv
+   fun:_ZN4llvm12PassRegistry23addRegistrationListenerEPNS_24PassRegistrationListenerE
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4llvm12PassRegistry12registerPassERKNS_8PassInfoEb
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-3.2.so.1
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   obj:/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0
+   fun:glXChooseVisual
+   fun:X11_GL_GetVisual
+   fun:X11_CreateWindow
+   fun:X11_SetVideoMode
+   fun:SDL_SetVideoMode
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+   fun:_XNoticeCreateBitmap
+   fun:XCreatePixmap
+   fun:X11_CreateWMCursor
+   fun:X11_VideoInit
+   fun:SDL_VideoInit
+   fun:SDL_InitSubSystem
+   fun:SDL_Init
+   fun:_Z10init_videov
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}

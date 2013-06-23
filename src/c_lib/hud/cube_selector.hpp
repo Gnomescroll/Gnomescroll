@@ -10,8 +10,8 @@ class CubeSelector
     private:
         int prev_blink;
         bool blink_status_visible;
-        void horizontal(bool left);
-        void vertical(bool up);
+    void horizontal(bool left);
+    void vertical(bool up);
 
     public:
 
@@ -28,24 +28,28 @@ class CubeSelector
 
         struct CubeSelectElement* cubes;
 
-        void set_position(float x, float y);
-        void set_block_selector(int pos, CubeType cube_type, int tex_id);
-        void set_block_selector(CubeType cube_type, int tex_id);
-        void set_active_pos(int pos);
-        void set_active_id(int id);
-        int get_active_pos();
-        CubeType get_active_id();
-        void draw();
+    void set_position(float x, float y);
+    void set_block_selector(int pos, CubeType cube_type, int tex_id);
+    void set_block_selector(CubeType cube_type, int tex_id);
+    void set_active_pos(int pos);
+    void set_active_id(int id);
+    int get_active_pos();
+    CubeType get_active_id();
+    void draw();
 
-        void up();
-        void down();
-        void left();
-        void right();
-        void reset_blink();
+    void up();
+    void down();
+    void left();
+    void right();
+    void reset_blink();
 
-        bool set_block_type(CubeType cube_type);
+    bool set_block_type(CubeType cube_type);
 
-        CubeSelector();
+    CubeSelector();
+    ~CubeSelector()
+    {
+        free(this->cubes);
+    }
 };
 
 extern CubeSelector cube_selector;

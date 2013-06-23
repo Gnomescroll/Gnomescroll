@@ -18,10 +18,10 @@ class VoxColors
         int *index;
         int n;
 
-        void init(const struct Vec3i& dimension);
-        void set(int i, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-        VoxColors();
-        ~VoxColors();
+    void init(const struct Vec3i& dimension);
+    void set(int i, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    VoxColors();
+    ~VoxColors();
 };
 
 class VoxPart
@@ -44,25 +44,23 @@ class VoxPart
         bool colorable;
         Color base_color;
 
-        void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
-        void set_dimension(const Vec3i& dimension);
+    void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
+    void set_dimension(const Vec3i& dimension);
 
-        int volume()
-        {
-            return vec3i_volume(this->dimension);
-        }
+    int volume()
+    {
+        return vec3i_volume(this->dimension);
+    }
 
-        void set_filename(const char* filename);
-        VoxPart(
-            VoxDat* dat,
+    void set_filename(const char* filename);
+    VoxPart(VoxDat* dat,
             int part_num,
             float vox_size,
             const Vec3i& dimension,
             const char* filename,
-            bool biaxial=false
-        );
+            bool biaxial=false);
 
-        ~VoxPart();
+    ~VoxPart();
 };
 
 class VoxDat
@@ -80,31 +78,31 @@ class VoxDat
         float** vox_skeleton_local_matrix_reference;
         int n_skeleton_nodes;
 
-        void init_skeleton(int n_skeleton);
+    void init_skeleton(int n_skeleton);
 
-        void reset_skeleton_local_matrix(int node);
-        void set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
-        void set_skeleton_node_parent(int node, int parent);
-        void set_skeleton_parent_matrix(int part, int parent);
+    void reset_skeleton_local_matrix(int node);
+    void set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
+    void set_skeleton_node_parent(int node, int parent);
+    void set_skeleton_parent_matrix(int part, int parent);
 
-        void init_parts(int n_parts);
+    void init_parts(int n_parts);
 
-        void set_part_properties(int part_num, float vox_size,
-                                 const Vec3i& dimension, const char* filename,
-                                 bool biaxial=false);
+    void set_part_properties(int part_num, float vox_size,
+                             const Vec3i& dimension, const char* filename,
+                             bool biaxial=false);
 
-        //anchor x,y,z then rotation x,y,z
-        void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
+    //anchor x,y,z then rotation x,y,z
+    void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
 
-        void set_colorable(int part, bool colorable);
-        void set_base_color(int part, unsigned char r, unsigned char g, unsigned char b);
+    void set_colorable(int part, bool colorable);
+    void set_base_color(int part, unsigned char r, unsigned char g, unsigned char b);
 
-        void set_color(int part, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set_color(int part, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
-        void save(char *fn);
+    void save(const char *fn);
 
-        VoxDat();
-        ~VoxDat();
+    VoxDat();
+    ~VoxDat();
 };
 
 }   // Voxels

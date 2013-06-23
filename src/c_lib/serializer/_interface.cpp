@@ -53,8 +53,7 @@ char entity_path_bak[GS_FN_MAX+1];
 static bool set_save_folder(int version, time_t timestamp)
 {
     int wrote = snprintf(save_folder, SAVE_FOLDER_LEN+1, save_folder_fmt, GS_VERSION, timestamp);
-    GS_ASSERT_ABORT(wrote > 0 && (size_t)wrote <= SAVE_FOLDER_LEN);
-    if (wrote <= 0 || (size_t)wrote > SAVE_FOLDER_LEN) return false;
+    IF_ASSERT(wrote <= 0 || (size_t)wrote > SAVE_FOLDER_LEN) return false;
     save_folder[SAVE_FOLDER_LEN] = '\0';
 
     char* save_path = (char*)malloc((sizeof(WORLD_DATA_PATH) + strlen(save_folder)+1) * sizeof(char));
@@ -67,8 +66,7 @@ static bool set_save_folder(int version, time_t timestamp)
 
 static void set_data_paths(const char* save_folder)
 {
-    GS_ASSERT_ABORT(save_folder[0] != '\0');
-    if (save_folder[0] == '\0') return;
+    IF_ASSERT(save_folder[0] == '\0') return;
 
     int wrote = 0;
 
@@ -184,8 +182,7 @@ static void create_data_paths()
 bool begin_new_world_version()
 {
     bool set = set_save_folder(GS_VERSION, utc_now());
-    GS_ASSERT(set);
-    if (!set) return false;
+    IF_ASSERT(!set) return false;
     set_data_paths(save_folder);
     return true;
 }
@@ -418,6 +415,7 @@ void init()
     verify_config();
 
     create_path(WORLD_DATA_PATH);
+    init_logger();
 
     // find the most up to date world data, if present
     int version = 0;
@@ -481,6 +479,8 @@ void teardown()
     teardown_items();
     teardown_state();
     #endif
+
+    teardown_logger();
 }
 
 }   // serializer

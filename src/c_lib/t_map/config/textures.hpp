@@ -130,6 +130,7 @@ void blit_block_item_sheet()
         create_texture_from_surface(block_item_64_surface, &block_item_64_texture, GL_NEAREST);
         //create_texture_from_surface(block_item_64_surface, &block_item_64_texture, GL_LINEAR);
         GS_ASSERT_ABORT(block_item_64_texture != 0);
+        SDL_FreeSurface(block_item_64_surface);
     }
 
     {
@@ -238,6 +239,7 @@ void blit_block_item_sheet()
         //Bind 0, which means render to back buffer, as a result, fb is unbound
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         glDeleteFramebuffersEXT(1, &fb);
+        SDL_FreeSurface(block_item_16_surface);
     }
 
     glBindFramebufferEXT(GL_FRAMEBUFFER, 0);

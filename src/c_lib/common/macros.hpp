@@ -31,7 +31,7 @@
     { \
         printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__); \
         print_trace(); \
-        exit(1); \
+        exit(EXIT_FAILURE); \
     } while (0);
 
 // macro stringification

@@ -362,7 +362,7 @@ void toolbelt_item_selected_event(ItemContainerID container_id, int slot)
 
 void left_trigger_down_event()
 {
-    GS_ASSERT(!left_down);
+    IF_ASSERT(left_down) return;
     left_down = true;
     holding = true;
     holding_tick = 0;
