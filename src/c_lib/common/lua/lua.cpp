@@ -8,22 +8,16 @@ extern "C"
     #include <lauxlib.h>
 }
 
-#if DC_CLIENT
-#include <options/client_options.hpp>
-#endif
-#if DC_SERVER
-#include <options/server_options.hpp>
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <options/options.hpp>
+
 int run_lua_test()
 {
-    int status, result;
-    //int i;
-    //double sum;
-    lua_State *L;
+    int status = 0;
+    int result = 0;
+    lua_State* L = NULL;
 
     /*
      * All Lua contexts are held in this structure. We work with it almost
@@ -34,7 +28,7 @@ int run_lua_test()
     luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "settings/test.lua");
+    status = luaL_loadfile(L, SETTINGS_PATH "test.lua");
     if (status)
     {
         /* If something went wrong, error message is at the top of */
@@ -111,27 +105,27 @@ int run_lua_test()
 namespace LUA
 {
 
-const char* OPTION_LOAD_PATH = "./settings/load_options.lua";
+const char OPTION_LOAD_PATH[] = SETTINGS_PATH "load_options.lua";
 
 lua_State* LUA_options_table = NULL;
 
 #if DC_CLIENT
 # if PRODUCTION
-const char* default_options_file = "settings";
+const char default_options_file[] = "settings";
 # else
-const char* default_options_file = "dev";
+const char default_options_file[] = "dev";
 # endif
 #endif
 
 #if DC_SERVER
-const char* default_options_file = "localhost";
+const char default_options_file[] = "localhost";
 #endif
 
 char* options_file = NULL;
 
 void set_options_file(const char* lua_name)
 {
-    if (options_file != NULL) free(options_file);
+    free(options_file);
     options_file = (char*)malloc(sizeof(char) * (strlen(lua_name) + 1));
     strcpy(options_file, lua_name);
 }
@@ -142,7 +136,7 @@ void set_options_file(const char* lua_name)
 
 void init_options()
 {
-    if (LUA_options_table != NULL) return;
+    IF_ASSERT(LUA_options_table != NULL) return;
 
     LUA_options_table = luaL_newstate();
     lua_State *L = LUA_options_table;
@@ -160,18 +154,18 @@ void init_options()
 
 void load_options()
 {
-    char* options = options_file;
+    const char* options = options_file;
     if (options == NULL)
-        options = (char*)default_options_file;
+        options = default_options_file;
     printf("Loading settings file \"%s\"\n", options);
 
     static int inited = 0;
 
-    lua_State *L = LUA_options_table;
+    lua_State* L = LUA_options_table;
     GS_ASSERT(L != NULL);
 
     if (!inited)
-        lua_setglobal(L, "options_table"); //name options
+        lua_setglobal(L, "options_table");
     else
     {
         printf("Reloading Settings\n");
@@ -204,6 +198,12 @@ void load_options()
     inited++;
 
     Options::validate();
+}
+
+void teardown()
+{
+    if (LUA_options_table != NULL)
+        lua_close(LUA_options_table);
 }
 
 /*

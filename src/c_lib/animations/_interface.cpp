@@ -250,6 +250,7 @@ void teardown()
     Animations::teardown_hitscan();
     Animations::teardown_sprite_voxelizer();
     teardown_voxel_particle();
+    teardown_mining_laser();
     #endif
 }
 

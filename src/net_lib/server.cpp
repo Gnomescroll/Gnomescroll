@@ -85,13 +85,34 @@ void init_globals()
 
 void teardown_globals()
 {
-    delete users;
     if (session_log_file != NULL) fclose(session_log_file);
     if (population_log_file != NULL) fclose(population_log_file);
+
+    if (pool != NULL)
+        for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+        {
+            if (pool[i] != NULL)
+                NetServer::kill_client(pool[i], DISCONNECT_SHUTDOWN);
+            delete pool[i];
+        }
     free(pool);
+
+    if (staging_pool != NULL)
+        for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+        {
+            if (staging_pool[i] != NULL)
+                NetServer::kill_client(staging_pool[i], DISCONNECT_SHUTDOWN);
+            delete staging_pool[i];
+        }
     free(staging_pool);
+
+    if (clients != NULL)
+        for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+            delete clients[i];
     free(clients);
+
     free(agents);
+    delete users;
 }
 
 class Session* begin_session(uint32_t ip_addr, ClientID client_id)
@@ -214,8 +235,7 @@ void check_client_authorizations()
 
         NetPeer* peer = staging_pool[i];
         if (peer == NULL) peer = pool[i];
-        GS_ASSERT(peer != NULL);    // peer should not be NULL if manager is not NULL
-        if (peer == NULL) continue;
+        IF_ASSERT(peer == NULL) continue;
 
         // remove peers who have authorized and it has expired,
         // or who have failed to authorize within a connection time limit

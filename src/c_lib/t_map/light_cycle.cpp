@@ -1,4 +1,4 @@
-#pragma once
+#include "light_cycle.hpp"
 
 namespace t_map
 {
@@ -13,13 +13,14 @@ class DayCycleController
     //then red fade out
     //then sunset
 
-    int dtime; //time in seconds from day start
+        int dtime; //time in seconds from day start
 
-    float blue_tint;  //blue tint (twilight)
-    float red_tint;   //red tint  (radiation)
-    float brightness; //total brightness
+        float blue_tint;  //blue tint (twilight)
+        float red_tint;   //red tint  (radiation)
+        float brightness; //total brightness
 
-    DayCycleController()
+    DayCycleController() :
+        blue_tint(0.0f), red_tint(0.0f), brightness(1.0f)
     {
         dtime = 0;
     }
@@ -713,18 +714,21 @@ class DayCycleController* DCC = NULL;
 //advance the day cycle on server
 void update_day_cycle()
 {
-    if(DCC == NULL)
+    if (DCC == NULL)
         DCC = new DayCycleController;
-
     DCC->advance();
+}
 
+void teardown_day_cycle()
+{
+    delete DCC;
 }
 #endif
 
 
 #if DC_CLIENT
 
-class LightTextureGenerator2* LTG;
+class LightTextureGenerator2* LTG = NULL;
 
 unsigned int generate_clut_light_texture()
 {
@@ -755,7 +759,6 @@ unsigned int generate_clut_light_texture()
 
 void generate_light_texture()
 {
-
     LTG = new LightTextureGenerator2;
     LTG->init_debug2();
     LTG->save("light_texture", true);
@@ -765,6 +768,11 @@ void generate_light_texture()
     //LTG->gen_textures();
 
     //light_texture_CLUT = LTG.texture_array[0];
+}
+
+void teardown_light_texture()
+{
+    delete LTG;
 }
 
 #endif

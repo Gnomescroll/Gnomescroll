@@ -133,12 +133,17 @@ ALWAYS_INLINE float quadrant_translate(float cx, float px)
 
 ALWAYS_INLINE float translate_point(float pt)
 {
-    #ifdef NAN
-    GS_ASSERT(!isnan(pt));
-    #endif
-    if (pt <  0.0f) pt += float(map_dim.x);
+    //#ifdef NAN
+    //GS_ASSERT(!isnan(pt));
+    //#endif
+    float old_pt = pt;
+    if (pt < 0) pt += float(map_dim.x);
     if (pt >= float(map_dim.x)) pt -= float(map_dim.x);
     GS_ASSERT(is_boxed_point(pt));
+    IF_ASSERT(!is_boxed_point(pt))
+    {
+        printf("Old: %0.2f, New: %0.2f\n", old_pt, pt);
+    }
     return pt;
 }
 

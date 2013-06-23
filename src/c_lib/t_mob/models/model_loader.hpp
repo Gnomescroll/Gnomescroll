@@ -28,15 +28,22 @@ class ModelLoader
         struct Node* _nl;
         int _nlm;
 
-        struct BoneNode
+        class BoneNode
         {
-            char* name;
-            struct Mat4 mOffsetMatrix;
-            struct aiNode* parent_node;   //parent node
-            int parent_index;
+            public:
+                char* name;
+                struct Mat4 mOffsetMatrix;
+                struct aiNode* parent_node;   //parent node
+                int parent_index;
+
+            BoneNode() :
+                name(NULL), parent_node(NULL), parent_index(0)
+            {
+                memset(&this->mOffsetMatrix, 0, sizeof(this->mOffsetMatrix));
+            }
         };
 
-        struct BoneNode* bnl;
+        class BoneNode* bnl;
         int bnlm;
 
     ModelLoader() :

@@ -98,18 +98,17 @@ class PlantTypeArray
 
     ~PlantTypeArray()
     {
-
+        delete[] array;
     }
 
     int get_type_id(const char* type_name)
     {
         for (int i=0; i<PLANT_TYPE_MAX; i++)
-        {
             if (strcmp(array[i].type_name, type_name) == 0)
                 return i;
-        }
+        GS_ASSERT(false);
         printf("ERROR: PlantTypeArray,  get_type_id, plant %s does not exist \n", type_name);
-        GS_ABORT();
+        return -1;
     }
 };
 
@@ -156,8 +155,8 @@ class PlantArray
                 GS_ASSERT(array[i].data_ptr == NULL);
                 GS_ASSERT(array[i].type_id  ==  -1);
             }
-
         }
+        delete[] array;
     }
 
     int element_create(int type_id)

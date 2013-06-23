@@ -523,6 +523,7 @@ void teardown()
     delete cache;
     delete equipment;
     delete grabbed_icon_stack_text;
+    delete tooltip_text;
     free(ui_elements);
 }
 

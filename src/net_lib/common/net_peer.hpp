@@ -47,15 +47,15 @@ class NetPeer
     private:
 
     public:
-    ClientID client_id;
-    int connected;
-    int version;
-    DisconnectType disconnect_code;
+        ClientID client_id;
+        int connected;
+        int version;
+        DisconnectType disconnect_code;
 
-    ENetPeer* enet_peer;
+        ENetPeer* enet_peer;
 
-    //uint32_t ip;
-    //uint16_t port;
+        //uint32_t ip;
+        //uint16_t port;
 
     void flush_to_net();
 

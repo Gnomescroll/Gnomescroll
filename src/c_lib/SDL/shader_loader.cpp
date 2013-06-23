@@ -10,7 +10,7 @@ void print_shader_info_log(GLhandleARB obj)
 {
     int infologLength = 0;
     int charsWritten  = 0;
-    char *infoLog;
+    char *infoLog = NULL;
 
     glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
 
@@ -34,7 +34,7 @@ void print_program_info_log(GLhandleARB obj)
     int charsWritten  = 0;
     char *infoLog;
 
-    glGetProgramiv(obj, GL_INFO_LOG_LENGTH,&infologLength);
+    glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
 
     if (infologLength > 0)
     {

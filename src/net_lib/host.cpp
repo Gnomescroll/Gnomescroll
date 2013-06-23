@@ -22,8 +22,22 @@
 
 const int DEFAULT_PORT = 4096;
 
+#if DC_SERVER
 struct _ENetHost* server_host;
+
+namespace NetServer
+{
+void shutdown_net_server();
+}
+#endif
+#if DC_CLIENT
 struct _ENetHost* client_host;
+
+namespace NetClient
+{
+void shutdown_net_client();
+}
+#endif
 
 static bool enet_inited = false;
 
@@ -34,7 +48,7 @@ void init_network()
 
     if (enet_initialize() != 0)
     {
-        fprintf (stderr, "An error occurred while initializing ENet.\n");
+        fprintf(stderr, "An error occurred while initializing ENet.\n");
         enet_inited = false;
         return;
     }
@@ -44,6 +58,13 @@ void init_network()
 void teardown_network()
 {
     if (enet_inited) enet_deinitialize();
+    #if DC_SERVER
+    NetServer::shutdown_net_server();
+    #endif
+    #if DC_CLIENT
+    NetClient::shutdown_net_client();
+    #endif
+    teardown_message_handler();
 }
 
 ENetAddress address;
@@ -70,8 +91,6 @@ void init_net_client()
         fprintf (stderr, "An error occurred while trying to create an ENet client host.\n");
         exit (EXIT_FAILURE);
     }
-
-    //enet_host_destroy(client);
 }
 
 void shutdown_net_client()
@@ -136,6 +155,9 @@ static void client_disconnect(ENetEvent* event)
     if (event->data == DISCONNECT_AUTH_LIMIT)
         Hud::set_server_disconnect_message("Client was disconnected because it had too many failed authorizations");
     else
+    if (event->data == DISCONNECT_SHUTDOWN)
+        Hud::set_server_disconnect_message("Remote server was shutdown");
+    else
         Hud::set_server_disconnect_message("Client disconnected from server");
 
     event->peer->data = NULL;
@@ -149,7 +171,7 @@ static void client_disconnect(ENetEvent* event)
 
 void client_connect_to(int a, int b, int c, int d, int port)
 {
-    ENetPeer *peer;
+    ENetPeer* peer = NULL;
 
     if (client_host == NULL)
     {
@@ -176,7 +198,7 @@ void client_connect_to(int a, int b, int c, int d, int port)
     }
     printf("Connecting to %d.%d.%d.%d on port %d\n", a, b, c, d, port);
 
-    address.host = htonl((a << 24) | (b << 16) | (c << 8) | d );
+    address.host = htonl((a << 24) | (b << 16) | (c << 8) | d);
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
     peer = enet_host_connect (client_host, & address, 8, 0);    //channel count
@@ -194,17 +216,13 @@ void client_dispatch_network_events()
 {
     if (client_host == NULL) return;
 
-    ENetEvent event;
-
-    /* Wait up to 5 milliseconds for an event. */
-
     size_t index = 0;
-
     int timeout = 1;
 
     while (1)
     {
-        int ret = enet_host_service(client_host, & event, timeout);
+        ENetEvent event;
+        int ret = enet_host_service(client_host, &event, timeout);
 
         if (ret == 0)
             break;
@@ -329,7 +347,13 @@ void init_server(int a, int b, int c, int d, int port)
         fprintf (stderr, "An error occurred while trying to create ENet server host: check that no other server is running on port %i \n", address.port);
         exit (EXIT_FAILURE);
     }
-    //enet_host_destroy(server);
+}
+
+void shutdown_net_server()
+{
+    if (server_host != NULL)
+        enet_host_destroy(server_host);
+    server_host = NULL;
 }
 
 //server

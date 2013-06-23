@@ -58,15 +58,11 @@ void register_client_message_handler(int message_id, size_t size, pt2handler_cli
 
 void init_message_handler()
 {
-
     #if !NET_STATIC_ARRAYS
-
     h_client_packet_size = (size_t*) calloc(256, sizeof(size_t));
     h_server_packet_size = (size_t*) calloc(256, sizeof(size_t));
-
-    client_handler_array = (pt2handler_client*) calloc(256, sizeof(pt2handler_server));
-    server_handler_array =  (pt2handler_server*) calloc(256, sizeof(pt2handler_server));
-
+    client_handler_array = (pt2handler_client*)calloc(256, sizeof(pt2handler_server));
+    server_handler_array = (pt2handler_server*)calloc(256, sizeof(pt2handler_server));
     #endif
 
     for (int i=0;i<256;i++)
@@ -76,8 +72,18 @@ void init_message_handler()
         h_server_packet_size[i] = 0;
         h_client_packet_size[i] = 0;
     }
-
 }
+
+void teardown_message_handler()
+{
+    #if !NET_STATIC_ARRAYS
+    free(h_client_packet_size);
+    free(h_server_packet_size);
+    free(client_handler_array);
+    free(server_handler_array);
+    #endif
+}
+
 
 #if DC_SERVER
 int process_packet_messages(char* buff, size_t* n, size_t max_n, ClientID client_id)

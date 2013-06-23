@@ -4,6 +4,7 @@ typedef void (*pt2handler_client)(char*, size_t, size_t* read_bytes);
 typedef void (*pt2handler_server)(char*, size_t, size_t* read_bytes, ClientID client_id);
 
 void init_message_handler();
+void teardown_message_handler();
 
 #if DC_SERVER
 int process_packet_messages(char* buff, size_t* n, size_t max_n, ClientID client_id);

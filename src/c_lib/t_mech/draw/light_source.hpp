@@ -59,7 +59,7 @@ class MechLightEffect
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels);
         glDisable(GL_TEXTURE_2D);
 
-        //SDL_FreeSurface(s);
+        SDL_FreeSurface(s);
     }
 
     void init_shader()

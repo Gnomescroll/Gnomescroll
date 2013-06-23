@@ -180,7 +180,7 @@ void init_world()
         }
     }
 
-    if (!loaded_map)
+    if (!loaded_map && !valgrind_map)
         t_map::post_gen_map_lighting(); //run after map gen, right only only sets skylight
 
     if (Options::serializer)

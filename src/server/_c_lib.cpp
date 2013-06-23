@@ -458,6 +458,8 @@ void close_c_lib()
 
     Path::teardown();
 
+    LUA::teardown();
+
     printf("Server closed\n");
     Log::teardown();
     _GS_ASSERT_TEARDOWN();

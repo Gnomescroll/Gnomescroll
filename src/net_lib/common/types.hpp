@@ -15,6 +15,7 @@ typedef enum
     DISCONNECT_SERVER_ERROR,    // some error occured in the server
     DISCONNECT_LOGIN_ELSEWHERE, // user logged in with a new connection
     DISCONNECT_AUTH_LIMIT,      // client sent too many bad token
+    DISCONNECT_SHUTDOWN,        // server was shutdown
 }   DisconnectType;
 
 typedef enum
@@ -24,7 +25,7 @@ typedef enum
 
 typedef enum
 {
-    NULL_CLIENT = 0xff,
+    NULL_CLIENT = 0xFF,
 } ClientID;
 
 inline bool isValid(UserID user_id)
