@@ -6,6 +6,7 @@
 #include <common/logger.hpp>
 #include <auth/constants.hpp>
 #include <net_lib/client.hpp>
+#include <sound/sound.hpp>
 
 namespace Chat
 {
@@ -67,6 +68,8 @@ ChatMessageHistoryObject::~ChatMessageHistoryObject()
 
 void ChatClientChannel::add_message(ChatMessage* m)
 {
+    Sound::play_2d_sound("incoming_chat_message");
+
     ChatMessageHistoryObject* in = new ChatMessageHistoryObject(m);
 
     if (history_size == CHAT_CLIENT_MESSAGE_HISTORY_MAX)
