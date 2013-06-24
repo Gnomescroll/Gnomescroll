@@ -165,47 +165,6 @@ static void slime_state_router(class Entity* entity, EntityState state)
 }
 #endif
 
-#if DC_SERVER
-void relax_slimes(Entity* entity)
-{   // TODO -- this is inefficient -- we need to unpack all the physics
-    // components into one array and work over that.
-    const float relax_distance = 0.85f;
-    const float relax_distance_sq = relax_distance * relax_distance;
-    const float relax_force = 0.1f;
-    int slime_count = 0;
-    int slime_max = 0;
-    class Entity* slimes = get_all(ENTITY_MONSTER_SLIME, slime_max, slime_count);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    Vec3 position = physics->get_position();
-    Vec3 momentum = physics->get_momentum();
-    for (int i=0, j=0; i<slime_max && j<slime_count; i++)
-    {
-        if (slimes[i].id == EntityList::null_id)
-            continue;
-        j++;
-        Entity* slime = &slimes[i];
-        if (slime->id == entity->id) continue;
-        auto slime_physics = GET_COMPONENT_INTERFACE(Physics, slime);
-        Vec3 p = slime_physics->get_position();
-        float dist_sq = vec3_distance_squared(position, p);
-        if (dist_sq > relax_distance_sq)
-            continue;
-        if (dist_sq == 0)
-        {
-            Vec3 push = vec3_init((2*randf()-1), (2*randf()-1), 0.0f);
-            push = vec3_scalar_mult(push, relax_force);
-            momentum = vec3_add(momentum, push);
-            continue;
-        }
-        Vec3 push = vec3_sub(position, p);
-        push = vec3_normalize(push);
-        push = vec3_scalar_mult(push, relax_force);
-        momentum = vec3_add(momentum, push);
-    }
-    physics->set_momentum(momentum);
-}
-#endif
-
 void tick_mob_slime(Entity* entity)
 {
     #if DC_SERVER
@@ -245,9 +204,6 @@ void tick_mob_slime(Entity* entity)
         if (target->target_type == ENTITY_AGENT)
             machine->router(entity, STATE_CHASE_AGENT);
     }
-
-    // TODO -- call this rate limited
-    relax_slimes(entity);
 
     #endif
 }

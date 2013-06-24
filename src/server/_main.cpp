@@ -317,6 +317,9 @@ void tick()
     Entities::spawn_monsters(ENTITY_MONSTER_LIZARD_THIEF, 100);
     Entities::spawn_monsters(ENTITY_MONSTER_BLUE_BLUB, 100);
 
+    if (counter % 5 == 0)
+        Components::relax_positions();  // body-body static force
+
     ItemContainer::update_smelters();
     Item::tick();
 

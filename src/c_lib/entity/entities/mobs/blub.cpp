@@ -155,47 +155,6 @@ static void blub_state_router(class Entity* entity, EntityState state)
 }
 #endif
 
-#if DC_SERVER
-void relax_blubs(Entity* entity)
-{   // TODO -- this is inefficient -- we need to unpack all the physics
-    // components into one array and work over that.
-    const float relax_distance = 0.85f;
-    const float relax_distance_sq = relax_distance * relax_distance;
-    const float relax_force = 0.1f;
-    int blub_count = 0;
-    int blub_max = 0;
-    class Entity* blubs = get_all(ENTITY_MONSTER_BLUE_BLUB, blub_max, blub_count);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    Vec3 position = physics->get_position();
-    Vec3 momentum = physics->get_momentum();
-    for (int i=0, j=0; i<blub_max && j<blub_count; i++)
-    {
-        if (blubs[i].id == EntityList::null_id)
-            continue;
-        j++;
-        Entity* blub = &blubs[i];
-        if (blub->id == entity->id) continue;
-        auto blub_physics = GET_COMPONENT_INTERFACE(Physics, blub);
-        Vec3 p = blub_physics->get_position();
-        float dist_sq = vec3_distance_squared(position, p);
-        if (dist_sq > relax_distance_sq)
-            continue;
-        if (dist_sq == 0)
-        {
-            Vec3 push = vec3_init((2*randf()-1), (2*randf()-1), 0.0f);
-            push = vec3_scalar_mult(push, relax_force);
-            momentum = vec3_add(momentum, push);
-            continue;
-        }
-        Vec3 push = vec3_sub(position, p);
-        push = vec3_normalize(push);
-        push = vec3_scalar_mult(push, relax_force);
-        momentum = vec3_add(momentum, push);
-    }
-    physics->set_momentum(momentum);
-}
-#endif
-
 void tick_mob_blub(Entity* entity)
 {
     #if DC_SERVER
@@ -234,9 +193,6 @@ void tick_mob_blub(Entity* entity)
         if (target->target_type == ENTITY_AGENT)
             machine->router(entity, STATE_CHASE_AGENT);
     }
-
-    // TODO -- call this rate limited
-    relax_blubs(entity);
 
     #endif
 }

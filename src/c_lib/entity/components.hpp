@@ -22,6 +22,7 @@ void teardown();
 #if DC_SERVER
 EntityID get_spawner_for_user(UserID user_id);
 void revoke_owned_entities(AgentID owner_id);
+void relax_positions();
 #endif
 
 } // Components

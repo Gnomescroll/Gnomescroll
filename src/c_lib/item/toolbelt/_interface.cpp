@@ -412,7 +412,7 @@ void left_trigger_up_event()
     // If it's a CHARGE_ALWAYS and we had a single_trigger event, emit charged attack proportional to charging
     if (cb == CHARGE_ALWAYS && single_trigger)
     {   // unleash a charged attack (if holding_tick is past threshold)
-        float charge_multiplier = 1.0f + get_charge_progress();
+        //float charge_multiplier = 1.0f + get_charge_progress();
         if (toolbelt_item_alpha_action())
         {
             //printf("Charged attack. Multiplier: %0.2f\n", charge_multiplier);
