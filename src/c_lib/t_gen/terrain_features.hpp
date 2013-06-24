@@ -32,9 +32,9 @@ const size_t NUM_SHROOMSTEMS = 2;
 // perlin noise
 const float PERSISTENCE = 0.5f; // tweak
 const size_t OCTAVES = 6;  // tweak
-const float TREE_ZONE_THRESHOLD = 0.3f;  // move to a config file maybe
+const float TREE_ZONE_THRESHOLD = 0.5f;  // move to a config file maybe
 const float TREE_THRESHOLD = 0.997f;
-const float SHROOM_ZONE_THRESHOLD = 0.3f;  // move to a config file maybe
+const float SHROOM_ZONE_THRESHOLD = 0.5f;  // move to a config file maybe
 const float SHROOM_THRESHOLD = 0.997f;
 
 const int NUM_LOOKUP_ANGLES = 32;

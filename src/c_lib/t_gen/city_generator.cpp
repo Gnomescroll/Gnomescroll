@@ -214,7 +214,7 @@ void generate_skyscraper(int x, int y)
     CubeType ActualBlock = SkyscraperBlock[randrange(0, sizeof(SkyscraperBlock) / sizeof(*SkyscraperBlock) - 1)];
     CubeType GlowBlock[2] = {glowblue, glowgreen};
     if(floors < 4) return;
-    generate_room(ActualBlock, x, y, z, x + floors, y + floors, z + SKYSCRAPER_ROOM_HEIGHT, x, y + floors / 2 - 1, z, x + 1, y + floors / 2 + 1, z + 4, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, 0, 0, random_bool(), 0, 0, 0);
+    generate_room(ActualBlock, x, y, z, x + floors + 1, y + floors + 1, z + SKYSCRAPER_ROOM_HEIGHT, x, y + floors / 2 - 1, z, x + 1, y + floors / 2 + 1, z + 4, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, 0, 0, random_bool(), 0, 0, 0);
     for(int FloorsMade = 1; FloorsMade < floors; FloorsMade++)
     {
         generate_room(ActualBlock, x, y, z + FloorsMade * SKYSCRAPER_ROOM_HEIGHT, x + floors - FloorsMade + 2, y + floors - FloorsMade + 2, z + FloorsMade * SKYSCRAPER_ROOM_HEIGHT + SKYSCRAPER_ROOM_HEIGHT, x + 1, y + 1, z + FloorsMade * SKYSCRAPER_ROOM_HEIGHT, x + 2, y + 2, z + FloorsMade * SKYSCRAPER_ROOM_HEIGHT, x + 1, y + 1, z + FloorsMade * SKYSCRAPER_ROOM_HEIGHT + SKYSCRAPER_ROOM_HEIGHT, x + 1, y + 1, z + FloorsMade * SKYSCRAPER_ROOM_HEIGHT + SKYSCRAPER_ROOM_HEIGHT, 0, 0, 0, 0, 1, random_bool(), 0, random_bool());
@@ -527,6 +527,7 @@ void generate_tunnel(int x, int y, int z, int otherx, int othery, int otherz)
         generate_line(x + SUBWAY_TUNNEL_SIZE, y, z + LinesMade, otherx + SUBWAY_TUNNEL_SIZE, othery, otherz + LinesMade, steelB, 1);
     }
     generate_line(x + SUBWAY_TUNNEL_SIZE / 2, y, z, otherx + SUBWAY_TUNNEL_SIZE / 2, othery, otherz, battery, 1);
+    generate_line(x + SUBWAY_TUNNEL_SIZE / 2, y, z + SUBWAY_TUNNEL_SIZE / 2, otherx + SUBWAY_TUNNEL_SIZE / 2, othery, otherz + SUBWAY_TUNNEL_SIZE / 2, EMPTY_CUBE, 1);
 }
 
 void create_cryofreezer(int x, int y, int z)
