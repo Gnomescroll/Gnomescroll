@@ -24,29 +24,30 @@ void init_config()
 EntityID get_spawner_for_user(UserID user_id)
 {
     auto a = GET_COMPONENT_LIST(AgentSpawner);
+    auto components = a->components;
     for (size_t i=0, j=0; i<a->max && j<a->count; i++)
-        if (a->components[i] != NULL)
-        {
-            j++;
-            for (size_t j=0; j<a->components[i]->users.count; j++)
-                if (a->components[i]->users.subscribers[j] == user_id)
-                    return a->components[i]->entity->id;
-        }
+    {
+        if (components[i].id == NULL_COMPONENT)
+            continue;
+        j++;
+        for (size_t j=0; j<components[i].users.count; j++)
+            if (components[i].users.subscribers[j] == user_id)
+                return components[i].entity->id;
+    }
     return BASE_SPAWN_ID;
 }
 
 void revoke_owned_entities(AgentID owner_id)
 {
     auto a = GET_COMPONENT_LIST(Owner);
+    auto components = a->components;
     for (size_t i=0, j=0; i<a->max && j<a->count; i++)
     {
-        OwnerComponent* owner = a->components[i];
-        if (owner != NULL)
-        {
-            j++;
-            if (owner->owner == owner_id)
-                owner->revoke();
-        }
+        if (components[i].id == NULL_COMPONENT)
+            continue;
+        j++;
+        if (components[i].owner == owner_id)
+            components[i].revoke();
     }
 }
 
@@ -59,24 +60,23 @@ void relax_positions()
     auto list = GET_COMPONENT_LIST(PositionMomentum);
     IF_ASSERT(list == NULL) return;
 
+    auto components = list->components;
     for (size_t i=0, j=0; i<list->max && j<list->count; i++)
     {
-        auto physics = list->components[i];
-        if (physics == NULL)
+        if (components[i].id == NULL_COMPONENT)
             continue;
         j++;
-        const Vec3 position = physics->get_position();
-        Vec3 momentum = physics->get_momentum();
+        const Vec3 position = components[i].get_position();
+        Vec3 momentum = components[i].get_momentum();
         for (size_t m=0, n=0; m<list->max && n<list->count; m++)
         {
-            auto other = list->components[m];
-            if (other == NULL)
+            if (components[m].id == NULL_COMPONENT)
                 continue;
             n++;
-            if (other == physics)
+            if (m == i)
                 continue;
 
-            Vec3 p = other->get_position();
+            Vec3 p = components[m].get_position();
             float dsq = vec3_distance_squared(position, p);
             if (dsq > relax_distance_sq)
                 continue;
@@ -87,7 +87,7 @@ void relax_positions()
             push = vec3_scalar_mult(push, relax_force);
             momentum = vec3_add(momentum, push);
         }
-        physics->set_momentum(momentum);
+        components[i].set_momentum(momentum);
     }
 }
 #endif

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entity/component/component.hpp>
+#include <entity/components.hpp>
 
 namespace Components
 {
@@ -9,11 +10,17 @@ class ComponentList
 {
     public:
         ComponentType type;
+        ComponentInterfaceType interface;
         size_t count;
         size_t max;
         size_t call_tick;
         size_t call_rate;
         bool autocall;
+
+    bool is_valid_id(ComponentID id)
+    {
+        return (id >= 0 && id < ComponentID(this->max));
+    }
 
     void set_autocall(size_t rate=1)
     {
@@ -34,39 +41,47 @@ class ComponentList
         type(type), count(0), max(0), call_tick(0), call_rate(1),
         autocall(false)
     {
+        this->interface = get_interface_for_component(type);
     }
 };
 
 template <class COMPONENT, ComponentType TYPE>
 class ComponentListChild: public ComponentList
 {
+    private:
+        size_t _index;
+
     public:
-        COMPONENT** components;
+        COMPONENT* components;
 
     COMPONENT* subscribe()
     {   // return pointer to available component
         IF_ASSERT(this->components == NULL) return NULL;
         for (size_t i=0; i<this->max; i++)
-            if (this->components[i] == NULL)
+        {
+            size_t index = (i + this->_index) % this->max;
+            if (this->components[index].id == NULL_COMPONENT)
             {
-                this->components[i] = new COMPONENT;
-                this->components[i]->id = i;
+                new (&this->components[index]) COMPONENT;
+                this->components[index].id = ComponentID(index);
                 this->count++;
-                return this->components[i];
+                this->_index = (index + 1) % this->max;
+                return &this->components[index];
             }
+        }
         GS_ASSERT(false);
-        printf("No component found\n");
         return NULL;
     }
 
     void unsubscribe(Component* component)
     {   // deallocate/release component in components
         IF_ASSERT(component == NULL) return;
-        GS_ASSERT(this->components != NULL);
-        GS_ASSERT(this->components[component->id] != NULL);
+        ComponentID id = component->id;
+        IF_ASSERT(!this->is_valid_id(id)) return;
+        IF_ASSERT(this->components[id].id == NULL_COMPONENT) return;
         this->count--;
-        this->components[component->id] = NULL;
-        delete component;
+        this->components[id].~COMPONENT();
+        this->components[id].id = NULL_COMPONENT;
     }
 
     void call()
@@ -75,10 +90,10 @@ class ComponentListChild: public ComponentList
             return;
         IF_ASSERT(this->components == NULL) return;
         for (size_t i=0, j=0; i<this->max && j < this->count; i++)
-            if (this->components[i] != NULL)
+            if (this->components[i].id != NULL_COMPONENT)
             {
                 j++;
-                this->components[i]->call();
+                this->components[i].call();
             }
     }
 
@@ -87,12 +102,14 @@ class ComponentListChild: public ComponentList
         IF_ASSERT(this->components != NULL) return;
         IF_ASSERT(max <= 0) return;
         this->max = max;
-        this->components = (COMPONENT**)calloc(this->max, sizeof(*this->components));
+        this->components = (COMPONENT*)calloc(this->max, sizeof(*this->components));
+        for (size_t i=0; i<this->max; i++)
+            this->components[i].id = NULL_COMPONENT;
     }
 
     ComponentListChild<COMPONENT, TYPE>() :
         ComponentList(TYPE),
-        components(NULL)
+        _index(0), components(NULL)
     {
     }
 
@@ -100,8 +117,8 @@ class ComponentListChild: public ComponentList
     {
         if (this->components == NULL) return;
         for (size_t i=0; i<this->max; i++)
-            if (this->components[i] != NULL)
-                delete this->components[i];
+            if (this->components[i].id != NULL_COMPONENT)
+                this->components[i].~COMPONENT();
         free(this->components);
     }
 };

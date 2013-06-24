@@ -60,7 +60,7 @@ void EntityDataList::grow_component_list(EntityType type)
 
     for (size_t i=this->component_sizes[type]; i<size; i++)
     {
-        this->component_types[type][i] = NULL_COMPONENT;
+        this->component_types[type][i] = NULL_COMPONENT_TYPE;
         this->interface_types[type][i] = NULL_COMPONENT_INTERFACE;
         this->components[type][i] = NULL;
     }
@@ -77,7 +77,7 @@ void EntityDataList::begin_attaching_to(EntityType type)
     this->components[type] = (Components::Component**)calloc(this->component_maxes[type], sizeof(**this->components));
     for (size_t i=0; i<this->component_maxes[type]; i++)
     {
-        this->component_types[type][i] = NULL_COMPONENT;
+        this->component_types[type][i] = NULL_COMPONENT_TYPE;
         this->interface_types[type][i] = NULL_COMPONENT_INTERFACE;
     }
 }

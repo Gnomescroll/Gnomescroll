@@ -78,7 +78,7 @@ Component* create_unmanaged(ComponentType type)
         COMPONENTS
         #undef A
 
-        case NULL_COMPONENT:
+        case NULL_COMPONENT_TYPE:
         default:
             GS_ASSERT(false);
             return NULL;
@@ -90,7 +90,7 @@ ComponentInterfaceType get_interface_for_component(ComponentType component)
 {
     IF_ASSERT(component_interface_map == NULL)
         return NULL_COMPONENT_INTERFACE;
-    IF_ASSERT(!isValid(component) && component != NULL_COMPONENT)
+    IF_ASSERT(!isValid(component) && component != NULL_COMPONENT_TYPE)
         return NULL_COMPONENT_INTERFACE;
     return component_interface_map[component];
 }
@@ -99,7 +99,7 @@ static void set_interface_for_component(ComponentType component, ComponentInterf
 {
     IF_ASSERT(component_interface_map == NULL)
         return;
-    IF_ASSERT(!isValid(component) && component != NULL_COMPONENT)
+    IF_ASSERT(!isValid(component) && component != NULL_COMPONENT_TYPE)
         return;
     component_interface_map[component] = interface;
 }
@@ -108,7 +108,7 @@ void init_interfaces()
 {
     GS_ASSERT(component_interface_map == NULL);
     component_interface_map = (ComponentInterfaceType*)calloc(MAX_COMPONENT_TYPES + 1, sizeof(ComponentInterfaceType));
-    set_interface_for_component(NULL_COMPONENT, NULL_COMPONENT_INTERFACE);
+    set_interface_for_component(NULL_COMPONENT_TYPE, NULL_COMPONENT_INTERFACE);
 
     #define A(TYPE, INTERFACE) \
         set_interface_for_component(COMPONENT_##TYPE, COMPONENT_INTERFACE_##INTERFACE);

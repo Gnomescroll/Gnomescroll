@@ -19,7 +19,7 @@ EntityID EntityList::get_free_id(EntityType type)
         EntityID j = EntityID((i + last_free_id) % max);
         if (this->entities[type][j].id == this->null_id)
         {
-            this->last_free_ids[type] = j;
+            this->last_free_ids[type] = (j + 1) % max;
             return j;
         }
     }

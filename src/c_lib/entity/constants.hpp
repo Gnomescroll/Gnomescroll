@@ -91,7 +91,7 @@ typedef enum
     COMPONENT_Knockback,
     #endif
 
-    NULL_COMPONENT = MAX_COMPONENT_TYPES,
+    NULL_COMPONENT_TYPE = MAX_COMPONENT_TYPES,
 } ComponentType;
 
 const int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
@@ -133,6 +133,11 @@ typedef enum
 
 typedef enum
 {
+    NULL_COMPONENT = 0xFFFF
+} ComponentID;
+
+typedef enum
+{
     NULL_ENTITY = 0xFFFF
 } EntityID;
 
@@ -149,6 +154,11 @@ inline bool isValid(ComponentType type)
 inline bool isValid(ComponentInterfaceType type)
 {
     return (type >= 0 && type < MAX_COMPONENT_INTERFACE_TYPES);
+}
+
+inline bool isValid(ComponentID id)
+{
+    return (id >= 0 && id < NULL_COMPONENT);
 }
 
 inline bool isValid(EntityID id)

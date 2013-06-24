@@ -11,7 +11,7 @@ namespace Components
 class Component
 {
     public:
-        int id;
+        ComponentID id;
         ComponentType type;
         ComponentInterfaceType interface;
         class Entities::Entity* entity;
@@ -23,7 +23,7 @@ class Component
     virtual ~Component() {}
 
     Component(ComponentType type, ComponentInterfaceType interface) :
-        id(NULL_ENTITY), type(type), interface(interface), entity(NULL)
+        id(NULL_COMPONENT), type(type), interface(interface), entity(NULL)
     {}
 };
 
