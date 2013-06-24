@@ -8,7 +8,6 @@
 #if DC_CLIENT
 # include <common/time/physics_timer.hpp>
 # include <chat/_interface.hpp>
-# include <entity/entities/fabs/constants.hpp>
 # include <SDL/SDL_functions.hpp>
 #endif
 
@@ -335,7 +334,7 @@ inline void set_spawner_StoC::handle()
             auto vox = GET_COMPONENT_INTERFACE(VoxelModel, obj);
             GS_ASSERT(vox != NULL);
             if (vox != NULL && vox->vox != NULL)
-                vox->vox->fill_color(Entities::DEACTIVATED_SPAWNER_COLOR);
+                vox->vox->fill_color(DEACTIVATED_SPAWNER_COLOR);
         }
     }
 
@@ -349,7 +348,7 @@ inline void set_spawner_StoC::handle()
             auto vox = GET_COMPONENT_INTERFACE(VoxelModel, obj);
             GS_ASSERT(vox != NULL);
             if (vox != NULL && vox->vox != NULL)
-                vox->vox->fill_color(Entities::ACTIVATED_SPAWNER_COLOR);
+                vox->vox->fill_color(ACTIVATED_SPAWNER_COLOR);
         }
     }
 

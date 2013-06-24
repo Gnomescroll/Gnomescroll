@@ -732,7 +732,6 @@ bool Agent::near_base()
     float x = quadrant_translate_f(this->s.x, bp.x);
     float y = quadrant_translate_f(this->s.y, bp.y);
     float z = bp.z;
-    using Entities::BASE_SPAWN_RADIUS;
     static const float k = sqrtf(2);    // scaling factor for radius of a square (base spawning is square manhattan distance)
     if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < k*BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;

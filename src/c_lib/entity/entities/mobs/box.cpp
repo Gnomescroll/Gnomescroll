@@ -2,7 +2,6 @@
 
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/mobs/constants.hpp>
 #include <entity/components/health.hpp>
 #include <entity/components/dimension.hpp>
 #include <entity/components/voxel_model.hpp>
@@ -23,44 +22,42 @@ void load_mob_robot_box_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = MONSTER_BOX_HEIGHT;
-    dims->camera_height = MONSTER_BOX_CAMERA_HEIGHT;
+    dims->height = 3.0f;
+    dims->camera_height = 2.5f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::robot_box;
-    vox->init_hitscan = MONSTER_BOX_INIT_WITH_HITSCAN;
-    vox->init_draw = MONSTER_BOX_INIT_WITH_DRAW;
+    vox->init_hitscan = true;
+    vox->init_draw = true;
 
     #if DC_CLIENT
     ADD_COMPONENT(HitPoints);
     #endif
     #if DC_SERVER   // health will be set by packet initializer
     auto health = ADD_COMPONENT(HitPoints);
-    int health_amt = randrange(MONSTER_BOX_HEALTH_MIN, MONSTER_BOX_HEALTH_MAX);
-    health->health = health_amt;
-    health->health_max = health_amt;
+    health->health = 50;
+    health->health_max = 50;
     #endif
 
     auto target = ADD_COMPONENT(WeaponTargeting);
-    target->target_acquisition_failure_rate = MONSTER_BOX_TARGET_ACQUISITION_FAILURE_RATE;
-    target->fire_rate_limit = MONSTER_BOX_FIRE_RATE_LIMIT;
-    target->uses_bias = MONSTER_BOX_USES_BIAS;
-    target->accuracy_bias = MONSTER_BOX_ACCURACY_BIAS;
-    target->sight_range = MONSTER_BOX_FIRING_SIGHT_RANGE;
-    target->attack_at_random = MONSTER_BOX_ATTACK_AT_RANDOM;
+    target->target_acquisition_failure_rate = 0.1f;
+    target->fire_rate_limit = 45;
+    target->uses_bias = false;
+    target->accuracy_bias = 0.0f;
+    target->sight_range = 15.0f;
+    target->attack_at_random = false;
     // we dont have ID yet, need to set that in the ready() call
-    target->attacker_properties.type = ENTITY_MONSTER_BOX;
-    target->attacker_properties.block_damage = MONSTER_BOX_TERRAIN_DAMAGE;
-    target->attacker_properties.agent_damage_min = MONSTER_BOX_AGENT_DAMAGE_MIN;
-    target->attacker_properties.agent_damage_max = MONSTER_BOX_AGENT_DAMAGE_MAX;
-    //target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
-    target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
+    target->attacker_properties.type = type;
+    target->attacker_properties.block_damage = 5;
+    target->attacker_properties.agent_damage_min = 1;
+    target->attacker_properties.agent_damage_max = 3;
+    target->attacker_properties.agent_protection_duration = ONE_SECOND * 3;
     target->attacker_properties.terrain_modification_action = TMA_MONSTER_BOX;
-    target->fire_delay_max = MONSTER_BOX_FIRE_DELAY_MAX;
+    target->fire_delay_max = 1;
 
     auto motion = ADD_COMPONENT(MotionTargeting);
-    motion->speed = MONSTER_BOX_SPEED;
-    motion->max_z_diff = MONSTER_BOX_MOTION_MAX_Z_DIFF;
+    motion->speed = 0.2f;
+    motion->max_z_diff = 3;
 
     #if DC_SERVER
     ADD_COMPONENT(SpawnChild);
@@ -84,11 +81,10 @@ void load_mob_robot_box_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->color = MONSTER_BOX_ANIMATION_COLOR;
-    anim->count = MONSTER_BOX_ANIMATION_COUNT;
-    //anim->count_max = MONSTER_BOX_ANIMATION_COUNT_MAX;
-    anim->size = MONSTER_BOX_ANIMATION_SIZE;
-    anim->force = MONSTER_BOX_ANIMATION_FORCE;
+    anim->color = Color(223, 31, 31);
+    anim->count = 5*5*5;
+    anim->size = 0.2f;
+    anim->force = 5.0f;
     #endif
 }
 
@@ -96,7 +92,6 @@ void ready_mob_robot_box(Entity* entity)
 {
     auto target = GET_COMPONENT(WeaponTargeting, entity);
     target->attacker_properties.id = entity->id;
-
 
     auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
@@ -211,7 +206,7 @@ void server_tick_mob_robot_box(Entity* entity)
     {   // no destination, no target
         // choose destination
         Vec3 destination;
-        const int walk_len = MONSTER_BOX_WALK_RANGE;
+        const int walk_len = 30;
         int dx = randrange(0,walk_len) - walk_len/2;
         int dy = randrange(0,walk_len) - walk_len/2;
         destination = vec3_add(position, vec3_init(float(dx)+randf(), float(dy)+randf(),0));

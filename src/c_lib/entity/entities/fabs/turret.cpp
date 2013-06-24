@@ -5,7 +5,6 @@
 #include <entity/components/physics/position.hpp>
 #include <entity/components/owner.hpp>
 #include <entity/components/voxel_model.hpp>
-#include <entity/entities/fabs/constants.hpp>
 #include <t_map/t_map.hpp>
 #if DC_SERVER
 # include <entity/components/explosion.hpp>
@@ -24,39 +23,38 @@ void load_turret_data()
     ADD_COMPONENT(Owner);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = TURRET_HEIGHT;
-    dims->camera_height = TURRET_CAMERA_HEIGHT;
+    dims->height = 1.9f;
+    dims->camera_height = 1.6f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::turret;
-    vox->init_hitscan = TURRET_INIT_WITH_HITSCAN;
-    vox->init_draw = TURRET_INIT_WITH_DRAW;
+    vox->init_hitscan = true;
+    vox->init_draw = true;
 
     auto health = ADD_COMPONENT(HitPoints);
-    health->health = TURRET_MAX_HEALTH;
-    health->health_max = TURRET_MAX_HEALTH;
+    health->health = 125;
+    health->health_max = 125;
 
     auto target = ADD_COMPONENT(WeaponTargeting);
-    target->target_acquisition_failure_rate = TURRET_TARGET_ACQUISITION_PROBABILITY;
-    target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
-    target->uses_bias = TURRET_USES_BIAS;
-    target->accuracy_bias = TURRET_ACCURACY_BIAS;
-    target->sight_range = TURRET_SIGHT_RANGE;
-    target->attack_at_random = TURRET_ATTACK_AT_RANDOM;
+    target->target_acquisition_failure_rate = 0.85f;
+    target->fire_rate_limit = 45;
+    target->uses_bias = true;
+    target->accuracy_bias = 1.0f;
+    target->sight_range = 32.0f;
+    target->attack_at_random = true;
     // we dont have ID yet, need to set that in the ready() call
-    target->attacker_properties.type = ENTITY_TURRET;
-    target->attacker_properties.block_damage = TURRET_TERRAIN_DAMAGE;
-    target->attacker_properties.agent_damage_min = TURRET_AGENT_DAMAGE_MIN;
-    target->attacker_properties.agent_damage_max = TURRET_AGENT_DAMAGE_MAX;
-    //target->attacker_properties.voxel_damage_radius = TURRET_VOXEL_DAMAGE_RADIUS;
-    target->attacker_properties.agent_protection_duration = TURRET_AGENT_IMMUNITY_DURATION;
+    target->attacker_properties.type = type;
+    target->attacker_properties.block_damage = 8;
+    target->attacker_properties.agent_damage_min = 2;
+    target->attacker_properties.agent_damage_max = 3;
+    target->attacker_properties.agent_protection_duration = ONE_SECOND * 5;
     target->attacker_properties.terrain_modification_action = TMA_TURRET;
 
     #if DC_SERVER
     auto explode = ADD_COMPONENT(Explosion);
-    explode->radius = TURRET_EXPLOSION_RADIUS;
-    explode->damage = TURRET_EXPLOSION_DAMAGE;
-    explode->harms_owner = TURRET_EXPLOSION_HARMS_OWNER;
+    explode->radius = 2.0f;
+    explode->damage = 10;
+    explode->harms_owner = false;
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
@@ -65,10 +63,11 @@ void load_turret_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->count = TURRET_ANIMATION_COUNT;
-    anim->count_max = TURRET_ANIMATION_COUNT_MAX;
-    anim->size = TURRET_ANIMATION_SIZE;
-    anim->force = TURRET_ANIMATION_FORCE;
+    anim->count = 35;
+    anim->count_max = 50;
+    anim->size = 0.1f;
+    anim->force = 5.0f;
+    anim->color = Color(1, 1, 1);
     #endif
 }
 

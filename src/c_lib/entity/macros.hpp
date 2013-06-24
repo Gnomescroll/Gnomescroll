@@ -20,3 +20,9 @@
     (Components::COMPONENT##ComponentList*)Components::get_component_list(COMPONENT_##COMPONENT);
 
 // auto list = GET_COMPONENT_LIST(AgentSpawner);
+
+#define GET_COMPONENT_INTERFACE_REFERENCE(COMPONENT, TYPE) \
+    (Components::COMPONENT##Component*)Entities::get_component_interface_reference(TYPE, COMPONENT_INTERFACE_##COMPONENT);
+
+// use for getting component configuration settings for an object
+// auto dims = GET_COMPONENT_INTERFACE_REFERENCE(Dimension, object_type);

@@ -76,7 +76,7 @@ static bool parse_agent_spawner_token(const char* key, const char* val, class Pa
     if (strcmp(key, USER_COUNT_TAG) == 0)
     {
         long long user_count = parse_int(val, err);
-        IF_ASSERT(err || user_count < 0 || (size_t)user_count > Entities::MAX_USERS_PER_AGENT_SPAWNER)
+        IF_ASSERT(err || user_count < 0 || (size_t)user_count > MAX_USERS_PER_AGENT_SPAWNER)
             return false;
         data->set_user_count(user_count);
     }

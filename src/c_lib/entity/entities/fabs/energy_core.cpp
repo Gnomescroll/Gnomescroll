@@ -3,7 +3,6 @@
 #include <physics/motion.hpp>
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/fabs/constants.hpp>
 #include <entity/components/physics/position.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
@@ -23,20 +22,20 @@ void load_energy_core_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = ENERGY_CORE_HEIGHT;
+    dims->height = 1.0f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::energy_core;
-    vox->init_hitscan = ENERGY_CORE_INIT_WITH_HITSCAN;
-    vox->init_draw = ENERGY_CORE_INIT_WITH_DRAW;
+    vox->init_hitscan = true;
+    vox->init_draw = true;
 
     auto health = ADD_COMPONENT(HitPoints);
-    health->health = ENERGY_CORE_MAX_HEALTH;
-    health->health_max = ENERGY_CORE_MAX_HEALTH;
+    health->health = 200;
+    health->health_max = 200;
 
     #if DC_SERVER
     auto healer = ADD_COMPONENT(Healer);
-    healer->radius = ENERGY_CORE_HEALING_RADIUS;
+    healer->radius = 1.0f;
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
@@ -54,11 +53,11 @@ void load_energy_core_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->count = ENERGY_CORE_ANIMATION_COUNT;
-    anim->count_max = ENERGY_CORE_ANIMATION_COUNT_MAX;
-    anim->size = ENERGY_CORE_ANIMATION_SIZE;
-    anim->force = ENERGY_CORE_ANIMATION_FORCE;
-    anim->color = ENERGY_CORE_ANIMATION_COLOR;
+    anim->count = 35;
+    anim->count_max = 50;
+    anim->size = 0.22f;
+    anim->force = 5.0f;
+    anim->color = Color(59, 99, 17);
     #endif
 }
 

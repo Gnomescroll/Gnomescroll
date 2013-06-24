@@ -2,6 +2,11 @@
 
 #include <entity/constants.hpp>
 
+namespace Components
+{
+class Component;
+}
+
 namespace Entities
 {
 
@@ -14,6 +19,8 @@ bool point_occupied_by_type(EntityType type, const Vec3i& position);
 void spawn_mobs();
 
 size_t get_components_needed(ComponentType type);
+Components::Component* get_component_interface_reference(
+    EntityType type, ComponentInterfaceType interface);
 
 /* API */
 

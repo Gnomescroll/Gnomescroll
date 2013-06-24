@@ -2,7 +2,6 @@
 
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/mobs/constants.hpp>
 #include <entity/components/health.hpp>
 #include <entity/components/dimension.hpp>
 #if DC_SERVER
@@ -23,7 +22,7 @@ void load_mob_blub_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = MONSTER_BLUB_HEIGHT;
+    dims->height = 1.0f;
 
     auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.set_type("blue_blub");
@@ -33,33 +32,31 @@ void load_mob_blub_data()
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     auto health = ADD_COMPONENT(HitPoints);
-    int health_amt = randrange(MONSTER_BLUB_HEALTH_MIN, MONSTER_BLUB_HEALTH_MAX);
-    health->health = health_amt;
-    health->health_max = health_amt;
+    health->health = 50;
+    health->health_max = 50;
     #endif
 
     auto dest = ADD_COMPONENT(DestinationTargeting);
-    dest->sight_range = MONSTER_BLUB_MOTION_PROXIMITY_RADIUS;
-    dest->destination_choice_x = MONSTER_BLUB_WALK_RANGE;
-    dest->destination_choice_y = MONSTER_BLUB_WALK_RANGE;
-    dest->speed = MONSTER_BLUB_WALK_SPEED;
-    dest->max_z_diff = MONSTER_BLUB_MOTION_MAX_Z_DIFF;
+    dest->sight_range = 15.0f;
+    dest->destination_choice_x = 20;
+    dest->destination_choice_y = 20;
+    dest->speed = 0.1f;
+    dest->max_z_diff = 3;
 
     auto agent = ADD_COMPONENT(AgentTargeting);
-    agent->sight_range = MONSTER_BLUB_MOTION_PROXIMITY_RADIUS;
-    agent->speed = MONSTER_BLUB_CHASE_SPEED;
-    agent->max_z_diff = MONSTER_BLUB_MOTION_MAX_Z_DIFF;
-    agent->max_lock_ticks = MONSTER_BLUB_MAX_TARGET_LOCK_TICKS;
-    agent->proximity_radius = MONSTER_BLUB_AGENT_STOP_PROXIMITY_RADIUS;
-    agent->jump_force = MONSTER_BLUB_JUMP_FORCE;
-    agent->set_jump_cooldowns(MONSTER_BLUB_JUMP_COOLDOWN_EN_ROUTE,
-                              MONSTER_BLUB_JUMP_COOLDOWN_NEARBY);
-    agent->attack_rate = (3 * MONSTER_BLUB_JUMP_COOLDOWN_NEARBY) / 4;
+    agent->sight_range = 15.0f;
+    agent->speed = 0.12f;
+    agent->max_z_diff = 3;
+    agent->max_lock_ticks = ONE_SECOND * 10;
+    agent->proximity_radius = 2.1f;
+    agent->jump_force = 0.38f;
+    agent->set_jump_cooldowns((3 * ONE_SECOND) / 2, ONE_SECOND * 2);
+    agent->attack_rate = (3 * ONE_SECOND) / 2;
     agent->attack_damage = 2;
     agent->jump_near_player = true;
 
     auto waiting = ADD_COMPONENT(Waiting);
-    waiting->wait_time = MONSTER_BLUB_IDLE_TIME;
+    waiting->wait_time = ONE_SECOND * 3;
 
     #if DC_SERVER
     auto limiter = ADD_COMPONENT(RateLimit);
@@ -84,11 +81,11 @@ void load_mob_blub_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->color = MONSTER_BLUB_ANIMATION_COLOR;
-    anim->count = MONSTER_BLUB_ANIMATION_COUNT;
-    anim->count_max = MONSTER_BLUB_ANIMATION_COUNT_MAX;
-    anim->size = MONSTER_BLUB_ANIMATION_SIZE;
-    anim->force = MONSTER_BLUB_ANIMATION_FORCE;
+    anim->color = Color(21, 21, 77);
+    anim->count = 25;
+    anim->count_max = 40;
+    anim->size = 0.2f;
+    anim->force = 1.0f;
     #endif
 }
 

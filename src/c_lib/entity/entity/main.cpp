@@ -151,6 +151,12 @@ size_t get_components_needed(ComponentType type)
     return ct;
 }
 
+Components::Component* get_component_interface_reference(
+    EntityType type, ComponentInterfaceType interface)
+{
+    return entity_data->get_component_interface_reference(type, interface);
+}
+
 bool point_occupied_by_type(EntityType type, const Vec3i& position)
 {
     if (entity_list->empty(type)) return false;
@@ -183,7 +189,9 @@ bool point_occupied_by_type(EntityType type, const Vec3i& position)
     return false;
 }
 
-void damage_entities_within_sphere(const EntityType* types, int n_types, Vec3 position, float radius, int damage)
+void damage_entities_within_sphere(const EntityType* types, int n_types,
+                                   const Vec3& position, float radius,
+                                   int damage)
 {
     int count = filter->within_sphere(entity_list, types, n_types, position, radius);
     for (int i=0; i<count; i++)

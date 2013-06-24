@@ -3,7 +3,6 @@
 #include <entity/entity/main.hpp>
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/mobs/constants.hpp>
 #include <entity/components/health.hpp>
 #include <entity/components/dimension.hpp>
 #if DC_SERVER
@@ -24,7 +23,7 @@ void load_mob_lizard_thief_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = MONSTER_BOMB_HEIGHT;
+    dims->height = 1.0f;
 
     auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.set_type("lizard_thief");
@@ -34,29 +33,28 @@ void load_mob_lizard_thief_data()
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     auto health = ADD_COMPONENT(HitPoints);
-    int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
-    health->health = health_amt;
-    health->health_max = health_amt;
+    health->health = 80;
+    health->health_max = 80;
     #endif
 
     auto dest = ADD_COMPONENT(DestinationTargeting);
-    dest->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
-    dest->destination_choice_x = MONSTER_BOMB_WALK_RANGE;
-    dest->destination_choice_y = MONSTER_BOMB_WALK_RANGE;
-    dest->speed = MONSTER_BOMB_WALK_SPEED;
-    dest->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
+    dest->sight_range = 15.0f;
+    dest->destination_choice_x = 20;
+    dest->destination_choice_y = 20;
+    dest->speed = 0.125f;
+    dest->max_z_diff = 5;
 
     auto agent = ADD_COMPONENT(AgentTargeting);
-    agent->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
-    agent->speed = MONSTER_BOMB_CHASE_SPEED;
-    agent->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
-    agent->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
-    agent->proximity_radius = MONSTER_SLIME_AGENT_STOP_PROXIMITY_RADIUS;
+    agent->sight_range = 15.0f;
+    agent->speed = 0.24f;
+    agent->max_z_diff = 5;
+    agent->max_lock_ticks = ONE_SECOND * 10;
+    agent->proximity_radius = 2.1f;
     agent->attack_rate = (3 * ONE_SECOND) / 2;
     agent->attack_damage = 2;
 
     auto waiting = ADD_COMPONENT(Waiting);
-    waiting->wait_time = MONSTER_BOMB_IDLE_TIME;
+    waiting->wait_time = ONE_SECOND * 3;
 
     #if DC_SERVER
     auto limiter = ADD_COMPONENT(RateLimit);
@@ -81,11 +79,11 @@ void load_mob_lizard_thief_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->color = MONSTER_BOMB_ANIMATION_COLOR;
-    anim->count = MONSTER_BOMB_ANIMATION_COUNT;
-    anim->count_max = MONSTER_BOMB_ANIMATION_COUNT_MAX;
-    anim->size = MONSTER_BOMB_ANIMATION_SIZE;
-    anim->force = MONSTER_BOMB_ANIMATION_FORCE;
+    anim->color = Color(21, 150, 21);
+    anim->count = 40;
+    anim->count_max = 60;
+    anim->size = 0.1;
+    anim->force = 1.0f;
     #endif
 }
 

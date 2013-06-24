@@ -2,7 +2,6 @@
 
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/mobs/constants.hpp>
 #include <entity/components/health.hpp>
 #include <entity/components/dimension.hpp>
 #include <entity/components/spawner/monster_spawner.hpp>
@@ -19,20 +18,20 @@ void load_mob_spawner_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = MONSTER_SPAWNER_HEIGHT;
+    dims->height = 1.9f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::monster_spawner;
-    vox->init_hitscan = MONSTER_SPAWNER_INIT_WITH_HITSCAN;
-    vox->init_draw = MONSTER_SPAWNER_INIT_WITH_DRAW;
+    vox->init_hitscan = true;
+    vox->init_draw = true;
 
     auto health = ADD_COMPONENT(HitPoints);
-    health->health = MONSTER_SPAWNER_MAX_HEALTH;
-    health->health_max = MONSTER_SPAWNER_MAX_HEALTH;
+    health->health = 150;
+    health->health_max = 150;
 
     auto spawner = ADD_COMPONENT(MonsterSpawner);
-    spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
-    spawner->set_max_children(MONSTER_SPAWNER_MAX_CHILDREN);
+    spawner->radius = 2.5f;
+    spawner->set_max_children(10);
     spawner->spawn_type = ENTITY_MONSTER_BOX;
 
     #if DC_SERVER
@@ -55,10 +54,9 @@ void load_mob_spawner_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->color = MONSTER_SPAWNER_ANIMATION_COLOR;
-    anim->count = MONSTER_SPAWNER_ANIMATION_COUNT;
-    //anim->count_max = MONSTER_SPAWNER_ANIMATION_COUNT_MAX;
-    anim->size = MONSTER_SPAWNER_ANIMATION_SIZE;
+    anim->color = Color(223, 31, 31);
+    anim->count = 5*5*5;
+    anim->size = 0.4f;
     #endif
 }
 

@@ -6,11 +6,14 @@
 namespace Entities
 {
 
-class Components::Component* EntityDataList::add_component_to_entity(Entity* entity, ComponentType type)
+class Components::Component* EntityDataList::add_component_to_entity(
+    Entity* entity, ComponentType type, size_t slot)
 {
+    IF_ASSERT(slot >= this->get_component_count(entity->type))
+        return NULL;
     class Components::Component* component = Components::get(type);
-    IF_ASSERT(component == NULL) return NULL;
-    int slot = this->get_component_slot(entity->type, type);
+    IF_ASSERT(component == NULL)
+        return NULL;
     entity->add_component(slot, component);
     component->entity = entity;
     return component;
@@ -22,11 +25,11 @@ void EntityDataList::load_properties(Entity* entity)
     size_t n_components = this->get_component_count(entity->type);
     Components::Component const* const* components = this->get_components(entity->type);
     IF_ASSERT(components == NULL) return;
-    for (size_t i=0; i<n_components; i++)
+    for (size_t i=0, slot=0; i<n_components; i++)
     {
         const Components::Component* c = components[i];
         IF_ASSERT(c == NULL) continue;
-        Components::Component* d = add_component_to_entity(entity, c->type);
+        Components::Component* d = add_component_to_entity(entity, c->type, slot++);
         d->load_settings_from(c);
     }
 }
@@ -98,7 +101,7 @@ Components::Component* EntityDataList::attach_component(EntityType type, Compone
     return this->components[type][index];
 }
 
-inline int EntityDataList::get_component_count(EntityType type) const
+inline size_t EntityDataList::get_component_count(EntityType type) const
 {
     IF_ASSERT(!isValid(type)) return 0;
     return this->component_sizes[type];
@@ -128,7 +131,8 @@ inline int EntityDataList::get_component_interface_slot(EntityType type, Compone
     return -1;
 }
 
-size_t EntityDataList::get_components_needed(EntityType entity, ComponentType component)
+size_t EntityDataList::get_components_needed(EntityType entity,
+                                             ComponentType component) const
 {
     IF_ASSERT(!isValid(entity)) return 0;
     size_t ct = 0;
@@ -137,6 +141,17 @@ size_t EntityDataList::get_components_needed(EntityType entity, ComponentType co
             ct++;
     return ct;
 }
+
+Components::Component* EntityDataList::get_component_interface_reference(
+    EntityType type, ComponentInterfaceType interface) const
+{
+    IF_ASSERT(!isValid(type)) return NULL;
+    for (size_t i=0; i<this->component_sizes[type]; i++)
+        if (this->interface_types[type][i] == interface)
+            return this->components[type][i];
+    return NULL;
+}
+
 
 void EntityDataList::init()
 {

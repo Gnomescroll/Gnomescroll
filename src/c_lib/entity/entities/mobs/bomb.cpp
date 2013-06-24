@@ -2,7 +2,6 @@
 
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/mobs/constants.hpp>
 #include <entity/components/health.hpp>
 #include <entity/components/dimension.hpp>
 #include <entity/components/voxel_model.hpp>
@@ -25,46 +24,45 @@ void load_mob_bomb_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = MONSTER_BOMB_HEIGHT;
+    dims->height = 1.0f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::robot_bomb;
-    vox->init_hitscan = MONSTER_BOMB_INIT_WITH_HITSCAN;
-    vox->init_draw = MONSTER_BOMB_INIT_WITH_DRAW;
+    vox->init_hitscan = true;
+    vox->init_draw = true;
 
     #if DC_CLIENT
     ADD_COMPONENT(HitPoints);
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     auto health = ADD_COMPONENT(HitPoints);
-    int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
-    health->health = health_amt;
-    health->health_max = health_amt;
+    health->health = 80;
+    health->health_max = 80;
     #endif
 
     auto dest = ADD_COMPONENT(DestinationTargeting);
-    dest->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
-    dest->destination_choice_x = MONSTER_BOMB_WALK_RANGE;
-    dest->destination_choice_y = MONSTER_BOMB_WALK_RANGE;
-    dest->speed = MONSTER_BOMB_WALK_SPEED;
-    dest->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
+    dest->sight_range = 15.0f;
+    dest->destination_choice_x = 20;
+    dest->destination_choice_y = 20;
+    dest->speed = 0.125f;
+    dest->max_z_diff = 5;
 
     auto agent = ADD_COMPONENT(AgentTargeting);
-    agent->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
-    agent->speed = MONSTER_BOMB_CHASE_SPEED;
-    agent->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
-    agent->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
+    agent->sight_range = 15.0f;
+    agent->speed = 0.25f;
+    agent->max_z_diff = 5;
+    agent->max_lock_ticks = ONE_SECOND * 10;
 
     auto waiting = ADD_COMPONENT(Waiting);
-    waiting->wait_time = MONSTER_BOMB_IDLE_TIME;
+    waiting->wait_time = ONE_SECOND * 3;
 
     #if DC_SERVER
     auto explode = ADD_COMPONENT(Explosion);
-    explode->radius = MONSTER_BOMB_EXPLOSION_RADIUS;
-    explode->proximity_radius = MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS;
-    explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
-    explode->block_destruction_radius = MONSTER_BOMB_BLOCK_DESTRUCTION_RADIUS;
-    explode->block_damage = MONSTER_BOMB_BLOCK_DAMAGE;
+    explode->radius = 4.0f;
+    explode->proximity_radius = 0.8f;
+    explode->damage = 40;
+    explode->block_destruction_radius = 3.0f;
+    explode->block_damage = 16;
     explode->terrain_modification_action = TMA_MONSTER_BOMB;
     explode->delay = MOB_BROADCAST_RATE;
 
@@ -91,17 +89,16 @@ void load_mob_bomb_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->color = MONSTER_BOMB_ANIMATION_COLOR;
-    anim->count = MONSTER_BOMB_ANIMATION_COUNT;
-    anim->count_max = MONSTER_BOMB_ANIMATION_COUNT_MAX;
-    anim->size = MONSTER_BOMB_ANIMATION_SIZE;
-    anim->force = MONSTER_BOMB_ANIMATION_FORCE;
+    anim->color = Color(31, 223, 233);
+    anim->count = 50;
+    anim->count_max = 100;
+    anim->size = 0.7f;
+    anim->force = 20.0f;
     #endif
 }
 
 void ready_mob_bomb(Entity* entity)
 {
-
     auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
 

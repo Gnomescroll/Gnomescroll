@@ -4,10 +4,13 @@
 #include <entity/entity/entity_list.hpp>
 #include <entity/entity/filter.hpp>
 
+namespace Components
+{
+class Component;
+}
+
 namespace Entities
 {
-
-using Components::Component;
 
 extern class EntityList* entity_list;
 extern class EntityDataList* entity_data;
@@ -21,6 +24,8 @@ void update();
 void harvest();
 
 size_t get_components_needed(ComponentType type);
+Components::Component* get_component_interface_reference(
+    EntityType type, ComponentInterfaceType interface);
 
 class Entity* create(EntityType type);
 class Entity* create(EntityType type, EntityID id);
@@ -37,7 +42,9 @@ void destroy_all();
 
 // misc interators. move to another file later
 bool point_occupied_by_type(EntityType type, const Vec3i& position);
-void damage_entities_within_sphere(const EntityType* types, int n_types, Vec3 position, float radius, int damage);
+void damage_entities_within_sphere(const EntityType* types, int n_types,
+                                   const Vec3& position, float radius,
+                                   int damage);
 void spawn_mobs();
 
 #if DC_SERVER

@@ -415,7 +415,7 @@ void left_trigger_up_event()
         float charge_multiplier = 1.0f + get_charge_progress();
         if (toolbelt_item_alpha_action())
         {
-            printf("Charged attack. Multiplier: %0.2f\n", charge_multiplier);
+            //printf("Charged attack. Multiplier: %0.2f\n", charge_multiplier);
             send_alpha_action_packet();
             turn_off = false;
         }

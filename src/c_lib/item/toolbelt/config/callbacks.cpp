@@ -4,7 +4,6 @@
 #include <agent/_interface.hpp>
 #include <item/toolbelt/common/types.hpp>
 #include <entity/entity/main.hpp>
-#include <entity/entities/fabs/constants.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <t_mech/_interface.hpp>
 #include <physics/pathfinding.hpp>
@@ -239,7 +238,9 @@ void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, ItemType i
 }
 
 // simple creator for objects
-static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, ItemType item_type, const EntityType object_type, const float object_height)
+static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id,
+                                            ItemType item_type,
+                                            EntityType object_type)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return NULL;
@@ -253,8 +254,12 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, It
     if (b.z <= 0) return NULL;  // can't place on nothing
     if (!t_map::isSolid(b.x, b.y, b.z - 1)) return NULL;
 
+    int h = 1;
+    auto dims = GET_COMPONENT_INTERFACE_REFERENCE(Dimension, object_type);
+    if (dims != NULL)
+        h = dims->get_integer_height();
+
     // make sure will fit height
-    int h = ceilf(object_height);
     IF_ASSERT(h <= 0) h = 1;
     for (int i=0; i<h; i++)
         if (t_map::get(b.x, b.y, b.z + i) != 0)
@@ -290,8 +295,7 @@ void place_spawner(AgentID agent_id, ItemID item_id, ItemType item_type)
     IF_ASSERT(a == NULL) return;
 
     class Entities::Entity* obj = place_object(agent_id, item_id, item_type,
-                                               ENTITY_AGENT_SPAWNER,
-                                               Entities::AGENT_SPAWNER_HEIGHT);
+                                               ENTITY_AGENT_SPAWNER);
     if (obj == NULL) return;
     Entities::ready(obj);
 
@@ -309,8 +313,7 @@ void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type)
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
 
     class Entities::Entity* obj = place_object(agent_id, item_id, item_type,
-                                               ENTITY_ENERGY_CORE,
-                                               Entities::ENERGY_CORE_HEIGHT);
+                                               ENTITY_ENERGY_CORE);
     if (obj == NULL) return;
     Entities::ready(obj);
 

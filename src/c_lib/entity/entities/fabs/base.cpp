@@ -3,7 +3,6 @@
 #include <physics/motion.hpp>
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/fabs/constants.hpp>
 #include <entity/components/physics/position.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
@@ -20,13 +19,13 @@ void load_base_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = BASE_HEIGHT;
+    dims->height = 1.0f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::base;
-    vox->init_hitscan = BASE_INIT_WITH_HITSCAN;
-    vox->init_draw = BASE_INIT_WITH_DRAW;
-    vox->should_hitscan = BASE_SHOULD_HITSCAN;
+    vox->init_hitscan = false;
+    vox->init_draw = true;
+    vox->should_hitscan = false;
 
     #if DC_SERVER
     auto spawner = ADD_COMPONENT(AgentSpawner);

@@ -22,18 +22,22 @@ class EntityDataList
         EntityType current_type;
 
     void grow_component_list(EntityType type);
-    class Components::Component* add_component_to_entity(Entity* entity, ComponentType type);
+    class Components::Component* add_component_to_entity(Entity* entity,
+                                                         ComponentType type,
+                                                         size_t slot);
 
     public:
 
     void begin_attaching_to(EntityType type);
     Components::Component* attach_component(EntityType type, ComponentType component);
     void load_properties(Entity* entity);
-    inline Components::Component const* const* get_components(EntityType type) const;
-    inline int get_component_count(EntityType type) const;
     inline int get_component_slot(EntityType type, ComponentType component) const;
+    inline Components::Component const* const* get_components(EntityType type) const;
+    inline size_t get_component_count(EntityType type) const;
     inline int get_component_interface_slot(EntityType type, ComponentInterfaceType interface) const;
-    size_t get_components_needed(EntityType entity, ComponentType component);
+    size_t get_components_needed(EntityType entity, ComponentType component) const;
+    Components::Component* get_component_interface_reference(
+        EntityType type, ComponentInterfaceType interface) const;
 
     void init();
 

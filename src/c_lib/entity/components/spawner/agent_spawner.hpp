@@ -6,7 +6,6 @@
 
 #include <entity/constants.hpp>
 #include <entity/components/spawner.hpp>
-#include <entity/entities/fabs/constants.hpp>
 
 namespace Components
 {
@@ -58,8 +57,8 @@ class AgentSpawnerComponent: public SpawnerComponent
     AgentSpawnerComponent() :
         SpawnerComponent(COMPONENT_AgentSpawner),
         radius(0),
-        agents(Entities::AGENT_SPAWNER_INITIAL_CHILDREN_SIZE, MAX_AGENTS),
-        users(Entities::AGENT_SPAWNER_INITIAL_USERS_SIZE, Entities::MAX_USERS_PER_AGENT_SPAWNER)
+        agents(AGENT_SPAWNER_INITIAL_CHILDREN_SIZE, MAX_AGENTS),
+        users(AGENT_SPAWNER_INITIAL_USERS_SIZE, MAX_USERS_PER_AGENT_SPAWNER)
     {}
 };
 

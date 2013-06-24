@@ -180,3 +180,10 @@ const float NULL_HEIGHT = 1.0f;
 
 const int MAX_SPAWNERS = 1024;
 const EntityID BASE_SPAWN_ID = EntityID(1024);
+const int BASE_SPAWN_RADIUS = 4;
+
+const size_t AGENT_SPAWNER_INITIAL_CHILDREN_SIZE = 4;
+const size_t AGENT_SPAWNER_INITIAL_USERS_SIZE = 8;
+const size_t MAX_USERS_PER_AGENT_SPAWNER = 1024;
+const Color ACTIVATED_SPAWNER_COLOR = Color(240, 20, 20);
+const Color DEACTIVATED_SPAWNER_COLOR = Color(20, 20, 20);

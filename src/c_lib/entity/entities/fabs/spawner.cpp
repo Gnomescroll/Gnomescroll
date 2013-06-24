@@ -3,7 +3,6 @@
 #include <physics/motion.hpp>
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
-#include <entity/entities/fabs/constants.hpp>
 #include <entity/components/physics/position.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
@@ -21,20 +20,20 @@ void load_agent_spawner_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = AGENT_SPAWNER_HEIGHT;
+    dims->height = 1.9f;
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::agent_spawner;
-    vox->init_hitscan = AGENT_SPAWNER_INIT_WITH_HITSCAN;
-    vox->init_draw = AGENT_SPAWNER_INIT_WITH_DRAW;
+    vox->init_hitscan = true;
+    vox->init_draw = true;
 
     auto health = ADD_COMPONENT(HitPoints);
-    health->health = AGENT_SPAWNER_MAX_HEALTH;
-    health->health_max = AGENT_SPAWNER_MAX_HEALTH;
+    health->health = 200;
+    health->health_max = 200;
 
     #if DC_SERVER
     auto spawner = ADD_COMPONENT(AgentSpawner);
-    spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
+    spawner->radius = 0;
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
@@ -47,11 +46,11 @@ void load_agent_spawner_data()
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
-    anim->count = AGENT_SPAWNER_ANIMATION_COUNT;
-    anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
-    anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
-    anim->force = AGENT_SPAWNER_ANIMATION_FORCE;
-    anim->color = AGENT_SPAWNER_ANIMATION_COLOR;
+    anim->count = 35;
+    anim->count_max = 50;
+    anim->size = 0.22f;
+    anim->force = 5.0f;
+    anim->color = Color(127, 31, 223);
     #endif
 }
 
