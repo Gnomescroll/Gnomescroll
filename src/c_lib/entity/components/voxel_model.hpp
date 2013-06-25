@@ -102,11 +102,6 @@ class VoxelModelComponent: public Component
             this->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());
         else
             this->update(physics->get_position(), angles.x, angles.y, physics->get_changed());
-        physics->set_changed(false);    // the thing that uses it should unset changed state
-                                        // because too much hassle guaranteeing on_update() ordering,
-                                        // or we'd put it on the physics component
-                                        // Note that this implies the changed state is
-                                        // only usable by one component
     }
 
     void update(const Vec3& position, float theta, float phi, bool state_changed);

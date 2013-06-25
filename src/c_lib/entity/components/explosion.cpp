@@ -102,7 +102,7 @@ bool ExplosionComponent::proximity_check()
         position = vox->get_center();
     else
     {
-            auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
         IF_ASSERT(physics == NULL) return false;
         position = physics->get_position();
     }

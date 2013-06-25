@@ -38,6 +38,11 @@ class PhysicsComponent: public Component
     virtual void set_angles_changed(bool changed) = 0;
     virtual bool get_angles_changed() = 0;
 
+    virtual void on_after_update()
+    {
+        this->set_changed(false);
+    }
+
     explicit PhysicsComponent(ComponentType type) :
         Component(type, COMPONENT_INTERFACE_Physics)
     {}

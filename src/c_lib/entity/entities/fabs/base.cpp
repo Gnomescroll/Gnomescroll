@@ -45,8 +45,6 @@ void tick_base(Entity* entity)
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     physics->set_position(position);
-    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
-    if (limiter->allowed()) entity->broadcastState();
     #endif
 }
 

@@ -53,6 +53,21 @@ void load_mob_lizard_thief_data()
     agent->attack_rate = (3 * ONE_SECOND) / 2;
     agent->attack_damage = 2;
 
+    auto target = ADD_COMPONENT(WeaponTargeting);
+    target->target_acquisition_failure_rate = 0.85f;
+    target->fire_rate_limit = ONE_SECOND;
+    target->uses_bias = false;
+    target->accuracy_bias = 1.0f;
+    target->sight_range = 64.0f;
+    target->attack_at_random = false;
+    // we dont have ID yet, need to set that in the ready() call
+    target->attacker_properties.type = type;
+    target->attacker_properties.block_damage = 8;
+    target->attacker_properties.agent_damage_min = 2;
+    target->attacker_properties.agent_damage_max = 3;
+    target->attacker_properties.agent_protection_duration = ONE_SECOND * 5;
+    target->attacker_properties.terrain_modification_action = TMA_TURRET;
+
     auto waiting = ADD_COMPONENT(Waiting);
     waiting->wait_time = ONE_SECOND * 3;
 
@@ -125,10 +140,8 @@ static void lizard_thief_state_router(class Entity* entity, EntityState state)
 void tick_mob_lizard_thief(Entity* entity)
 {
     #if DC_SERVER
-    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
-    if (limiter->allowed()) entity->broadcastState();
-
     auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
+    auto weapon = GET_COMPONENT(WeaponTargeting, entity);
 
     switch (machine->state)
     {
@@ -141,7 +154,8 @@ void tick_mob_lizard_thief(Entity* entity)
             break;
 
         case STATE_CHASE_AGENT:
-            chase_agent(entity);
+            if (!weapon->locked_on_target)
+                chase_agent(entity);
             break;
 
         case STATE_NONE:

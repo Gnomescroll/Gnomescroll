@@ -138,6 +138,7 @@ void broadcast_object_fired(EntityID id, EntityType type, const WorldHitscanResu
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;
             none_msg.type = type;
+            none_msg.direction = result.direction;
             none_msg.broadcast();
             break;
     }

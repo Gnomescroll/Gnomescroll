@@ -163,7 +163,9 @@ void EntityList::tick()
             if (entities[j].id != this->null_id)
             {
                 k++;
+                entities[j].before_tick();
                 tick(&entities[j]);
+                entities[j].after_tick();
             }
     }
 }
@@ -180,7 +182,9 @@ void EntityList::update()
             if (entities[j].id != this->null_id)
             {
                 k++;
+                //entities[j].before_update();
                 entities[j].update();
+                entities[j].after_update();
             }
     }
 }

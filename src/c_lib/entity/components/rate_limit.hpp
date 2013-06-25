@@ -29,6 +29,14 @@ class RateLimitComponent: public Component
         COPY(limit);
     }
 
+    #if DC_SERVER
+    virtual void on_after_tick()
+    {
+        if (this->allowed())
+            this->entity->broadcastState();
+    }
+    #endif
+
     virtual ~RateLimitComponent() {}
 
     RateLimitComponent() :

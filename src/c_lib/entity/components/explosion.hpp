@@ -51,6 +51,11 @@ class ExplosionComponent: public Component
         this->damage_blocks();
     }
 
+    virtual void on_after_tick()
+    {
+        this->proximity_check();
+    }
+
     virtual ~ExplosionComponent() {}
 
     ExplosionComponent() :

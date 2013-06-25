@@ -23,6 +23,9 @@ class Component
     virtual void on_ready() {}
     virtual void on_destroy() {}
     virtual void on_update() {}
+    virtual void on_after_update() {}
+    virtual void on_before_tick() {}
+    virtual void on_after_tick() {}
     //virtual void on_tick() {}
 
     virtual ~Component() {}

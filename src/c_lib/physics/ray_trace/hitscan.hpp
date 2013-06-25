@@ -96,6 +96,8 @@ class WorldHitscanResult
     {
         this->start_position = position;
         this->direction = direction;
+        IF_ASSERT(vec3_length_squared(direction) == 0)
+            this->direction = vec3_init(0, 0, 1);
         this->range = range;
     }
 

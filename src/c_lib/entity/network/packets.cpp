@@ -229,15 +229,20 @@ inline void entity_hitscan_nothing_StoC::handle()
     Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
-    // get firing position of entity
-    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
-    if (physics == NULL) return;
-    Vec3 position = physics->get_position();
-
+    Vec3 position;
     auto dims = GET_COMPONENT_INTERFACE(Dimension, obj);
-    if (dims != NULL) position.z += dims->get_camera_height();
+    if (dims == NULL)
+    {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
+        if (physics == NULL) return;
+        position = physics->get_position();
+    }
+    else
+        position = dims->get_camera_position();
 
-    struct Vec3 v = vec3_normalize(this->direction);
+    Vec3 v = vec3_init(0, 0, 1);
+    if (vec3_length_squared(this->direction) != 0)
+        v = vec3_normalize(this->direction);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(position, v);
