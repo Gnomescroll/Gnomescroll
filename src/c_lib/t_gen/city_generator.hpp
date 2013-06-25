@@ -19,7 +19,7 @@ namespace t_gen
     const int CITY_AMOUNT = 1;
     const int BUILDINGS_IN_CITY = 64;
     const int LAB_ROOM_SIZE = 10;
-    const int LAB_ROOMS=5;
+    const int LAB_ROOMS=8;
     const int LAB_ROOM_HEIGHT = 12;
     const int LAB_RANDOMNESS = 4;
     const int SKYSCRAPER_ROOM_HEIGHT = 6; //size is calculated based on avaliable height, so that skyscrapers are as high as can be & keep proportions
@@ -34,12 +34,11 @@ namespace t_gen
     const int TEMPLE_SIZE = 32;
     const int HOUSE_ROOM_SIZE = 8;
     const int HOUSE_RANDOMNESS = 3;
-    const int HOUSE_ROOMS = 6;
+    const int HOUSE_ROOMS = 10;
     const int HOUSE_ROOM_HEIGHT = 12;
     const int HOUSE_GARDEN = 6;
     const int SHOP_SIZE = 8;
     const int SHOP_HEIGHT = 5;
-    const int TRANSMISSION_TOWER_HEIGHT = 64;
     const int ROAD_SIZE = 4;
     const int BUILDING_AMOUNT = 9;
     const int MAXIMAL_HEIGHT = map_dim.z - 1 - BUNKER_SPHERE_RADIUS; //for isGood
