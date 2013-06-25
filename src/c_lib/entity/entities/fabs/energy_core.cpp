@@ -28,6 +28,7 @@ void load_energy_core_data()
     vox->vox_dat = &VoxDats::energy_core;
     vox->init_hitscan = true;
     vox->init_draw = true;
+    vox->init_frozen = true;
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 200;
@@ -58,48 +59,6 @@ void load_energy_core_data()
     anim->size = 0.22f;
     anim->force = 5.0f;
     anim->color = Color(59, 99, 17);
-    #endif
-}
-
-void ready_energy_core(Entity* entity)
-{
-
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    GS_ASSERT(vox != NULL);
-    GS_ASSERT(physics != NULL);
-
-    Vec3 position = physics->get_position();
-    Vec3 angles = physics->get_angles();
-
-    vox->ready(position, angles.x, angles.y);
-    vox->freeze();
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_energy_core(Entity* entity)
-{
-    #if DC_SERVER
-    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, entity);
-    GS_ASSERT(item_drop != NULL);
-    item_drop->drop_item();
-
-    entity->broadcastDeath();
-    #endif
-
-    #if DC_CLIENT
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    GS_ASSERT(vox != NULL);
-    if (vox != NULL && vox->vox != NULL)
-    {
-        auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-        GS_ASSERT(anim != NULL);
-        if (anim != NULL)
-            anim->explode_random(vox->get_center());
-    }
     #endif
 }
 

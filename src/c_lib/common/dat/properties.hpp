@@ -58,6 +58,7 @@ class Properties
 
     Property* get(const char* name)
     {
+        IF_ASSERT(name == NULL) return NULL;
         unsigned int hash = strhash(name);
         for (size_t i=0; i<this->max; i++)
             if (this->properties[i].loaded &&

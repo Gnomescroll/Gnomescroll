@@ -17,6 +17,12 @@ class SpriteMobComponent: public Component
         this->mob.load_settings_from(&_component->mob);
     }
 
+    virtual void on_ready()
+    {
+        this->mob.associate_entity(this->entity->id, this->entity->type);
+        this->mob.init();
+    }
+
     virtual ~SpriteMobComponent() {}
     SpriteMobComponent() :
         Component(COMPONENT_SpriteMob, COMPONENT_INTERFACE_SpriteMob)

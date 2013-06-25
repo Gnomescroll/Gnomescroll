@@ -17,6 +17,7 @@ class SpawnChildComponent: public Component
         this->parent_type = type;
         this->parent_id = id;
     }
+
     void notify_parent_of_death();
     void parent_died();
 
@@ -25,7 +26,12 @@ class SpawnChildComponent: public Component
         // no settings
     }
 
-    ~SpawnChildComponent() {}
+    virtual void on_destroy()
+    {
+        this->notify_parent_of_death();
+    }
+
+    virtual ~SpawnChildComponent() {}
 
     SpawnChildComponent() :
         Component(COMPONENT_SpawnChild, COMPONENT_INTERFACE_SpawnChild),

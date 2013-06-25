@@ -15,10 +15,11 @@
 namespace Voxels
 {
 
-void VoxelModel::set_skeleton_root(float x, float y, float z, float theta)
+void VoxelModel::set_skeleton_root(const Vec3& position, float theta)
 {   //set offset and rotation
     IF_ASSERT(!this->skeleton_inited) return;
-    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0f,0.0f);
+    Vec3 angles = vec3_init(theta, 0.0f, 0.0f);
+    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(position, angles);
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
@@ -26,8 +27,8 @@ void VoxelModel::set_skeleton_root(float *data)
 {
     IF_ASSERT(!this->skeleton_inited) return;
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(
-        data[0], data[1], data[2],
-        data[3], data[4], data[5]);
+        vec3_init(data[0], data[1], data[2]),
+        vec3_init(data[3], data[4], data[5]));
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
@@ -58,7 +59,9 @@ void VoxelModel::set_node_rotation(int node, float theta, float phi, float rho)
     float rx = vox_dat->vox_skeleton_local_matrix_reference[node][3];
     float ry = vox_dat->vox_skeleton_local_matrix_reference[node][4];
     float rz = vox_dat->vox_skeleton_local_matrix_reference[node][5];
-    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx - theta, ry - phi, rz - rho);
+    Vec3 p = vec3_init(x,y,z);
+    Vec3 a = vec3_init(rx - theta, ry - phi, rz - rho);
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(p, a);
 }
 
 void VoxelModel::set_biaxial_nodes(float phi)
@@ -356,15 +359,13 @@ void VoxelModel::set_hitscan(bool hitscan)
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void VoxelModel::update(float x, float y, float z, float theta, float phi)
+void VoxelModel::update(const Vec3& position, float theta, float phi)
 {
     if (this->frozen) return;
     if (this->was_updated) return;
 
-    GS_ASSERT(is_boxed_point(x));
-    GS_ASSERT(is_boxed_point(y));
-
-    this->set_skeleton_root(x,y,z, theta);
+    GS_ASSERT(is_boxed_position(position));
+    this->set_skeleton_root(position, theta);
 
     #if DC_CLIENT && !PRODUCTION
     if (!input_state.skeleton_editor)
@@ -465,13 +466,13 @@ VoxelVolume* VoxelModel::get_part(int part)
 
 Vec3 VoxelModel::get_center()
 {
-    IF_ASSERT(this->n_parts <= 0) return vec3_init(0,0,0);
+    IF_ASSERT(this->n_parts <= 0) return vec3_init(0);
     return this->get_part(0)->get_center();
 }
 
 Vec3 VoxelModel::get_center(int part)
 {
-    IF_ASSERT(part >= this->n_parts || part < 0) return vec3_init(0,0,0);
+    IF_ASSERT(part >= this->n_parts || part < 0) return vec3_init(0);
     return this->get_part(part)->get_center();
 }
 
@@ -493,12 +494,12 @@ Affine* VoxelModel::get_node(int node)
     return &this->vox_skeleton_world_matrix[node];
 }
 
-bool VoxelModel::in_sight_of(Vec3 source, Vec3* sink)
+bool VoxelModel::in_sight_of(const Vec3& source, Vec3* sink)
 {   // ray cast from source to each body part center (shuffled)
     return this->in_sight_of(source, sink, 0.0f);
 }
 
-bool VoxelModel::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
+bool VoxelModel::in_sight_of(const Vec3& source, Vec3* sink, float failure_rate)
 {   // ray cast from source to each body part center (shuffled)
     IF_ASSERT(failure_rate < 0.0f || failure_rate >= 1.0f)
     {
@@ -513,13 +514,12 @@ bool VoxelModel::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
         part_numbers[i] = i;
     shuffle<int>(part_numbers, this->n_parts);
 
-    struct Vec3 c;
     for (int i=0; i<this->n_parts; i++)
     {
         if (randf() < failure_rate) continue;
         int pnum = part_numbers[i];
         IF_ASSERT(pnum < 0 || pnum >= this->n_parts) continue;
-        c = this->vv[pnum].get_center(); // ray cast to center of volume
+        Vec3 c = this->vv[pnum].get_center(); // ray cast to center of volume
         c = quadrant_translate_position(source, c);
         if (!raytrace_terrain(source, c))
         {

@@ -58,7 +58,7 @@ inline void agent_teleport_StoC::handle()
     a->set_angles(theta, phi);
     // force update vox
     if (a->vox != NULL)
-        a->vox->update(x,y,z,theta,phi);
+        a->vox->update(vec3_init(x, y, z), theta, phi);
 }
 
 inline void agent_control_state_StoC::handle()

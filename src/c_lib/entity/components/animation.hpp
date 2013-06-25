@@ -20,8 +20,8 @@ class AnimationComponent: public Component
         float force;
         Color color;
 
-    void explode(Vec3 position);
-    void explode_random(Vec3 position);
+    void explode(const Vec3& position);
+    void explode_random(const Vec3& position);
 
     void load_settings_from(const Component* component)
     {
@@ -31,6 +31,19 @@ class AnimationComponent: public Component
         COPY(color);
         COPY(size);
         COPY(force);
+    }
+
+    virtual void on_destroy()
+    {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
+        IF_ASSERT(physics == NULL) return;
+        float h = 0;
+        auto dims = GET_COMPONENT_INTERFACE(Dimension, entity);
+        if (dims != NULL)
+            h = dims->get_height();
+        Vec3 p = physics->get_position();
+        p.z += h * 0.5f;
+        this->explode_random(p);
     }
 
     virtual ~AnimationComponent() {}

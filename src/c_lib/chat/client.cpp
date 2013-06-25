@@ -68,7 +68,7 @@ ChatMessageHistoryObject::~ChatMessageHistoryObject()
 
 void ChatClientChannel::add_message(ChatMessage* m)
 {
-    Sound::play_2d_sound("incoming_chat_message");
+    //Sound::play_2d_sound("incoming_chat_message");
 
     ChatMessageHistoryObject* in = new ChatMessageHistoryObject(m);
 

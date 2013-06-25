@@ -278,7 +278,6 @@ void init_configs()
     ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
-    //Entities::init_entity_dat();
 
     t_map::load_block_dat();
     t_mech::load_mech_dat();
@@ -418,7 +417,6 @@ void close_c_lib()
 
     Entities::teardown();    // Entity system
     Entities::teardown_net_interfaces();
-    Entities::teardown_entity_dat();
     Components::teardown();
 
     Agents::teardown();

@@ -15,7 +15,7 @@ class VoxColors
 {
     public:
         unsigned char* rgba;
-        int *index;
+        int* index;
         int n;
 
     void init(const struct Vec3i& dimension);

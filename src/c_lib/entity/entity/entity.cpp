@@ -61,6 +61,20 @@ void Entity::init(size_t n_components)
     this->components = (class Components::Component**)calloc(n_components, sizeof(*this->components));
 }
 
+void Entity::ready()
+{
+    for (int i=0; i<this->n_components; i++)
+        if (this->components[i] != NULL)
+            this->components[i]->on_ready();
+}
+
+void Entity::destroy()
+{
+    for (int i=0; i<this->n_components; i++)
+        if (this->components[i] != NULL)
+            this->components[i]->on_destroy();
+}
+
 Entity::~Entity()
 {
     this->release_components();

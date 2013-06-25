@@ -296,6 +296,18 @@ float vec3_cos2(struct Vec3 a, struct Vec3 b)
 }
 
 ALWAYS_INLINE
+Vec3 vec3_cos(const Vec3& a)
+{
+    return vec3_init(cosf(a.x), cosf(a.y), cosf(a.z));
+}
+
+ALWAYS_INLINE
+Vec3 vec3_sin(const Vec3& a)
+{
+    return vec3_init(sinf(a.x), sinf(a.y), sinf(a.z));
+}
+
+ALWAYS_INLINE
 float vec3_distance_squared(struct Vec3 a, struct Vec3 b)
 {
     return (b.x-a.x)*(b.x-a.x) + (b.y-a.y)*(b.y-a.y) + (b.z-a.z)*(b.z-a.z);

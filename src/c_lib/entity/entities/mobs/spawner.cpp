@@ -24,6 +24,7 @@ void load_mob_spawner_data()
     vox->vox_dat = &VoxDats::monster_spawner;
     vox->init_hitscan = true;
     vox->init_draw = true;
+    vox->init_frozen = true;
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 150;
@@ -74,32 +75,6 @@ void ready_mob_spawner(Entity* entity)
 
     #if DC_SERVER
     entity->broadcastCreate();
-    #endif
-}
-
-void die_mob_spawner(Entity* entity)
-{
-    #if DC_SERVER
-    // drop item
-    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, entity);
-    GS_ASSERT(item_drop != NULL);
-    item_drop->drop_item();
-
-    entity->broadcastDeath();
-
-    auto spawner = GET_COMPONENT(MonsterSpawner, entity);
-    GS_ASSERT(spawner != NULL);
-    spawner->notify_children_of_death();
-    #endif
-
-    #if DC_CLIENT
-    // explosion animation
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    if (vox->vox != NULL)
-    {
-        auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-        anim->explode(vox->get_center());
-    }
     #endif
 }
 

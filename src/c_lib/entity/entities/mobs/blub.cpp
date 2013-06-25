@@ -89,37 +89,6 @@ void load_mob_blub_data()
     #endif
 }
 
-void ready_mob_blub(Entity* entity)
-{
-    auto mob = GET_COMPONENT_INTERFACE(SpriteMob, entity);
-    mob->mob.associate_entity(entity->id, entity->type);
-    mob->mob.init();
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_mob_blub(Entity* entity)
-{
-    #if DC_SERVER
-    // drop item
-    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, entity);
-    IF_ASSERT(item_drop == NULL) return;
-    item_drop->drop_item();
-
-    // notify clients
-    entity->broadcastDeath();
-    #endif
-
-    #if DC_CLIENT
-    // explosion animation
-    auto mob = GET_COMPONENT_INTERFACE(SpriteMob, entity);
-    auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-    anim->explode_random(mob->mob.get_center());
-    #endif
-}
-
 #if DC_SERVER
 static void blub_state_router(class Entity* entity, EntityState state)
 {

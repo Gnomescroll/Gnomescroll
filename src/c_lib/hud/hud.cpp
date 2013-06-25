@@ -350,9 +350,13 @@ static void draw_targeted_text()
     {
         case HITSCAN_TARGET_VOXEL:
             if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
-                update_targeted_text("FRIEND");
+            {
+                Agents::Agent* agent = Agents::get_agent(AgentID(hitscan.voxel_target.entity_id));
+                if (agent != NULL)
+                    update_targeted_text(agent->status.name);
+            }
             else
-                update_targeted_text("ENEMY");
+                update_targeted_text(Entities::get_entity_pretty_name(hitscan.voxel_target.entity_type));
             break;
 
         case HITSCAN_TARGET_BLOCK:

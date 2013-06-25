@@ -1,12 +1,12 @@
 #pragma once
 
-#define GET_COMPONENT(COMPONENT, OBJECT) \
-    (Components::COMPONENT##Component*)OBJECT->get_component(COMPONENT_##COMPONENT);
+#define GET_COMPONENT(COMPONENT, ENTITY) \
+    (Components::COMPONENT##Component*)ENTITY->get_component(COMPONENT_##COMPONENT);
 
 // auto c = GET_COMPONENT(VoxelModel, entity);
 
-#define GET_COMPONENT_INTERFACE(COMPONENT, OBJECT) \
-    (Components::COMPONENT##Component*)OBJECT->get_component_interface(COMPONENT_INTERFACE_##COMPONENT);
+#define GET_COMPONENT_INTERFACE(COMPONENT, ENTITY) \
+    (Components::COMPONENT##Component*)ENTITY->get_component_interface(COMPONENT_INTERFACE_##COMPONENT);
 
 // auto c = GET_COMPONENT_INTERFACE(Physics, entity);
 

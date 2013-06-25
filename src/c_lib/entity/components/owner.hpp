@@ -23,6 +23,11 @@ class OwnerComponent: public Component
 
     #if DC_SERVER
     void revoke();
+
+    virtual void on_destroy()
+    {
+        this->revoke();
+    }
     #endif
 
     void load_settings_from(const Component* component)

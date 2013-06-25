@@ -51,6 +51,11 @@ class MonsterSpawnerComponent: public SpawnerComponent
         this->set_max_children(_component->get_max_children());
     }
 
+    virtual void on_destroy()
+    {
+        this->notify_children_of_death();
+    }
+
     MonsterSpawnerComponent() :
         SpawnerComponent(COMPONENT_MonsterSpawner),
         max_children(0), children(NULL), spawn_type(NULL_ENTITY_TYPE),

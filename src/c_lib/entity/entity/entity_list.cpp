@@ -149,14 +149,18 @@ void EntityList::tick()
 {
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
+        int count = this->counts[i];
+        if (count <= 0) continue;
         int max = this->maximums[i];
-        if (max <= 0) continue;
         Entity* entities = this->entities[i];
         entityTick tick = get_entity_tick_method(EntityType(i));
         if (tick == NULL) continue;
-        for (int j=0; j<max; j++)
+        for (int j=0, k=0; j<max && k<count; j++)
             if (entities[j].id != this->null_id)
+            {
+                k++;
                 tick(&entities[j]);
+            }
     }
 }
 

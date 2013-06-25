@@ -97,49 +97,6 @@ void load_mob_bomb_data()
     #endif
 }
 
-void ready_mob_bomb(Entity* entity)
-{
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-
-    Vec3 position = physics->get_position();
-    Vec3 angles = physics->get_angles();
-
-    vox->ready(position, angles.x, angles.y);
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_mob_bomb(Entity* entity)
-{
-    #if DC_SERVER
-    // drop item
-    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, entity);
-    GS_ASSERT(item_drop != NULL);
-    item_drop->drop_item();
-
-    // explosion damage
-    auto explode = GET_COMPONENT_INTERFACE(Explosion, entity);
-    explode->explode();
-    explode->damage_blocks();
-
-    // notify clients
-    entity->broadcastDeath();
-    #endif
-
-    #if DC_CLIENT
-    // explosion animation
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    if (vox->vox != NULL)
-    {
-        auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-        anim->explode_random(vox->get_center());
-    }
-    #endif
-}
-
 #if DC_SERVER
 static void bomb_state_router(class Entity* entity, EntityState state)
 {

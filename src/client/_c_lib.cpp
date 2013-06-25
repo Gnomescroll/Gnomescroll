@@ -345,7 +345,6 @@ void init_configs()
     ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
-    Entities::init_entity_dat();
 
     t_map::load_block_dat();
     t_map::init_for_draw();
@@ -546,8 +545,6 @@ void close_c_lib()
     Components::teardown();
     if (TEARDOWN_DEBUG) printf("entity net interfaces teardown\n");
     Entities::teardown_net_interfaces();
-    if (TEARDOWN_DEBUG) printf("entity dat teardown\n");
-    Entities::teardown_entity_dat();
 
     if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
     Voxels::teardown_voxel_volume();

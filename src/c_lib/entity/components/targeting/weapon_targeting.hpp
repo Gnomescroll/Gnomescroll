@@ -67,6 +67,11 @@ class WeaponTargetingComponent: public TargetingComponent
     void lock_target(Vec3 camera_position);
     void lock_target_part(Vec3 camera_position);
 
+    virtual void on_ready()
+    {
+        this->attacker_properties.id = this->entity->id;
+    }
+
     virtual ~WeaponTargetingComponent() {}
 
     WeaponTargetingComponent() :

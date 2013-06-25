@@ -90,27 +90,29 @@ Entity* create(EntityType type, EntityID id)
 void ready(Entity* entity)
 {
     IF_ASSERT(entity == NULL) return;
-    entityReady ready = get_entity_ready_method(entity->type);
-    IF_ASSERT(ready == NULL) return;
-    ready(entity);
+    entity->ready();
+    #if DC_SERVER
+    if (entity_is_networked(entity->type))
+        entity->broadcastCreate();
+    #endif
 }
 
 void destroy(Entity* entity)
 {
     IF_ASSERT(entity == NULL) return;
-    EntityType type = entity->type;
-
-    entityDie die = get_entity_die_method(type);
-    GS_ASSERT(die != NULL);
-    if (die != NULL) die(entity);
-
-    entity_list->destroy(type, entity->id);
+    entity->destroy();
+    #if DC_SERVER
+    if (entity_is_networked(entity->type))
+        entity->broadcastDeath();
+    #endif
+    entity_list->destroy(entity->type, entity->id);
 }
 
 void destroy(EntityType type, EntityID id)
 {
     Entity* entity = get(type, id);
-    if (entity != NULL) destroy(entity);
+    if (entity != NULL)
+        destroy(entity);
 }
 
 Entity* get(EntityType type, EntityID id)

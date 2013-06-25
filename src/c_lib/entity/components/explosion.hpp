@@ -45,6 +45,12 @@ class ExplosionComponent: public Component
         COPY(delay);
     }
 
+    virtual void on_destroy()
+    {
+        this->explode();
+        this->damage_blocks();
+    }
+
     virtual ~ExplosionComponent() {}
 
     ExplosionComponent() :

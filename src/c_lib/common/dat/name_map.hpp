@@ -8,7 +8,7 @@
 /* Writes dat names to file */
 
 template <class Property>
-bool save_active_names(Property* properties, size_t count, size_t name_len, const char* filename)
+bool save_active_names(const Property* properties, size_t count, size_t name_len, const char* filename)
 {
     bool worked = false;
 

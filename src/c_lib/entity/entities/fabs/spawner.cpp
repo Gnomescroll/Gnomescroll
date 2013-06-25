@@ -26,6 +26,7 @@ void load_agent_spawner_data()
     vox->vox_dat = &VoxDats::agent_spawner;
     vox->init_hitscan = true;
     vox->init_draw = true;
+    vox->init_frozen = true;
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 200;
@@ -51,54 +52,6 @@ void load_agent_spawner_data()
     anim->size = 0.22f;
     anim->force = 5.0f;
     anim->color = Color(127, 31, 223);
-    #endif
-}
-
-void ready_agent_spawner(Entity* entity)
-{
-
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-
-    Vec3 position = physics->get_position();
-    Vec3 angles = physics->get_angles();
-
-    vox->ready(position, angles.x, angles.y);
-    vox->freeze();
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_agent_spawner(Entity* entity)
-{
-    #if DC_SERVER
-    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, entity);
-    GS_ASSERT(item_drop != NULL);
-    item_drop->drop_item();
-
-    // remove self from any agents using us
-    using Agents::agent_list;
-    for (size_t i=0; i<agent_list->max; i++)
-        if (agent_list->objects[i].id != agent_list->null_id)
-            if (agent_list->objects[i].status.spawner == entity->id)
-                agent_list->objects[i].status.set_spawner(BASE_SPAWN_ID);
-
-    entity->broadcastDeath();
-    #endif
-
-    #if DC_CLIENT
-    // explosion animation
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    if (vox != NULL && vox->vox != NULL)
-    {
-        auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-        if (anim != NULL)
-            anim->explode_random(vox->get_center());
-    }
-
-    //dieChatMessage(entity);
     #endif
 }
 

@@ -20,6 +20,11 @@ class Component
     virtual void use_as_default() {}
     virtual void call() {}
 
+    virtual void on_ready() {}
+    virtual void on_destroy() {}
+    //virtual void on_tick() {}
+    //virtual void on_update() {}
+
     virtual ~Component() {}
 
     Component(ComponentType type, ComponentInterfaceType interface) :

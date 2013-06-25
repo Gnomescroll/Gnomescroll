@@ -684,7 +684,7 @@ void Agent::update_model()
 
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
-    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
+    this->vox->update(this->s.get_position(), this->s.theta, -this->s.phi);
     this->vox->set_draw(true);
     this->vox->set_hitscan(true);
     #endif
@@ -716,7 +716,7 @@ void Agent::update_model()
 
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
-    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
+    this->vox->update(this->s.get_position(), this->s.theta, -this->s.phi);
     this->vox->set_hitscan(true);
     #endif
 }
@@ -754,7 +754,7 @@ void force_update_agent_vox(Agent* a)
     IF_ASSERT(a == NULL) return;
     a->vox->was_updated = false;
     AgentState s = a->get_state();
-    a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
+    a->vox->update(s.get_position(), s.theta, -s.phi);
 }
 
 // returns block type

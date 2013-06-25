@@ -113,9 +113,8 @@ VoxPart::~VoxPart()
 void VoxPart::set_local_matrix()
 {
     this->dat->vox_volume_local_matrix[part_num] =
-        affine_euler_rotation_and_translation(this->sx, this->sy,
-                                              this->sz, this->srx,
-                                              this->sry, this->srz);
+        affine_euler_rotation_and_translation(vec3_init(this->sx, this->sy, this->sz),
+                                              vec3_init(this->srx, this->sry, this->srz));
 }
 
 
@@ -138,15 +137,15 @@ void VoxDat::reset_skeleton_local_matrix(int node)
 {
     IF_ASSERT(!this->voxel_skeleton_inited) return;
     IF_ASSERT(node < 0 || node >= this->n_skeleton_nodes) return;
-
-    float x,y,z,rx,ry,rz;
-    x = vox_skeleton_local_matrix_reference[node][0];
-    y = vox_skeleton_local_matrix_reference[node][1];
-    z = vox_skeleton_local_matrix_reference[node][2];
-    rx = vox_skeleton_local_matrix_reference[node][3];
-    ry = vox_skeleton_local_matrix_reference[node][4];
-    rz = vox_skeleton_local_matrix_reference[node][5];
-    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
+    float x = vox_skeleton_local_matrix_reference[node][0];
+    float y = vox_skeleton_local_matrix_reference[node][1];
+    float z = vox_skeleton_local_matrix_reference[node][2];
+    float rx = vox_skeleton_local_matrix_reference[node][3];
+    float ry = vox_skeleton_local_matrix_reference[node][4];
+    float rz = vox_skeleton_local_matrix_reference[node][5];
+    Vec3 p = vec3_init(x, y, z);
+    Vec3 a = vec3_init(rx, ry, rz);
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(p, a);
 }
 
 void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
@@ -154,7 +153,9 @@ void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, floa
     IF_ASSERT(!this->voxel_skeleton_inited) return;
     IF_ASSERT(node < 0 || node >= this->n_skeleton_nodes) return;
 
-    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
+    Vec3 p = vec3_init(x,y,z);
+    Vec3 r = vec3_init(rx,ry,rz);
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(p, r);
     vox_skeleton_local_matrix_reference[node][0] = x;
     vox_skeleton_local_matrix_reference[node][1] = y;
     vox_skeleton_local_matrix_reference[node][2] = z;
@@ -223,7 +224,9 @@ void VoxDat::set_part_local_matrix(int part_num, float x, float y, float z, floa
         printf("ERROR VoxDat::set_part_spatials -- part %d is NULL. Abort\n", part_num);
         return;
     }
-    this->vox_volume_local_matrix[part_num] =  affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
+    Vec3 pos = vec3_init(x, y, z);
+    Vec3 rot = vec3_init(rx, ry, rz);
+    this->vox_volume_local_matrix[part_num] =  affine_euler_rotation_and_translation(pos, rot);
 
     p->sx = x;
     p->sy = y;

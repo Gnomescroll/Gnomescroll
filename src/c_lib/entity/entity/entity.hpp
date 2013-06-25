@@ -53,6 +53,23 @@ class Entity
     void init(size_t n_components);
     void release_components();
 
+    void ready();
+    void destroy();
+
+    //void update()
+    //{
+        //for (int i=0; i<this->n_components; i++)
+            //if (this->components[i] != NULL)
+                //this->components[i]->on_update();
+    //}
+
+    //void tick()
+    //{
+        //for (int i=0; i<this->n_components; i++)
+            //if (this->components[i] != NULL)
+                //this->components[i]->on_tick();
+    //}
+
     ~Entity();
 
     explicit Entity(EntityID id) :

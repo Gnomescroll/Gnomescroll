@@ -41,6 +41,11 @@ class ItemDropComponent: public Component
         this->drop->vy_func = &default_random_velocity;
     }
 
+    virtual void on_destroy()
+    {
+        this->drop_item();
+    }
+
     virtual ~ItemDropComponent()
     {
         if (this->owns_drop)

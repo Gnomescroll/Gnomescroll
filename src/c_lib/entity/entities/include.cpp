@@ -1,8 +1,4 @@
-#pragma once
-
 #include "include.hpp"
-
-#include <entity/entities/dat.cpp>
 
 #include <entity/entities/fabs/base.cpp>
 #include <entity/entities/fabs/energy_core.cpp>

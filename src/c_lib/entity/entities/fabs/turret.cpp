@@ -30,6 +30,7 @@ void load_turret_data()
     vox->vox_dat = &VoxDats::turret;
     vox->init_hitscan = true;
     vox->init_draw = true;
+    vox->init_frozen = true;
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 125;
@@ -68,51 +69,6 @@ void load_turret_data()
     anim->size = 0.1f;
     anim->force = 5.0f;
     anim->color = Color(1, 1, 1);
-    #endif
-}
-
-void ready_turret(Entity* entity)
-{
-    // we have id now, set it on attack properties
-    auto target = GET_COMPONENT(WeaponTargeting, entity);
-    target->attacker_properties.id = entity->id;
-
-
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-
-    Vec3 position = physics->get_position();
-    Vec3 angles = physics->get_angles();
-
-    vox->ready(position, angles.x, angles.y);
-    vox->freeze();
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_turret(Entity* entity)
-{
-    #if DC_SERVER
-    auto explode = GET_COMPONENT_INTERFACE(Explosion, entity);
-    auto owner = GET_COMPONENT_INTERFACE(Owner, entity);
-
-    explode->explode();
-    owner->revoke();
-    entity->broadcastDeath();
-    #endif
-
-    #if DC_CLIENT
-    // explosion animation
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    if (vox->vox != NULL)
-    {
-        auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-        anim->explode_random(vox->get_center());
-    }
-
-    //dieChatMessage(entity);
     #endif
 }
 

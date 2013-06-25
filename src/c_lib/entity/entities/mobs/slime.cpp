@@ -92,43 +92,6 @@ void load_mob_slime_data()
     #endif
 }
 
-void ready_mob_slime(Entity* entity)
-{
-
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-
-    Vec3 position = physics->get_position();
-    Vec3 angles = physics->get_angles();
-
-    vox->ready(position, angles.x, angles.y);
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_mob_slime(Entity* entity)
-{
-    #if DC_SERVER
-    // drop item
-    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, entity);
-    IF_ASSERT(item_drop == NULL) return;
-    item_drop->drop_item();
-
-    // notify clients
-    entity->broadcastDeath();
-    #endif
-
-    #if DC_CLIENT
-    // explosion animation
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    IF_ASSERT(vox->vox == NULL) return;
-    auto anim = GET_COMPONENT_INTERFACE(Animation, entity);
-    anim->explode_random(vox->get_center());
-    #endif
-}
-
 #if DC_SERVER
 static void slime_state_router(class Entity* entity, EntityState state)
 {

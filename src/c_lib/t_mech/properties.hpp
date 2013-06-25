@@ -17,7 +17,7 @@ inline class MechAttribute* get_mech_attributes(MechType type);
 
 const char* get_mech_name(MechType type);
 const char* get_mech_pretty_name(MechType type);
-bool is_valid_mech_name(const char* name);
+inline bool is_valid_mech_name(const char* name);
 
 MechType get_mech_type(const char* name);
 

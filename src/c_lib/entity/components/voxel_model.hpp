@@ -25,6 +25,7 @@ class VoxelModelComponent: public Component
         Voxels::VoxDat* vox_dat;
         bool init_hitscan;
         bool init_draw;
+        bool init_frozen;
         bool should_hitscan;
         bool should_draw;
 
@@ -65,13 +66,13 @@ class VoxelModelComponent: public Component
         return vv->get_center();
     }
 
-    void ready(Vec3 position, float theta, float phi)
+    void ready(const Vec3& position, float theta, float phi)
     {
         IF_ASSERT(this->vox != NULL) return;
         IF_ASSERT(this->vox_dat == NULL) return;
         this->vox = new Voxels::VoxelModel(this->vox_dat, this->entity->id, this->entity->type);
         this->set_properties();
-        vox->update(position.x, position.y, position.z, theta, phi);
+        vox->update(position, theta, phi);
         vox->set_hitscan(this->init_hitscan);
         vox->set_draw(this->init_draw);
     }
@@ -82,8 +83,18 @@ class VoxelModelComponent: public Component
             this->vox->freeze();
     }
 
-    void update(Vec3 position, float theta, float phi, bool state_changed);
-    void force_update(Vec3 position, float theta, float phi, bool state_changed);
+    virtual void on_ready()
+    {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
+        IF_ASSERT(physics == NULL) return;
+        Vec3 angles = physics->get_angles();
+        this->ready(physics->get_position(), angles.x, angles.y);
+        if (this->init_frozen)
+            this->freeze();
+    }
+
+    void update(const Vec3& position, float theta, float phi, bool state_changed);
+    void force_update(const Vec3& position, float theta, float phi, bool state_changed);
 
     virtual ~VoxelModelComponent()
     {
@@ -93,7 +104,7 @@ class VoxelModelComponent: public Component
     VoxelModelComponent() :
         Component(COMPONENT_VoxelModel, COMPONENT_INTERFACE_VoxelModel),
         vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
-        should_hitscan(true), should_draw(true)
+        init_frozen(false), should_hitscan(true), should_draw(true)
     {}
 };
 

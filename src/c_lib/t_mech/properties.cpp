@@ -83,14 +83,9 @@ inline bool type_in_use(MechType type)
     return (get_mech_attributes(type) != NULL);
 }
 
-bool is_valid_mech_name(const char* name)
+inline bool is_valid_mech_name(const char* name)
 {
-    size_t len = strlen(name);
-    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
-    for (size_t i=0; i<len; i++)
-        if (!is_valid_name_char(name[i]))
-            return false;
-    return true;
+    return is_valid_name(name);
 }
 
 const char* get_compatible_mech_name(const char* name)

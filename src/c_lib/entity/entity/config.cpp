@@ -1,20 +1,19 @@
 #include "config.hpp"
 
+#include <common/dat/properties.hpp>
+#include <common/dat/name_map.hpp>
+
 namespace Entities
 {
 
-static class EntityConfig* entity_conf = NULL;
+static class EntityProperties* entity_conf = NULL;
+static class DatNameMap* entity_name_map = NULL;
 
-class EntityConfig
+class EntityProperty: public Property<EntityType>
 {
     public:
-        bool loaded;
-
-        EntityType type;
-        unsigned int max;
-        entityLoad   loader;
-        entityReady  ready;
-        entityDie    die;
+        size_t max;
+        entityLoad loader;
         bool networked;
 
         tickEntity tick;
@@ -23,249 +22,279 @@ class EntityConfig
         CreatePacketDelegate* create_packet;
         StatePacketDelegate* state_packet;
 
-    EntityConfig()
-    {
-        this->init();
-    }
-
-    void init()
-    {
-        this->type = NULL_ENTITY_TYPE;
-        this->max = 0;
-        this->loader = NULL;
-        this->ready = NULL;
-        this->die = NULL;
-        this->tick = NULL;
-        this->update = NULL;
-        this->create_packet = NULL;
-        this->state_packet = NULL;
-        this->networked = false;
-        this->loaded = false;
-    }
+    EntityProperty() :
+        Property<EntityType>(NULL_ENTITY_TYPE),
+        max(0), loader(NULL), networked(false), tick(NULL), update(NULL),
+        create_packet(NULL), state_packet(NULL)
+    {}
 };
 
-static class EntityConfig c;
-static bool started = false;
-
-static void commit_entity_config()
+class EntityProperties: public Properties<EntityProperty, EntityType>
 {
-    GS_ASSERT(c.type != NULL_ENTITY_TYPE);
+    public:
 
-    // no duplicate types
-    GS_ASSERT(!entity_conf[c.type].loaded);
+    EntityProperties() :
+        Properties<EntityProperty, EntityType>(MAX_ENTITY_TYPES)
+    {}
+};
 
-    c.loaded = true;
-    entity_conf[c.type] = c;
-    c.init();
-}
 
-static void set_entity(EntityType type)
+static class EntityProperty* c = NULL;
+
+static void set_entity(EntityType type, const char* name)
 {
-    if (started) commit_entity_config();
-    started = true;
-
-    c.type = type;
-    c.networked = true;  // everything defined should be networked by default
+    c = entity_conf->get_next(type);
+    c->set_name(name);
+    c->networked = true;  // everything defined should be networked by default
 }
 
 static void register_settings()
 {
-    GS_ASSERT(!started);
+    GS_ASSERT(c == NULL);
 
     // fabs
+    set_entity(ENTITY_AGENT_SPAWNER, "agent_spawner");
+    c->loader = &load_agent_spawner_data;
+    c->max = MAX_SPAWNERS;
+    c->tick = &tick_agent_spawner;
+    c->update = &update_agent_spawner;
+    c->create_packet = create_packet;
+    c->state_packet = state_packet;
 
-    set_entity(ENTITY_AGENT_SPAWNER);
-    c.loader = &load_agent_spawner_data;
-    c.ready = &ready_agent_spawner;
-    c.die = &die_agent_spawner;
-    c.max = MAX_SPAWNERS;
-    c.tick = &tick_agent_spawner;
-    c.update = &update_agent_spawner;
-    c.create_packet = create_packet;
-    c.state_packet = state_packet;
+    set_entity(ENTITY_BASE, "base");
+    c->loader = &load_base_data;
+    c->max = 2;
+    c->tick = &tick_base;
+    c->update = &update_base;
+    c->create_packet = create_packet;
+    c->state_packet = state_packet;
 
-    set_entity(ENTITY_BASE);
-    c.loader = &load_base_data;
-    c.ready = &ready_base;
-    c.die = &die_base;
-    c.max = 2;
-    c.tick = &tick_base;
-    c.update = &update_base;
-    c.create_packet = create_packet;
-    c.state_packet = state_packet;
+    set_entity(ENTITY_TURRET, "turret");
+    c->loader = &load_turret_data;
+    c->max = 512;
+    c->tick = &tick_turret;
+    c->update = &update_turret;
+    c->create_packet = create_packet_owner;
+    c->state_packet = state_packet;
 
-    set_entity(ENTITY_TURRET);
-    c.loader = &load_turret_data;
-    c.ready = &ready_turret;
-    c.die = &die_turret;
-    c.max = 512;
-    c.tick = &tick_turret;
-    c.update = &update_turret;
-    c.create_packet = create_packet_owner;
-    c.state_packet = state_packet;
-
-    set_entity(ENTITY_ENERGY_CORE);
-    c.loader = &load_energy_core_data;
-    c.ready = &ready_energy_core;
-    c.die = &die_energy_core;
-    c.max = 1024;
-    c.tick = &tick_energy_core;
-    c.update = &update_energy_core;
-    c.create_packet = create_packet;
-    c.state_packet = state_packet;
+    set_entity(ENTITY_ENERGY_CORE, "energy_core");
+    c->loader = &load_energy_core_data;
+    c->max = 512;
+    c->tick = &tick_energy_core;
+    c->update = &update_energy_core;
+    c->create_packet = create_packet;
+    c->state_packet = state_packet;
 
     // mobs
+    set_entity(ENTITY_MONSTER_SPAWNER, "monster_spawner");
+    c->loader = &load_mob_spawner_data;
+    c->max = 64;
+    c->tick = &tick_mob_spawner;
+    c->update = &update_mob_spawner;
+    c->create_packet = create_packet;
+    c->state_packet = state_packet;
 
-    set_entity(ENTITY_MONSTER_SPAWNER);
-    c.loader = &load_mob_spawner_data;
-    c.ready = &ready_mob_spawner;
-    c.die = &die_mob_spawner;
-    c.max = 64;
-    c.tick = &tick_mob_spawner;
-    c.update = &update_mob_spawner;
-    c.create_packet = create_packet;
-    c.state_packet = state_packet;
+    set_entity(ENTITY_MONSTER_BOX, "box");
+    c->loader = &load_mob_robot_box_data;
+    c->max = 512;
+    c->tick = &tick_mob_robot_box;
+    c->update = &update_mob_robot_box;
+    c->create_packet = create_packet_momentum_angles_health;
+    c->state_packet = state_packet_momentum_angles;
 
-    set_entity(ENTITY_MONSTER_BOX);
-    c.loader = &load_mob_robot_box_data;
-    c.ready = &ready_mob_robot_box;
-    c.die = &die_mob_robot_box;
-    c.max = 512;
-    c.tick = &tick_mob_robot_box;
-    c.update = &update_mob_robot_box;
-    c.create_packet = create_packet_momentum_angles_health;
-    c.state_packet = state_packet_momentum_angles;
+    set_entity(ENTITY_MONSTER_BOMB, "bomb");
+    c->loader = &load_mob_bomb_data;
+    c->max = 256;
+    c->tick = &tick_mob_bomb;
+    c->update = &update_mob_bomb;
+    c->create_packet = create_packet_momentum_angles_health;
+    c->state_packet = state_packet_momentum_angles;
 
-    set_entity(ENTITY_MONSTER_BOMB);
-    c.loader = &load_mob_bomb_data;
-    c.ready = &ready_mob_bomb;
-    c.die = &die_mob_bomb;
-    c.max = 256;
-    c.tick = &tick_mob_bomb;
-    c.update = &update_mob_bomb;
-    c.create_packet = create_packet_momentum_angles_health;
-    c.state_packet = state_packet_momentum_angles;
+    set_entity(ENTITY_MONSTER_SLIME, "slime");
+    c->loader = &load_mob_slime_data;
+    c->max = 512;
+    c->tick = &tick_mob_slime;
+    c->update = &update_mob_slime;
+    c->create_packet = create_packet_momentum_angles_health;
+    c->state_packet = state_packet_momentum_angles;
 
-    set_entity(ENTITY_MONSTER_SLIME);
-    c.loader = &load_mob_slime_data;
-    c.ready = &ready_mob_slime;
-    c.die = &die_mob_slime;
-    c.max = 512;
-    c.tick = &tick_mob_slime;
-    c.update = &update_mob_slime;
-    c.create_packet = create_packet_momentum_angles_health;
-    c.state_packet = state_packet_momentum_angles;
+    set_entity(ENTITY_MONSTER_LIZARD_THIEF, "lizard_thief");
+    c->loader = &load_mob_lizard_thief_data;
+    c->max = 128;
+    c->tick = &tick_mob_lizard_thief;
+    c->update = &update_mob_lizard_thief;
+    c->create_packet = create_packet_momentum_angles_health;
+    c->state_packet = state_packet_momentum_angles;
 
-    set_entity(ENTITY_MONSTER_LIZARD_THIEF);
-    c.loader = &load_mob_lizard_thief_data;
-    c.ready = &ready_mob_lizard_thief;
-    c.die = &die_mob_lizard_thief;
-    c.max = 128;
-    c.tick = &tick_mob_lizard_thief;
-    c.update = &update_mob_lizard_thief;
-    c.create_packet = create_packet_momentum_angles_health;
-    c.state_packet = state_packet_momentum_angles;
+    set_entity(ENTITY_MONSTER_BLUE_BLUB, "blub");
+    c->loader = &load_mob_blub_data;
+    c->max = 128;
+    c->tick = &tick_mob_blub;
+    c->update = &update_mob_blub;
+    c->create_packet = create_packet_momentum_angles_health;
+    c->state_packet = state_packet_momentum_angles;
 
-    set_entity(ENTITY_MONSTER_BLUE_BLUB);
-    c.loader = &load_mob_blub_data;
-    c.ready = &ready_mob_blub;
-    c.die = &die_mob_blub;
-    c.max = 128;
-    c.tick = &tick_mob_blub;
-    c.update = &update_mob_blub;
-    c.create_packet = create_packet_momentum_angles_health;
-    c.state_packet = state_packet_momentum_angles;
+    entity_conf->done_loading();
+    entity_conf->set_pretty_names();
+}
 
-    commit_entity_config();
+static void change_entity(const char* original, const char* replacement)
+{   // Use this to remove or rename an entity
+    GS_ASSERT_ABORT(is_valid_name(original));
+    GS_ASSERT_ABORT(is_valid_name(replacement));
+    bool mapped = entity_name_map->add_definition(original, replacement);
+    GS_ASSERT_ABORT(mapped);
+}
+
+static void apply_entity_dat_changes()
+{
+    // example:
+    //change_entity("blub", "glob");
 }
 
 static void validate_settings()
 {
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {   // either everything is set or nothing
-        EntityConfig* c = &entity_conf[i];
+        EntityProperty* c = &entity_conf->properties[i];
+        if (!c->loaded) continue;
         GS_ASSERT((c->max    != 0 &&
                    c->loader != NULL &&
-                   c->ready  != NULL &&
                    c->tick   != NULL &&
-                   c->update != NULL &&
-                   c->die    != NULL) ||
+                   c->update != NULL) ||
                   (c->max    == 0 &&
                    c->loader == NULL &&
-                   c->ready  == NULL &&
-                   c->die    == NULL));
+                   c->tick == NULL &&
+                   c->update == NULL));
 
         GS_ASSERT(!c->networked ||
                   (c->state_packet != NULL && c->create_packet != NULL));
     }
 }
 
+#define ENTITY_NAME_FILE_ACTIVE   "entity_names.active"
+#define ENTITY_NAME_FILE_INACTIVE "entity_names.inactive"
+
+static void save_entity_names()
+{
+    #if DC_SERVER || !PRODUCTION
+    bool saved = save_active_names(entity_conf->properties,
+        MAX_ENTITY_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ENTITY_NAME_FILE_ACTIVE);
+    GS_ASSERT_ABORT(saved);
+    saved = entity_name_map->save(DATA_PATH ENTITY_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT(saved);
+    #endif
+}
+
 void init_config()
 {
     GS_ASSERT(entity_conf == NULL);
-    entity_conf = new EntityConfig[MAX_ENTITY_TYPES];
-
+    GS_ASSERT(entity_name_map == NULL);
+    entity_conf = new EntityProperties;
+    entity_name_map = new DatNameMap(256, DAT_NAME_MAX_LENGTH);
     register_settings();
+    apply_entity_dat_changes();
     validate_settings();
+    save_entity_names();
 }
 
 void teardown_config()
 {
-    delete[] entity_conf;
+    delete entity_conf;
+    delete entity_name_map;
+}
+
+static EntityProperty* get_entity_property(EntityType type)
+{
+    return entity_conf->get(type);
+}
+
+static EntityProperty* get_entity_property(const char* name)
+{
+    return entity_conf->get(name);
 }
 
 size_t get_entity_max(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return 0;
-    return entity_conf[type].max;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return 0;
+    return attr->max;
 }
 
 entityLoad get_entity_load_method(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].loader;
-}
-
-entityReady get_entity_ready_method(EntityType type)
-{
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].ready;
-}
-
-entityDie get_entity_die_method(EntityType type)
-{
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].die;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return NULL;
+    return attr->loader;
 }
 
 entityTick get_entity_tick_method(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].tick;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return NULL;
+    return attr->tick;
 }
 
 entityUpdate get_entity_update_method(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].update;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return NULL;
+    return attr->update;
 }
 
 CreatePacketDelegate* get_entity_create_packet_delegate(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].create_packet;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return NULL;
+    return attr->create_packet;
 }
 
 StatePacketDelegate* get_entity_state_packet_delegate(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return NULL;
-    return entity_conf[type].state_packet;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return NULL;
+    return attr->state_packet;
 }
 
 bool entity_is_networked(EntityType type)
 {
-    IF_ASSERT(!isValid(type)) return false;
-    return entity_conf[type].networked;
+    EntityProperty* attr = get_entity_property(type);
+    if (attr == NULL) return false;
+    return attr->networked;
+}
+
+const char* get_entity_name(EntityType type)
+{
+    EntityProperty* attr = get_entity_property(type);
+    IF_ASSERT(attr == NULL) return NULL;
+    return attr->name;
+}
+
+const char* get_entity_pretty_name(EntityType type)
+{
+    EntityProperty* attr = get_entity_property(type);
+    IF_ASSERT(attr == NULL) return NULL;
+    return attr->pretty_name;
+}
+
+EntityType get_entity_type(const char* name)
+{
+    EntityProperty* attr = get_entity_property(name);
+    IF_ASSERT(attr == NULL) return NULL_ENTITY_TYPE;
+    return attr->type;
+}
+
+inline bool is_valid_entity_name(const char* name)
+{
+    return is_valid_name(name);
+}
+
+const char* get_compatible_entity_name(const char* name)
+{
+    const char* mapname = entity_name_map->get_mapped_name(name);
+    if (mapname != NULL) return mapname;
+    if (get_entity_type(name) != NULL_ENTITY_TYPE) return name;
+    return NULL;
 }
 
 }   // Entities

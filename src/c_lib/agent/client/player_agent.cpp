@@ -434,7 +434,7 @@ void PlayerAgent::update_model()
     a->vox->set_vox_dat(vox_dat);
     a->update_legs();
     AgentState s = a->get_state();
-    a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);
+    a->vox->update(s.get_position(), s.theta, -s.phi);
     if (current_camera->first_person)
     {
         a->vox->set_draw(false);

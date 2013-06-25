@@ -25,6 +25,7 @@ void load_base_data()
     vox->vox_dat = &VoxDats::base;
     vox->init_hitscan = false;
     vox->init_draw = true;
+    vox->init_frozen = true;
     vox->should_hitscan = false;
 
     #if DC_SERVER
@@ -34,28 +35,6 @@ void load_base_data()
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
     #endif
-}
-
-void ready_base(Entity* entity)
-{
-
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-
-    Vec3 position = physics->get_position();
-    Vec3 angles = physics->get_angles();
-
-    vox->ready(position, angles.x, angles.y);
-    vox->freeze();
-
-    #if DC_SERVER
-    entity->broadcastCreate();
-    #endif
-}
-
-void die_base(Entity* entity)
-{
-    GS_ASSERT(false);
 }
 
 void tick_base(Entity* entity)

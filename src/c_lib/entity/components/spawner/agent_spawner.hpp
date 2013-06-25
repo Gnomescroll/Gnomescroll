@@ -52,6 +52,8 @@ class AgentSpawnerComponent: public SpawnerComponent
         COPY(radius);
     }
 
+    virtual void on_destroy();
+
     virtual ~AgentSpawnerComponent() {}
 
     AgentSpawnerComponent() :
