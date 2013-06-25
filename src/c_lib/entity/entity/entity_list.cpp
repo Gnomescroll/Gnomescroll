@@ -105,10 +105,16 @@ Entity* EntityList::get_entities(EntityType type) const
 void EntityList::destroy_all()
 {
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
+    {
         if (this->entities[i] != NULL)
             for (int j=0; j<this->maximums[j]; j++)
                 if (this->entities[i][j].id != this->null_id)
                     this->destroy(this->entities[i][j].type, this->entities[i][j].id);
+        if (this->counts[i] != NULL)
+            this->counts[i] = 0;
+        if (this->last_free_ids[i] != NULL)
+            this->last_free_ids[i] = 0;
+    }
 }
 
 void EntityList::set_entity_max(EntityType type, int max)
@@ -189,7 +195,7 @@ void EntityList::harvest()
     {
         int count = this->counts[i];
         if (count <= 0) continue;
-        for (int j=0, k=0; j<this->maximums[i] && k<count; j++, k++)
+        for (int j=0, k=0; j<this->maximums[i] && k<count; j++)
         {
             if (this->entities[i][j].id == this->null_id)
                 continue;
@@ -213,7 +219,7 @@ void EntityList::send_to_client(EntityType type, ClientID client_id) const
     int max = this->max(type);
     GS_ASSERT(max > 0);
 
-    for (int i=0, j=0; i<max && j<count; i++, j++)
+    for (int i=0, j=0; i<max && j<count; i++)
         if (entities[i].id != this->null_id)
         {
             j++;

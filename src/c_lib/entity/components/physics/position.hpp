@@ -118,6 +118,11 @@ class PositionComponent: public PhysicsComponent
             return;
         }
         this->computed_position = new_position;
+
+        const float snap_distance_sq = 4.0f * 4.0f;
+        if (vec3_distance_squared(this->computed_position, this->position) > snap_distance_sq)
+            this->computed_position = this->position;
+
         this->position_changed = true;
         GS_ASSERT(vec3_is_valid(this->computed_position));
         GS_ASSERT(is_boxed_position(this->computed_position));
@@ -129,7 +134,6 @@ class PositionComponent: public PhysicsComponent
     {
         // no settings
     }
-
 
     PositionComponent() :
         PhysicsComponent(COMPONENT_Position)
