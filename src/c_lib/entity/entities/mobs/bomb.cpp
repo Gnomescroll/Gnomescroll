@@ -135,13 +135,6 @@ static void bomb_state_router(class Entity* entity, EntityState state)
 void tick_mob_bomb(Entity* entity)
 {
     #if DC_SERVER
-     //die if near agent
-    auto explode = GET_COMPONENT_INTERFACE(Explosion, entity);
-    explode->proximity_check();
-
-    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
-    if (limiter->allowed()) entity->broadcastState();
-
     auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
 
     switch (machine->state)

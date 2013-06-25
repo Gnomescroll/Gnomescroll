@@ -56,13 +56,9 @@ class Entity
     void ready();
     void destroy();
     void update();
-
-    //void tick()
-    //{
-        //for (int i=0; i<this->n_components; i++)
-            //if (this->components[i] != NULL)
-                //this->components[i]->on_tick();
-    //}
+    void after_update();
+    void before_tick();
+    void after_tick();
 
     ~Entity();
 

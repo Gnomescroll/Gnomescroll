@@ -11,7 +11,7 @@ namespace Components
 
 /* Targeting */
 
-void WeaponTargetingComponent::lock_target(Vec3 camera_position)
+bool WeaponTargetingComponent::lock_target(const Vec3& camera_position)
 {   // lock on agent
     Agents::Agent* target = Hitscan::lock_agent_target(
         camera_position, &this->target_direction,
@@ -21,24 +21,25 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
     {
         this->target_type = NULL_ENTITY_TYPE;
         this->locked_on_target = false;
-        return;
+        return this->locked_on_target;
     }
     this->target_type = target->type;
     this->target_id = target->id;
     this->locked_on_target = true;
     this->target_direction = vec3_normalize(this->target_direction);
+    return this->locked_on_target;
 }
 
-void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
+bool WeaponTargetingComponent::lock_target_part(const Vec3& camera_position)
 {
     this->firing_direction_set = false;
 
-    if (this->target_type == NULL_ENTITY_TYPE) return;
-    if (this->target_type != ENTITY_AGENT) return;    // TODO -- target all types
+    if (this->target_type == NULL_ENTITY_TYPE) return this->firing_direction_set;
+    if (this->target_type != ENTITY_AGENT) return this->firing_direction_set;    // TODO -- target all types
 
     // get target
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
-    if (target == NULL) return;
+    if (target == NULL) return this->firing_direction_set;
 
     // aim at target
     this->orient_to_random_target_part(camera_position);
@@ -48,9 +49,10 @@ void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
 
     this->firing_direction = direction;
     this->firing_direction_set = true;
+    return this->firing_direction_set;
 }
 
-bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
+bool WeaponTargetingComponent::fire_on_target(const Vec3& camera_position)
 {
     if (this->target_type == NULL_ENTITY_TYPE) return false;
     if (this->target_type != ENTITY_AGENT) return false;    // TODO -- target all types
@@ -74,11 +76,11 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
     // apply custom handling
     // play sounds
     // play animations
-
+    this->shot_at_something = true;
     return (result.type == HITSCAN_TARGET_VOXEL);
 }
 
-bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
+bool WeaponTargetingComponent::target_is_visible(const Vec3& firing_position)
 {
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     // target exists
@@ -94,7 +96,7 @@ bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
     return false;
 }
 
-void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position)
+void WeaponTargetingComponent::orient_to_random_target_part(const Vec3& camera_position)
 {
     if (this->target_type == NULL_ENTITY_TYPE) return;
     if (this->target_type != ENTITY_AGENT) return;  //  todo -- target all types

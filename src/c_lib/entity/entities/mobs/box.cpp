@@ -207,10 +207,6 @@ void server_tick_mob_robot_box(Entity* entity)
         vec3_to_angles(motion->target_direction, &theta, &phi);
         physics->set_angles(vec3_init(theta, phi, 0));
     }
-
-    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
-    IF_ASSERT(limiter == NULL) return;
-    if (limiter->allowed()) entity->broadcastState();
 }
 #endif
 

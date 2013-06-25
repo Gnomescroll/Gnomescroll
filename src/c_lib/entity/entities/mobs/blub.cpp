@@ -127,9 +127,6 @@ static void blub_state_router(class Entity* entity, EntityState state)
 void tick_mob_blub(Entity* entity)
 {
     #if DC_SERVER
-    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
-    if (limiter->allowed()) entity->broadcastState();
-
     auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
 
     switch (machine->state)

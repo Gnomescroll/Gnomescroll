@@ -68,6 +68,7 @@ void block_crumble(const Vec3& pos, int n, CubeType cube_type, TerrainModificati
             momentum = 10.0f;
             break;
         case TMA_LASER:
+        case TMA_TURRET:
             momentum = 0.5f;
             break;
         case TMA_MONSTER_BOX:
@@ -79,7 +80,6 @@ void block_crumble(const Vec3& pos, int n, CubeType cube_type, TerrainModificati
         case TMA_NONE:
             break;
         case TMA_APPLIER:
-        case TMA_TURRET:
         case TMA_PLACE_BLOCK:
             GS_ASSERT(false);
             break;

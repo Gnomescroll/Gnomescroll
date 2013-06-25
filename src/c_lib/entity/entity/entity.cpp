@@ -79,6 +79,23 @@ void Entity::update()
         this->components[i]->on_update();
 }
 
+void Entity::after_update()
+{
+    for (int i=0; i<this->n_components; i++)
+        this->components[i]->on_after_update();
+}
+
+void Entity::before_tick()
+{
+    for (int i=0; i<this->n_components; i++)
+        this->components[i]->on_before_tick();
+}
+
+void Entity::after_tick()
+{
+    for (int i=0; i<this->n_components; i++)
+        this->components[i]->on_after_tick();
+}
 
 Entity::~Entity()
 {

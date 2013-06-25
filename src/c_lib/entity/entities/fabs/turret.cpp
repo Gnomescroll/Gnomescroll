@@ -83,14 +83,6 @@ void tick_turret(Entity* entity)
     physics->set_position(position);
     auto dimension = GET_COMPONENT_INTERFACE(Dimension, entity);
     position.z += dimension->get_camera_height();
-
-    // shoot at enemy
-    auto targeting = GET_COMPONENT(WeaponTargeting, entity);
-    targeting->lock_target(position);
-    if (targeting->can_fire()) targeting->fire_on_target(position);
-
-    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
-    if (limiter->allowed()) entity->broadcastState();
     #endif
 }
 
