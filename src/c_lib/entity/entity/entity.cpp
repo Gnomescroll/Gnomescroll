@@ -2,7 +2,7 @@
 
 #include <entity/constants.hpp>
 #include <entity/network/packets.hpp>
-#include <entity/component/main.hpp>
+#include <entity/component/_interface.hpp>
 
 namespace Entities
 {

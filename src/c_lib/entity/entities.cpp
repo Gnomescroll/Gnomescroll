@@ -1,6 +1,6 @@
 #include "entities.hpp"
 
-#include <entity/entity/main.hpp>
+#include <entity/entity/_interface.hpp>
 
 namespace Entities
 {

@@ -164,7 +164,7 @@ bool c_lib_inited = false;
 #include <common/draw/textured_voxel.cpp>
 
 /* Entity system */
-#include <entity/include.cpp>
+#include <entity/_include.cpp>
 
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>

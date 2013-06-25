@@ -1,6 +1,6 @@
 #include "lizard_thief.hpp"
 
-#include <entity/entity/main.hpp>
+#include <entity/entity/_interface.hpp>
 #include <entity/entity/entity.hpp>
 #include <entity/constants.hpp>
 #include <entity/components/health.hpp>

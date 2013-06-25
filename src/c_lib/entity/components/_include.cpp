@@ -1,6 +1,4 @@
-#pragma once
-
-#include "include.hpp"
+#include "_include.hpp"
 
 #include <entity/components/health.cpp>
 #include <entity/components/health/hit_points.cpp>

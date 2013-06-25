@@ -1,6 +1,6 @@
 #pragma once
 
-#include <entity/network/main.hpp>
+#include <entity/network/_interface.hpp>
 
 namespace Entities
 {

@@ -3,7 +3,7 @@
 #include <common/time/physics_timer.hpp>
 #include <agent/_interface.hpp>
 #include <item/toolbelt/common/types.hpp>
-#include <entity/entity/main.hpp>
+#include <entity/entity/_interface.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <t_mech/_interface.hpp>
 #include <physics/pathfinding.hpp>

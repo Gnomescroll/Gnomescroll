@@ -1,7 +1,7 @@
 #include "entity_data_list.hpp"
 
 #include <entity/constants.hpp>
-#include <entity/component/main.hpp>
+#include <entity/component/_interface.hpp>
 
 namespace Entities
 {
