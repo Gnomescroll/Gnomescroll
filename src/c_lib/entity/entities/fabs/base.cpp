@@ -25,7 +25,7 @@ void load_base_data()
     vox->vox_dat = &VoxDats::base;
     vox->init_hitscan = false;
     vox->init_draw = true;
-    vox->init_frozen = true;
+    vox->frozen = true;
     vox->should_hitscan = false;
 
     #if DC_SERVER
@@ -48,15 +48,6 @@ void tick_base(Entity* entity)
     auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
     if (limiter->allowed()) entity->broadcastState();
     #endif
-}
-
-void update_base(Entity* entity)
-{
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-    Vec3 angles = physics->get_angles();
-    vox->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());
-    physics->set_changed(false);  // reset changed state
 }
 
 } // Entities

@@ -13,19 +13,18 @@ class EntityProperty: public Property<EntityType>
 {
     public:
         size_t max;
-        entityLoad loader;
-        bool networked;
 
-        tickEntity tick;
-        updateEntity update;
+        entityLoad loader;
+        entityTick tick;
 
         CreatePacketDelegate* create_packet;
         StatePacketDelegate* state_packet;
+        bool networked;
 
     EntityProperty() :
         Property<EntityType>(NULL_ENTITY_TYPE),
-        max(0), loader(NULL), networked(false), tick(NULL), update(NULL),
-        create_packet(NULL), state_packet(NULL)
+        max(0), loader(NULL), tick(NULL), create_packet(NULL),
+        state_packet(NULL), networked(false)
     {}
 };
 
@@ -57,7 +56,6 @@ static void register_settings()
     c->loader = &load_agent_spawner_data;
     c->max = MAX_SPAWNERS;
     c->tick = &tick_agent_spawner;
-    c->update = &update_agent_spawner;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
@@ -65,7 +63,6 @@ static void register_settings()
     c->loader = &load_base_data;
     c->max = 2;
     c->tick = &tick_base;
-    c->update = &update_base;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
@@ -73,7 +70,6 @@ static void register_settings()
     c->loader = &load_turret_data;
     c->max = 512;
     c->tick = &tick_turret;
-    c->update = &update_turret;
     c->create_packet = create_packet_owner;
     c->state_packet = state_packet;
 
@@ -81,7 +77,6 @@ static void register_settings()
     c->loader = &load_energy_core_data;
     c->max = 512;
     c->tick = &tick_energy_core;
-    c->update = &update_energy_core;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
@@ -90,7 +85,6 @@ static void register_settings()
     c->loader = &load_mob_spawner_data;
     c->max = 64;
     c->tick = &tick_mob_spawner;
-    c->update = &update_mob_spawner;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
@@ -98,7 +92,6 @@ static void register_settings()
     c->loader = &load_mob_robot_box_data;
     c->max = 512;
     c->tick = &tick_mob_robot_box;
-    c->update = &update_mob_robot_box;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
@@ -106,7 +99,6 @@ static void register_settings()
     c->loader = &load_mob_bomb_data;
     c->max = 256;
     c->tick = &tick_mob_bomb;
-    c->update = &update_mob_bomb;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
@@ -114,7 +106,6 @@ static void register_settings()
     c->loader = &load_mob_slime_data;
     c->max = 512;
     c->tick = &tick_mob_slime;
-    c->update = &update_mob_slime;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
@@ -122,7 +113,6 @@ static void register_settings()
     c->loader = &load_mob_lizard_thief_data;
     c->max = 128;
     c->tick = &tick_mob_lizard_thief;
-    c->update = &update_mob_lizard_thief;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
@@ -130,7 +120,6 @@ static void register_settings()
     c->loader = &load_mob_blub_data;
     c->max = 128;
     c->tick = &tick_mob_blub;
-    c->update = &update_mob_blub;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
@@ -160,12 +149,10 @@ static void validate_settings()
         if (!c->loaded) continue;
         GS_ASSERT((c->max    != 0 &&
                    c->loader != NULL &&
-                   c->tick   != NULL &&
-                   c->update != NULL) ||
+                   c->tick   != NULL) ||
                   (c->max    == 0 &&
                    c->loader == NULL &&
-                   c->tick == NULL &&
-                   c->update == NULL));
+                   c->tick == NULL));
 
         GS_ASSERT(!c->networked ||
                   (c->state_packet != NULL && c->create_packet != NULL));
@@ -233,13 +220,6 @@ entityTick get_entity_tick_method(EntityType type)
     EntityProperty* attr = get_entity_property(type);
     if (attr == NULL) return NULL;
     return attr->tick;
-}
-
-entityUpdate get_entity_update_method(EntityType type)
-{
-    EntityProperty* attr = get_entity_property(type);
-    if (attr == NULL) return NULL;
-    return attr->update;
 }
 
 CreatePacketDelegate* get_entity_create_packet_delegate(EntityType type)

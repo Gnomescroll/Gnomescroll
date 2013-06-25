@@ -2,7 +2,6 @@
 
 #include <entity/components.hpp>
 #include <entity/entity/filter.hpp>
-#include <entity/entity/types.hpp>
 #include <entity/entity/config.hpp>
 
 namespace Entities

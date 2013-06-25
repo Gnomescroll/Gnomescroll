@@ -64,16 +64,21 @@ void Entity::init(size_t n_components)
 void Entity::ready()
 {
     for (int i=0; i<this->n_components; i++)
-        if (this->components[i] != NULL)
-            this->components[i]->on_ready();
+        this->components[i]->on_ready();
 }
 
 void Entity::destroy()
 {
     for (int i=0; i<this->n_components; i++)
-        if (this->components[i] != NULL)
-            this->components[i]->on_destroy();
+        this->components[i]->on_destroy();
 }
+
+void Entity::update()
+{
+    for (int i=0; i<this->n_components; i++)
+        this->components[i]->on_update();
+}
+
 
 Entity::~Entity()
 {

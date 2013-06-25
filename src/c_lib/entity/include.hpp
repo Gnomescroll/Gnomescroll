@@ -4,7 +4,6 @@
 #include <entity/constants.hpp>
 
 #include <entity/entities/include.hpp>
-#include <entity/entity/types.hpp>
 #include <entity/entity/entity.hpp>
 #include <entity/entity/config.hpp>
 #include <entity/entity/entity_list.hpp>

@@ -110,10 +110,8 @@ void EntityList::destroy_all()
             for (int j=0; j<this->maximums[j]; j++)
                 if (this->entities[i][j].id != this->null_id)
                     this->destroy(this->entities[i][j].type, this->entities[i][j].id);
-        if (this->counts[i] != NULL)
-            this->counts[i] = 0;
-        if (this->last_free_ids[i] != NULL)
-            this->last_free_ids[i] = 0;
+        this->counts[i] = 0;
+        this->last_free_ids[i] = 0;
     }
 }
 
@@ -178,13 +176,11 @@ void EntityList::update()
         if (count <= 0) continue;
         int max = this->maximums[i];
         Entity* entities = this->entities[i];
-        entityUpdate update = get_entity_update_method(EntityType(i));
-        if (update == NULL) continue;
         for (int j=0, k=0; j<max && k<count; j++)
             if (entities[j].id != this->null_id)
             {
                 k++;
-                update(&entities[j]);
+                entities[j].update();
             }
     }
 }

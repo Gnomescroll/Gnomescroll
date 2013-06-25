@@ -23,9 +23,9 @@ class VoxelModelComponent: public Component
     public:
         Voxels::VoxelModel* vox;
         Voxels::VoxDat* vox_dat;
+        bool frozen;
         bool init_hitscan;
         bool init_draw;
-        bool init_frozen;
         bool should_hitscan;
         bool should_draw;
 
@@ -89,8 +89,24 @@ class VoxelModelComponent: public Component
         IF_ASSERT(physics == NULL) return;
         Vec3 angles = physics->get_angles();
         this->ready(physics->get_position(), angles.x, angles.y);
-        if (this->init_frozen)
+        if (this->frozen)
             this->freeze();
+    }
+
+    virtual void on_update()
+    {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
+        IF_ASSERT(physics == NULL) return;
+        Vec3 angles = physics->get_angles();
+        if (this->frozen)
+            this->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());
+        else
+            this->update(physics->get_position(), angles.x, angles.y, physics->get_changed());
+        physics->set_changed(false);    // the thing that uses it should unset changed state
+                                        // because too much hassle guaranteeing on_update() ordering,
+                                        // or we'd put it on the physics component
+                                        // Note that this implies the changed state is
+                                        // only usable by one component
     }
 
     void update(const Vec3& position, float theta, float phi, bool state_changed);
@@ -103,8 +119,8 @@ class VoxelModelComponent: public Component
 
     VoxelModelComponent() :
         Component(COMPONENT_VoxelModel, COMPONENT_INTERFACE_VoxelModel),
-        vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
-        init_frozen(false), should_hitscan(true), should_draw(true)
+        vox(NULL), vox_dat(NULL), frozen(false), init_hitscan(false),
+        init_draw(false), should_hitscan(true), should_draw(true)
     {}
 };
 

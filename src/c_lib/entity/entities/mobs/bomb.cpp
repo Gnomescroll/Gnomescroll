@@ -177,14 +177,4 @@ void tick_mob_bomb(Entity* entity)
     #endif
 }
 
-void update_mob_bomb(Entity* entity)
-{
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-
-    Vec3 angles = physics->get_angles();
-    vox->update(physics->get_position(), angles.x, angles.y, physics->get_changed());
-    physics->set_changed(false);  // reset changed state
-}
-
 } // Entities

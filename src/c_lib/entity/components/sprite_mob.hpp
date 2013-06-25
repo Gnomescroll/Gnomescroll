@@ -23,6 +23,14 @@ class SpriteMobComponent: public Component
         this->mob.init();
     }
 
+    virtual void on_update()
+    {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
+        IF_ASSERT(physics == NULL) return;
+        this->mob.position = physics->get_position();
+        physics->set_changed(false);
+    }
+
     virtual ~SpriteMobComponent() {}
     SpriteMobComponent() :
         Component(COMPONENT_SpriteMob, COMPONENT_INTERFACE_SpriteMob)

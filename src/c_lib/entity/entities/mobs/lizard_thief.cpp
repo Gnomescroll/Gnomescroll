@@ -164,13 +164,4 @@ void tick_mob_lizard_thief(Entity* entity)
     #endif
 }
 
-void update_mob_lizard_thief(Entity* entity)
-{
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    auto mob = GET_COMPONENT_INTERFACE(SpriteMob, entity);
-
-    mob->mob.position = physics->get_position();
-    physics->set_changed(false);  // reset changed state
-}
-
 } // Entities

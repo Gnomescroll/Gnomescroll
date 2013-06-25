@@ -30,7 +30,7 @@ void load_turret_data()
     vox->vox_dat = &VoxDats::turret;
     vox->init_hitscan = true;
     vox->init_draw = true;
-    vox->init_frozen = true;
+    vox->frozen = true;
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 125;
@@ -92,16 +92,6 @@ void tick_turret(Entity* entity)
     auto limiter = GET_COMPONENT_INTERFACE(RateLimit, entity);
     if (limiter->allowed()) entity->broadcastState();
     #endif
-}
-
-void update_turret(Entity* entity)
-{
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
-
-    Vec3 angles = physics->get_angles();
-    vox->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());
-    physics->set_changed(false);  // reset changed state
 }
 
 } // Entities

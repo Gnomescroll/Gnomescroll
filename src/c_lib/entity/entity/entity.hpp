@@ -55,13 +55,7 @@ class Entity
 
     void ready();
     void destroy();
-
-    //void update()
-    //{
-        //for (int i=0; i<this->n_components; i++)
-            //if (this->components[i] != NULL)
-                //this->components[i]->on_update();
-    //}
+    void update();
 
     //void tick()
     //{
