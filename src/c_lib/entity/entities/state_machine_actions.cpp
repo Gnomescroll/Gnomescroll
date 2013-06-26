@@ -63,14 +63,14 @@ void in_transit(Entity* entity, Components::StateMachineComponent* machine)
     dest_target->move_on_surface();
     if (!physics->get_changed())
     {   // failed to move
-        machine->receive_event("at_desination");
+        machine->receive_event("at_destination");
     }
     else
     {   // check at destination
         if (dest_target->check_at_destination())
         {
             if (dest_target->path_finished())
-                machine->receive_event("at_desination");
+                machine->receive_event("at_destination");
             else
                 go_to_next_destination(entity, machine);
         }

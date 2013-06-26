@@ -45,6 +45,7 @@ class StateMachineComponent: public Component
     void load_settings_from(const Component* component)
     {
         BEGIN_COPY(StateMachineComponent);
+        COPY(aggro);
         this->state.load_configuration(_component->configuration);
         this->state.current_state = _component->configuration->start_state;
     }
@@ -56,8 +57,9 @@ class StateMachineComponent: public Component
         this->owns_configuration = true;
     }
 
-    virtual void before_tick()
+    virtual void on_before_tick()
     {
+        this->process_current_event();
         if (this->aggro)
             check_agent_aggro(this->entity, this);
         this->process_current_event();
@@ -70,7 +72,7 @@ class StateMachineComponent: public Component
             action(this->entity, this);
     }
 
-    virtual void after_tick()
+    virtual void on_after_tick()
     {
         this->process_current_event();
     }

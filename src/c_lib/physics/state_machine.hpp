@@ -14,6 +14,16 @@ typedef enum
     NULL_STATE_MACHINE_STATE = -1
 } StateMachineStateID;
 
+inline bool isValid(StateMachineEventID id)
+{
+    return (id != NULL_STATE_MACHINE_EVENT);
+}
+
+inline bool isValid(StateMachineStateID id)
+{
+    return (id != NULL_STATE_MACHINE_STATE);
+}
+
 template <typename fptr>
 class StateMachineEvent
 {
@@ -41,12 +51,14 @@ class StateMachineState
         SimpleGrowingObjectList<StateMachineEvent<fptr>,
                                 StateMachineEventID> transitions;
 
-    void add_event(const char* name, fptr action)
+    void add_event(const char* name, StateMachineStateID next_state, fptr action)
     {
         StateMachineEvent<fptr>* event = this->transitions.create();
         IF_ASSERT(event == NULL) return;
         copy_string(event->name, name, STATE_MACHINE_NAME_MAX_LEN);
         event->action = action;
+        GS_ASSERT(isValid(next_state));
+        event->next_state = next_state;
     }
 
     StateMachineEvent<fptr>* get_event(const char* name)
@@ -94,7 +106,7 @@ class StateMachineConfiguration
         StateMachineState<fptr>* end_state = this->get_state(end_state_name);
         IF_ASSERT(end_state == NULL) return;
         GS_ASSERT(start_state->get_event(event_name) == NULL);
-        start_state->add_event(event_name, event_action);
+        start_state->add_event(event_name, end_state->id, event_action);
     }
 
     void set_start_state(const char* name)
@@ -185,7 +197,7 @@ class StateMachine
         StateMachineState<fptr>* state = this->get_current_state();
         IF_ASSERT(state == NULL) return NULL;
         StateMachineEvent<fptr>* event = state->get_event(this->pending_event);
-        IF_ASSERT(event == NULL) return NULL;
+        if (event == NULL) return NULL;
         this->pending_state = event->next_state;
         return event->action;
     }
