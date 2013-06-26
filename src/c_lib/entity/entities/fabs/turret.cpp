@@ -59,8 +59,11 @@ void load_turret_data()
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
-    #endif
 
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
+    #endif
 
     #if DC_CLIENT
     auto anim = ADD_COMPONENT(Animation);
@@ -72,18 +75,18 @@ void load_turret_data()
     #endif
 }
 
-void tick_turret(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+//void tick_turret(Entity* entity)
+//{
+    //#if DC_SERVER
+    //auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
 
-    // adjust to terrain changes
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
-    auto dimension = GET_COMPONENT_INTERFACE(Dimension, entity);
-    position.z += dimension->get_camera_height();
-    #endif
-}
+    //// adjust to terrain changes
+    //Vec3 position = physics->get_position();
+    //position.z = stick_to_terrain_surface(position);
+    //physics->set_position(position);
+    //auto dimension = GET_COMPONENT_INTERFACE(Dimension, entity);
+    //position.z += dimension->get_camera_height();
+    //#endif
+//}
 
 } // Entities

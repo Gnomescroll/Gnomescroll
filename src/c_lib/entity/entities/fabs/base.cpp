@@ -34,18 +34,22 @@ void load_base_data()
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
+
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 }
 
-void tick_base(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    IF_ASSERT(physics == NULL) return;
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
-    #endif
-}
+//void tick_base(Entity* entity)
+//{
+    //#if DC_SERVER
+    //auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+    //IF_ASSERT(physics == NULL) return;
+    //Vec3 position = physics->get_position();
+    //position.z = stick_to_terrain_surface(position);
+    //physics->set_position(position);
+    //#endif
+//}
 
 } // Entities

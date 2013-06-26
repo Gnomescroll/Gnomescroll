@@ -2,60 +2,93 @@
 
 #include <entity/constants.hpp>
 #include <entity/component/component.hpp>
-#include <common/physics/state_machine.hpp>
+#include <physics/state_machine.hpp>
+#include <entity/entities/state_machine_actions.hpp>
 
-typedef (*stateMachineAction)(class Entities::Entity*, class Components::StateMachineComponent*);
+namespace Entities
+{
+class Entity;
+}
+
+namespace Components
+{
+class StateMachineComponent;
+}
+
+typedef void (*stateMachineAction)(class Entities::Entity*, class Components::StateMachineComponent*);
 
 namespace Components
 {
 
 class StateMachineComponent: public Component
 {
+    private:
+        bool owns_configuration;
+
+    void process_current_event()
+    {
+        stateMachineAction action = this->state.get_current_event_action();
+        if (action != NULL)
+            action(this->entity, this);
+        this->state.update();
+    }
+
     public:
         // need to split StateMachine into two things:
         // StateMachineTable and StateMachine (which only holds current etc)
         StateMachineConfiguration<stateMachineAction>* configuration;
         StateMachine<stateMachineAction> state;
 
+        // miscellaneous behaviour flags
+        bool aggro;
+
     void load_settings_from(const Component* component)
     {
         BEGIN_COPY(StateMachineComponent);
-        this->state.load_configuration(component->state_configuration);
-        this->state.current_state = other->state.current_state;
+        this->state.load_configuration(_component->configuration);
+        this->state.current_state = _component->configuration->start_state;
     }
 
-    StateMachineConfiguration<stateMachineAction>* create_configuration()
-    {   // only call this for the reference component
+    virtual void use_as_default()
+    {
+        GS_ASSERT(this->configuration == NULL);
         this->configuration = new StateMachineConfiguration<stateMachineAction>;
-        return this->configuration;
+        this->owns_configuration = true;
+    }
+
+    virtual void before_tick()
+    {
+        if (this->aggro)
+            check_agent_aggro(this->entity, this);
+        this->process_current_event();
     }
 
     virtual void on_tick()
     {
-        size_t n = 0;
-        stateMachineAction* actions = state.get_current_actions(n);
-        for (size_t i=0; i<n; i++)
-            actions[i](this->entity, this);
+        stateMachineAction action = state.get_current_action();
+        if (action != NULL)
+            action(this->entity, this);
     }
 
     virtual void after_tick()
     {
-        size_t n = 0;
-        stateMachineAction* actions = NULL;
-        while ((actions = state.get_current_event_actions(n)) != NULL)
-            for (size_t i=0; i<n; i++)
-                actions[i](this->entity, this);
-        this->state.update();
+        this->process_current_event();
+    }
+
+    void receive_event(const char* name)
+    {
+        this->state.receive_event(name);
     }
 
     virtual ~StateMachineComponent()
     {
-        delete this->configuration;
+        if (this->owns_configuration)
+            delete this->configuration;
     }
 
     StateMachineComponent() :
         Component(COMPONENT_StateMachine, COMPONENT_INTERFACE_StateMachine),
-        configuration(NULL)
+        owns_configuration(false), configuration(NULL), aggro(false)
     {}
 };
 

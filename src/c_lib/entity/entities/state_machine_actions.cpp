@@ -1,4 +1,4 @@
-#pragma once
+#include "state_machine_actions.hpp"
 
 #include <entity/components/physics.hpp>
 #include <entity/components/targeting/destination_targeting.hpp>
@@ -9,6 +9,18 @@
 
 namespace Entities
 {
+
+void check_agent_aggro(Entity* entity, Components::StateMachineComponent* machine)
+{
+    auto target = GET_COMPONENT(AgentTargeting, entity);
+    if (target->target_type != NULL_ENTITY_TYPE)
+        return;
+
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+    target->lock_target(physics->get_position());
+    if (target->target_type == ENTITY_AGENT)
+        machine->receive_event("agent_targeted");
+}
 
 void go_to_next_destination(Entity* entity, Components::StateMachineComponent* machine)
 {
@@ -33,7 +45,7 @@ void begin_wait(Entity* entity, Components::StateMachineComponent* machine)
     waiting->tick = 0;
 }
 
-void waiting(Entity* entity, Components::StateMachineComponent* machine)
+void do_wait(Entity* entity, Components::StateMachineComponent* machine)
 {
     auto waiting = GET_COMPONENT_INTERFACE(Waiting, entity);
     waiting->tick++;
@@ -60,7 +72,7 @@ void in_transit(Entity* entity, Components::StateMachineComponent* machine)
             if (dest_target->path_finished())
                 machine->receive_event("at_desination");
             else
-                go_to_next_destination(entity);
+                go_to_next_destination(entity, machine);
         }
         else
             dest_target->orient_to_target(physics->get_position());
@@ -92,16 +104,12 @@ void chase_agent(Entity* entity, Components::StateMachineComponent* machine)
     target->move_on_surface();
 }
 
-void wait_for_agent(Entity* entity, Components::StateMachineComponent* machine)
+void stick_to_surface(Entity* entity, Components::StateMachineComponent* machine)
 {
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     Vec3 position = physics->get_position();
-
-    auto target = GET_COMPONENT(AgentTargeting, entity);
-    target->lock_target(position);
-
-    if (target->target_type == ENTITY_AGENT)
-        machine->receive_event("agent_targeted");
+    position.z = stick_to_terrain_surface(position);
+    physics->set_position(position);
 }
 
 }   // Entities

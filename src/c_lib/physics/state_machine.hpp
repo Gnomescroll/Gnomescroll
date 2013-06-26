@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/template/simple_growing_object_list.hpp>
+
 const size_t STATE_MACHINE_NAME_MAX_LEN = 64;
 
 typedef enum
@@ -12,23 +14,6 @@ typedef enum
     NULL_STATE_MACHINE_STATE = -1
 } StateMachineStateID;
 
-typedef enum
-{
-    NULL_STATE_MACHINE_ACTION = -1
-} StateMachineActionID;
-
-template <typename fptr>
-class StateMachineAction
-{
-    public:
-        StateMachineActionID id;
-        fptr action;
-
-    StateMachineAction<fptr>() :
-        id(NULL_STATE_MACHINE_ACTION), action(NULL)
-    {}
-};
-
 template <typename fptr>
 class StateMachineEvent
 {
@@ -38,7 +23,7 @@ class StateMachineEvent
         fptr action;
         StateMachineStateID next_state;
 
-    StateMachineEvent<fptr>() :
+    StateMachineEvent() :
         id(NULL_STATE_MACHINE_EVENT), action(NULL),
         next_state(NULL_STATE_MACHINE_STATE)
     {
@@ -52,7 +37,7 @@ class StateMachineState
     public:
         StateMachineStateID id;
         char name[STATE_MACHINE_NAME_MAX_LEN];
-        SimpleGrowingObjectList<StateMachineAction<fptr>> actions;
+        fptr action;
         SimpleGrowingObjectList<StateMachineEvent<fptr>,
                                 StateMachineEventID> transitions;
 
@@ -73,7 +58,7 @@ class StateMachineState
     }
 
     StateMachineState<fptr>() :
-        id(NULL_STATE_MACHINE_STATE), actions(2, NULL),
+        id(NULL_STATE_MACHINE_STATE), action(NULL),
         transitions(4, NULL_STATE_MACHINE_EVENT)
     {
         memset(this->name, 0, sizeof(this->name));
@@ -84,9 +69,11 @@ template <typename fptr>
 class StateMachineConfiguration
 {
     public:
-        SimpleGrowingObjectList<StateMachineState, StateMachineStateID> states;
+        SimpleGrowingObjectList<StateMachineState<fptr>,
+                                StateMachineStateID> states;
+        StateMachineStateID start_state;
 
-    void add_action(const char* name, fptr action)
+    void add_state(const char* name, fptr action)
     {   // e.g. state.add_state("wait", &tick_waiting);
         StateMachineState<fptr>* state = this->get_state(name);
         if (state == NULL)
@@ -94,9 +81,9 @@ class StateMachineConfiguration
         IF_ASSERT(state == NULL) return;
         if (state->name[0] == '\0')
             copy_string(state->name, name, STATE_MACHINE_NAME_MAX_LEN);
-        StateMachineAction<fptr> state_action = state->actions.create();
-        IF_ASSERT(state_action == NULL) return;
-        state_action->action = action;
+        state->action = action;
+        if (this->start_state == NULL_STATE_MACHINE_STATE)
+            this->start_state = state->id;
     }
 
     void add_transition(const char* start_state_name, const char* event_name,
@@ -114,11 +101,20 @@ class StateMachineConfiguration
     {   // e.g. state.set_state_state("waiting");
         StateMachineState<fptr>* state = this->get_state(name);
         IF_ASSERT(state == NULL) return;
-        this->current_state = state->id;
+        this->start_state = state->id;
     }
 
-    StateMachineConfiguration<fptr>() :
-        states(4, NULL_STATE_MACHINE_EVENT)
+    StateMachineState<fptr>* get_state(const char* name)
+    {
+        for (size_t i=0; i<this->states.count; i++)
+            if (strcmp(name, this->states.objects[i].name) == 0)
+                return &this->states.objects[i];
+        return NULL;
+    }
+
+    StateMachineConfiguration() :
+        states(4, NULL_STATE_MACHINE_STATE),
+        start_state(NULL_STATE_MACHINE_STATE)
     {}
 };
 
@@ -126,17 +122,16 @@ template <typename fptr>
 class StateMachine
 {
     public:
-        SimpleGrowingObjectList<StateMachineState, StateMachineStateID>* states;
+        StateMachineConfiguration<fptr>* configuration;
 
         StateMachineStateID current_state;
         StateMachineStateID pending_state;
-        StateMachineEventID pending_event;
         char pending_event[STATE_MACHINE_NAME_MAX_LEN];
 
     void load_configuration(StateMachineConfiguration<fptr>* configuration)
     {
-        GS_ASSERT(this->states == NULL);
-        this->states = configuration;
+        GS_ASSERT(this->configuration == NULL);
+        this->configuration = configuration;
     }
 
     void receive_event(const char* event)
@@ -148,56 +143,48 @@ class StateMachine
         copy_string(this->pending_event, event, STATE_MACHINE_NAME_MAX_LEN);
     }
 
-    fptr* get_current_action(size_t& n_actions)
+    fptr get_current_action()
     {   // Call this every tick to get the action function.
         // Then call the action function
-        n_actions = 0;
         StateMachineState<fptr>* state = this->get_current_state();
         IF_ASSERT(state == NULL) return NULL;
-        n_actions = state->actions.count;
-        if (!n_actions) return NULL;
-        return state->actions.objects;
+        return state->action;
     }
 
-    fptr* get_current_event_actions(size_t& n_actions)
+    fptr get_current_event_action()
     {   // Call this at the end of every tick to process the last event received
         // Make sure to call update() after this, so everything is properly flushed
-        return this->get_pending_event_actions(n_actions);
+        return this->get_pending_event_action();
     }
 
     void update()
     {   // Call this at the end of every tick to flush the event and switch
         // state, if applicable
-        if (this->pending_state >= 0)
+        if (this->pending_state != NULL_STATE_MACHINE_STATE)
             this->current_state = this->pending_state;
-        this->pending_state = 0;
+        this->pending_state = NULL_STATE_MACHINE_STATE;
         this->pending_event[0] = '\0';
     }
 
-    ~StateMachine<fptr>()
+    ~StateMachine()
     {
-        if (this->transitions != NULL)
-            for (size_t i=0; i<this->n_transitions; i++)
-                free(this->transitions[i]);
-        free(this->transitions);
-        free(this->actions);
     }
 
-    StateMachine<fptr>() :
-        states(NULL), current_state(NULL_STATE_MACHINE_STATE),
-        pending_state(NULL_STATE_MACHINE_EVENT)
+    StateMachine() :
+        configuration(NULL), current_state(NULL_STATE_MACHINE_STATE),
+        pending_state(NULL_STATE_MACHINE_STATE)
     {
         memset(this->pending_event, 0, sizeof(this->pending_event));
     }
 
     private:
 
-    fptr* get_pending_event_action(size_t& n_actions)
+    fptr get_pending_event_action()
     {
         if (this->pending_event[0] == '\0') return NULL;
         StateMachineState<fptr>* state = this->get_current_state();
         IF_ASSERT(state == NULL) return NULL;
-        StateMachineEvent* event = state->get_event(this->pending_event);
+        StateMachineEvent<fptr>* event = state->get_event(this->pending_event);
         IF_ASSERT(event == NULL) return NULL;
         this->pending_state = event->next_state;
         return event->action;
@@ -205,14 +192,13 @@ class StateMachine
 
     StateMachineState<fptr>* get_current_state()
     {
-        return this->states.get(this->current_state);
+        IF_ASSERT(this->configuration == NULL) return NULL;
+        return this->configuration->states.get(this->current_state);
     }
 
     StateMachineState<fptr>* get_state(const char* name)
     {
-        for (size_t i=0; i<this->states.count; i++)
-            if (strcmp(name, this->states.objects[i].name) == 0)
-                return &this->states.objects[i];
-        return NULL;
+        IF_ASSERT(this->configuration == NULL) return NULL;
+        return this->configuration->get_state(name);
     }
 };

@@ -544,8 +544,8 @@ inline void hitscan_entity_CtoS::handle()
                     agent_targeting->ticks_locked = 0;
 
                 auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, obj);
-                if (state_machine != NULL && state_machine->router != NULL)
-                    state_machine->router(obj, STATE_CHASE_AGENT);
+                if (state_machine != NULL)
+                    state_machine->receive_event("agent_attacked");
             }
         }
     }

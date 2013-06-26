@@ -174,8 +174,8 @@ void AgentTargetingComponent::call()
         this->ticks_locked = 0;
 
         auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, this->entity);
-        if (state_machine != NULL && state_machine->router != NULL)
-            state_machine->router(this->entity, STATE_WAITING);
+        if (state_machine != NULL)
+            state_machine->receive_event("agent_target_lost");
     }
     this->jump_cooldown_tick = GS_MAX(this->jump_cooldown_tick - 1, 0);
     this->attack_tick = GS_MAX(this->attack_tick - 1, 0);

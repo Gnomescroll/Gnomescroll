@@ -50,6 +50,10 @@ void load_energy_core_data()
     item_drop->drop->add_drop("small_charge_pack", 4, 0.5f);
     item_drop->drop->add_drop("small_charge_pack", 5, 0.3f);
     item_drop->drop->add_drop("small_charge_pack", 6, 0.2f);
+
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 
     #if DC_CLIENT

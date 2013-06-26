@@ -6,13 +6,13 @@
 #include <entity/components/dimension.hpp>
 #include <entity/components/voxel_model.hpp>
 #if DC_SERVER
-# include <entity/entities/mobs/state_machines.hpp>
+# include <entity/entities/state_machine_actions.hpp>
 #endif
 
 namespace Entities
 {
 
-static void slime_state_router(class Entity*, EntityState state);
+//static void slime_state_router(class Entity*, EntityState state);
 
 void load_mob_slime_data()
 {
@@ -75,8 +75,9 @@ void load_mob_slime_data()
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
     auto state = ADD_COMPONENT(StateMachine);
-    auto conf = state->create_configuration();
-    conf->add_state("waiting", &waiting);
+    state->aggro = true;
+    auto conf = state->configuration;
+    conf->add_state("waiting", &do_wait);
     // TODO -- multiple action sequence? would like to be able to say aggro, without packing it into every function
     conf->add_state("chase_agent", &chase_agent);
     conf->add_transition("waiting", "agent_targeted", "chase_agent", NULL);

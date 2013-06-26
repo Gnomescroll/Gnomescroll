@@ -33,7 +33,6 @@
 // these will be scheduled by the main tick
 #define CALL_LIST \
     S(RateLimit) \
-    S(MotionTargeting) \
     S(AgentTargeting) \
     S(Knockback) \
     S(Healer, 6) \

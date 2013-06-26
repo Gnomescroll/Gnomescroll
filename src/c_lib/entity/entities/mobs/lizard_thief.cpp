@@ -6,13 +6,13 @@
 #include <entity/components/health.hpp>
 #include <entity/components/dimension.hpp>
 #if DC_SERVER
-# include <entity/entities/mobs/state_machines.hpp>
+# include <entity/entities/state_machine_actions.hpp>
 #endif
 
 namespace Entities
 {
 
-static void lizard_thief_state_router(class Entity*, EntityState state);
+//static void lizard_thief_state_router(class Entity*, EntityState state);
 
 void load_mob_lizard_thief_data()
 {
@@ -85,13 +85,16 @@ void load_mob_lizard_thief_data()
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
     auto state = ADD_COMPONENT(StateMachine);
-    auto conf = state->create_configuration();
-    conf->add_state("waiting", &wait_around);
+    state->aggro = true;
+    auto conf = state->configuration;
+    conf->add_state("waiting", &do_wait);
     conf->add_state("chase_agent", &chase_agent);
     conf->add_state("wander", &in_transit);
     conf->add_transition("waiting", "done_waiting", "wander", &go_to_next_destination);
-    conf->add_transition("waiting", "agent_targeted", "chase_agent", &waiting_to_chase_agent);
-    conf->add_transition("wander", "agent_targeted", "chase_agent", &in_transit_to_chase_agent);
+    conf->add_transition("waiting", "agent_targeted", "chase_agent", NULL);
+    conf->add_transition("wander", "agent_targeted", "chase_agent", NULL);
+    conf->add_transition("waiting", "agent_attacked", "chase_agent", NULL);
+    conf->add_transition("wander", "agent_attacked", "chase_agent", NULL);
     conf->add_transition("wander", "at_destination", "waiting", &begin_wait);
     conf->add_transition("chase_agent", "agent_target_lost", "waiting", &begin_wait);
     conf->set_start_state("waiting");

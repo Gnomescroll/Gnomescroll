@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <ctype.h>
 #include <time.h>
 
@@ -234,7 +235,7 @@ inline bool is_equal(float a, float b)
     return (fabsf(a - b) < epsilon);
 }
 
-void copy_string(const char* dest, const char* src, size_t n)
+void copy_string(char* dest, const char* src, size_t n)
 {
     IF_ASSERT(n == 0 || dest == NULL || src == NULL) return;
     strncpy(dest, src, n);

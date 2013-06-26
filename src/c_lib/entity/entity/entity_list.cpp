@@ -157,15 +157,11 @@ void EntityList::tick()
         if (count <= 0) continue;
         int max = this->maximums[i];
         Entity* entities = this->entities[i];
-        entityTick tick = get_entity_tick_method(EntityType(i));
-        if (tick == NULL) continue;
         for (int j=0, k=0; j<max && k<count; j++)
             if (entities[j].id != this->null_id)
             {
                 k++;
                 entities[j].before_tick();
-                // TODO -- remove
-                tick(&entities[j]);
                 entities[j].tick();
                 entities[j].after_tick();
             }

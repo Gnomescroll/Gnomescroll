@@ -43,6 +43,10 @@ void load_agent_spawner_data()
     item_drop->drop->set_max_drop_types(1);
     item_drop->drop->set_max_drop_amounts("agent_spawner", 1);
     item_drop->drop->add_drop("agent_spawner", 1, 1.0f);
+
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 
     #if DC_CLIENT

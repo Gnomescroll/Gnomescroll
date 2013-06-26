@@ -51,6 +51,10 @@ void load_mob_spawner_data()
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
+
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 
     #if DC_CLIENT
@@ -58,16 +62,6 @@ void load_mob_spawner_data()
     anim->color = Color(223, 31, 31);
     anim->count = 5*5*5;
     anim->size = 0.4f;
-    #endif
-}
-
-void tick_mob_spawner(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
     #endif
 }
 
