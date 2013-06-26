@@ -13,10 +13,7 @@ class EntityProperty: public Property<EntityType>
 {
     public:
         size_t max;
-
         entityLoad loader;
-        //entityTick tick;
-
         CreatePacketDelegate* create_packet;
         StatePacketDelegate* state_packet;
         bool networked;
@@ -55,28 +52,24 @@ static void register_settings()
     set_entity(ENTITY_AGENT_SPAWNER, "agent_spawner");
     c->loader = &load_agent_spawner_data;
     c->max = MAX_SPAWNERS;
-    //c->tick = &tick_agent_spawner;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_BASE, "base");
     c->loader = &load_base_data;
     c->max = 2;
-    //c->tick = &tick_base;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_TURRET, "turret");
     c->loader = &load_turret_data;
     c->max = 512;
-    //c->tick = &tick_turret;
     c->create_packet = create_packet_owner;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_ENERGY_CORE, "energy_core");
     c->loader = &load_energy_core_data;
     c->max = 512;
-    //c->tick = &tick_energy_core;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
@@ -84,42 +77,36 @@ static void register_settings()
     set_entity(ENTITY_MONSTER_SPAWNER, "monster_spawner");
     c->loader = &load_mob_spawner_data;
     c->max = 64;
-    //c->tick = &tick_mob_spawner;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_MONSTER_BOX, "box");
     c->loader = &load_mob_robot_box_data;
     c->max = 512;
-    //c->tick = &tick_mob_robot_box;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_BOMB, "bomb");
     c->loader = &load_mob_bomb_data;
     c->max = 256;
-    //c->tick = &tick_mob_bomb;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_SLIME, "slime");
     c->loader = &load_mob_slime_data;
     c->max = 512;
-    //c->tick = &tick_mob_slime;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_LIZARD_THIEF, "lizard_thief");
     c->loader = &load_mob_lizard_thief_data;
     c->max = 128;
-    //c->tick = &tick_mob_lizard_thief;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_BLUE_BLUB, "blub");
     c->loader = &load_mob_blub_data;
     c->max = 128;
-    //c->tick = &tick_mob_blub;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
@@ -212,13 +199,6 @@ entityLoad get_entity_load_method(EntityType type)
     if (attr == NULL) return NULL;
     return attr->loader;
 }
-
-//entityTick get_entity_tick_method(EntityType type)
-//{
-    //EntityProperty* attr = get_entity_property(type);
-    //if (attr == NULL) return NULL;
-    //return attr->tick;
-//}
 
 CreatePacketDelegate* get_entity_create_packet_delegate(EntityType type)
 {

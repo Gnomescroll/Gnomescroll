@@ -59,14 +59,4 @@ void load_agent_spawner_data()
     #endif
 }
 
-void tick_agent_spawner(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
-    #endif
-}
-
 } // Entities

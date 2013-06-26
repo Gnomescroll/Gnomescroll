@@ -66,16 +66,4 @@ void load_energy_core_data()
     #endif
 }
 
-void tick_energy_core(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    IF_ASSERT(physics == NULL) return;
-
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
-    #endif
-}
-
 } // Entities
