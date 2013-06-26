@@ -364,14 +364,19 @@ void generate_temple(int x, int y)
 void generate_bunker(int x, int y)
 {
     int z = t_map::get_highest_open_block(x, y);
+    generate_sphere(vec3i_init(x, y, z), BUNKER_SPHERE_RADIUS, stone);
+    x += randrange(0 - BUNKER_SPHERE_RADIUS / 2, BUNKER_SPHERE_RADIUS / 2);
+    y += randrange(0 - BUNKER_SPHERE_RADIUS / 2, BUNKER_SPHERE_RADIUS / 2);
+    x = translate_point(x);
+    y = translate_point(y);
+    z = t_map::get_highest_open_block(x, y);
     printf ("Generating a bunker at %d, %d, %d \n", x, y, z);
     CubeType BunkerBlock[]={steelA, steelB, steelC};
     int CurrentSizeX;
     int CurrentSizeY;
     int PrevX = x;
     int PrevY = y;
-    int PrevZ = z;
-    generate_sphere(vec3i_init(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z), BUNKER_SPHERE_RADIUS, stone);
+    int PrevZ = map_dim.z - 1;
     for(int RoomsMade = 0; RoomsMade < BUNKER_ROOM_AMOUNT; RoomsMade++)
     {
         CurrentSizeX = randrange(BUNKER_ROOM_SIZE - BUNKER_RANDOMNESS, BUNKER_ROOM_SIZE + BUNKER_RANDOMNESS);
