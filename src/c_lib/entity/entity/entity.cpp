@@ -91,6 +91,12 @@ void Entity::before_tick()
         this->components[i]->on_before_tick();
 }
 
+void Entity::tick()
+{
+    for (int i=0; i<this->n_components; i++)
+        this->components[i]->on_tick();
+}
+
 void Entity::after_tick()
 {
     for (int i=0; i<this->n_components; i++)

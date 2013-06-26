@@ -58,6 +58,7 @@ class Entity
     void update();
     void after_update();
     void before_tick();
+    void tick();
     void after_tick();
 
     ~Entity();

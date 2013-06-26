@@ -164,7 +164,9 @@ void EntityList::tick()
             {
                 k++;
                 entities[j].before_tick();
+                // TODO -- remove
                 tick(&entities[j]);
+                entities[j].tick();
                 entities[j].after_tick();
             }
     }

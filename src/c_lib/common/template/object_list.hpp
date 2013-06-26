@@ -108,7 +108,7 @@ class ObjectList
         this->init();
     }
 
-    explicit ObjectList(size_t capacity, IDType null_id) :
+    ObjectList(size_t capacity, IDType null_id) :
         start(0), null_id(null_id), max(capacity), ct(0)
     {
         this->init();

@@ -85,8 +85,16 @@ void load_mob_lizard_thief_data()
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
     auto state = ADD_COMPONENT(StateMachine);
-    state->state = STATE_WAITING;
-    state->router = &lizard_thief_state_router;
+    auto conf = state->create_configuration();
+    conf->add_state("waiting", &wait_around);
+    conf->add_state("chase_agent", &chase_agent);
+    conf->add_state("wander", &in_transit);
+    conf->add_transition("waiting", "done_waiting", "wander", &go_to_next_destination);
+    conf->add_transition("waiting", "agent_targeted", "chase_agent", &waiting_to_chase_agent);
+    conf->add_transition("wander", "agent_targeted", "chase_agent", &in_transit_to_chase_agent);
+    conf->add_transition("wander", "at_destination", "waiting", &begin_wait);
+    conf->add_transition("chase_agent", "agent_target_lost", "waiting", &begin_wait);
+    conf->set_start_state("waiting");
 
     auto knockback = ADD_COMPONENT(Knockback);
     knockback->weight = 1.0f;
@@ -102,80 +110,80 @@ void load_mob_lizard_thief_data()
     #endif
 }
 
-#if DC_SERVER
-static void lizard_thief_state_router(class Entity* entity, EntityState state)
-{
-    auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
+//#if DC_SERVER
+//static void lizard_thief_state_router(class Entity* entity, EntityState state)
+//{
+    //auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
 
-    switch (state)
-    {
-        case STATE_CHASE_AGENT:
-            if (machine->state == STATE_WAITING)
-                waiting_to_chase_agent(entity);
-            else if (machine->state == STATE_IN_TRANSIT)
-                in_transit_to_chase_agent(entity);
-            break;
+    //switch (state)
+    //{
+        //case STATE_CHASE_AGENT:
+            //if (machine->state == STATE_WAITING)
+                //waiting_to_chase_agent(entity);
+            //else if (machine->state == STATE_IN_TRANSIT)
+                //in_transit_to_chase_agent(entity);
+            //break;
 
-        case STATE_IN_TRANSIT:
-            if (machine->state == STATE_WAITING)
-                waiting_to_in_transit(entity);
-            else if (machine->state == STATE_CHASE_AGENT)
-                chase_agent_to_in_transit(entity);
-            break;
+        //case STATE_IN_TRANSIT:
+            //if (machine->state == STATE_WAITING)
+                //waiting_to_in_transit(entity);
+            //else if (machine->state == STATE_CHASE_AGENT)
+                //chase_agent_to_in_transit(entity);
+            //break;
 
-        case STATE_WAITING:
-            if (machine->state == STATE_CHASE_AGENT)
-                chase_agent_to_waiting(entity);
-            else if (machine->state == STATE_IN_TRANSIT)
-                in_transit_to_waiting(entity);
-            break;
+        //case STATE_WAITING:
+            //if (machine->state == STATE_CHASE_AGENT)
+                //chase_agent_to_waiting(entity);
+            //else if (machine->state == STATE_IN_TRANSIT)
+                //in_transit_to_waiting(entity);
+            //break;
 
-        case STATE_NONE:
-            GS_ASSERT(false);
-            break;
-    }
-}
-#endif
+        //case STATE_NONE:
+            //GS_ASSERT(false);
+            //break;
+    //}
+//}
+//#endif
 
-void tick_mob_lizard_thief(Entity* entity)
-{
-    #if DC_SERVER
-    auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
-    auto weapon = GET_COMPONENT(WeaponTargeting, entity);
+//void tick_mob_lizard_thief(Entity* entity)
+//{
+    //#if DC_SERVER
+    //auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
+    //auto weapon = GET_COMPONENT(WeaponTargeting, entity);
 
-    switch (machine->state)
-    {
-        case STATE_WAITING:
-            waiting(entity);
-            break;
+    //switch (machine->state)
+    //{
+        //case STATE_WAITING:
+            //waiting(entity);
+            //break;
 
-        case STATE_IN_TRANSIT:
-            in_transit(entity);
-            break;
+        //case STATE_IN_TRANSIT:
+            //in_transit(entity);
+            //break;
 
-        case STATE_CHASE_AGENT:
-            if (!weapon->locked_on_target)
-                chase_agent(entity);
-            break;
+        //case STATE_CHASE_AGENT:
+            //if (!weapon->locked_on_target)
+                //chase_agent(entity);
+            //break;
 
-        case STATE_NONE:
-            GS_ASSERT(false);
-            break;
-    }
+        //case STATE_NONE:
+            //GS_ASSERT(false);
+            //break;
+    //}
 
-    if (machine->state != STATE_CHASE_AGENT)
-    {   // aggro nearby agent
-        auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-        Vec3 position = physics->get_position();
+    //if (machine->state != STATE_CHASE_AGENT)
+    //{   // aggro nearby agent
+        //auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+        //Vec3 position = physics->get_position();
 
-        auto target = GET_COMPONENT(AgentTargeting, entity);
-        target->lock_target(position);
+        //auto target = GET_COMPONENT(AgentTargeting, entity);
+        //target->lock_target(position);
 
-        if (target->target_type == ENTITY_AGENT)
-            machine->router(entity, STATE_CHASE_AGENT);
-    }
+        //if (target->target_type == ENTITY_AGENT)
+            //machine->router(entity, STATE_CHASE_AGENT);
+    //}
 
-    #endif
-}
+    //#endif
+//}
 
 } // Entities

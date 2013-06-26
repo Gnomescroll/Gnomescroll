@@ -233,3 +233,11 @@ inline bool is_equal(float a, float b)
     static const float epsilon = 0.0005f;
     return (fabsf(a - b) < epsilon);
 }
+
+void copy_string(const char* dest, const char* src, size_t n)
+{
+    IF_ASSERT(n == 0 || dest == NULL || src == NULL) return;
+    strncpy(dest, src, n);
+    GS_ASSERT(dest[n - 1] == '\0');
+    dest[n - 1] = '\0';
+}

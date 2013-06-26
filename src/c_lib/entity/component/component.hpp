@@ -26,7 +26,7 @@ class Component
     virtual void on_after_update() {}
     virtual void on_before_tick() {}
     virtual void on_after_tick() {}
-    //virtual void on_tick() {}
+    virtual void on_tick() {}
 
     virtual ~Component() {}
 
