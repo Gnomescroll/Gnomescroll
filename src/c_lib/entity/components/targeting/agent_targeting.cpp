@@ -1,4 +1,4 @@
-#include "motion_targeting.hpp"
+#include "agent_targeting.hpp"
 
 #include <physics/vec3.hpp>
 #include <physics/motion.hpp>
@@ -161,8 +161,13 @@ void AgentTargetingComponent::move_on_surface()
 
 void AgentTargetingComponent::call()
 {
+    auto machine = GET_COMPONENT_INTERFACE(StateMachine, this->entity);
     if (this->target_type == NULL_ENTITY_TYPE)
     {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+        this->lock_target(physics->get_position());
+        if (this->target_type == ENTITY_AGENT && machine != NULL)
+            machine->receive_event("agent_targeted");
         this->ticks_locked = 0;
         return;
     }
@@ -173,9 +178,8 @@ void AgentTargetingComponent::call()
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 
-        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, this->entity);
-        if (state_machine != NULL)
-            state_machine->receive_event("agent_target_lost");
+        if (machine != NULL)
+            machine->receive_event("agent_target_lost");
     }
     this->jump_cooldown_tick = GS_MAX(this->jump_cooldown_tick - 1, 0);
     this->attack_tick = GS_MAX(this->attack_tick - 1, 0);

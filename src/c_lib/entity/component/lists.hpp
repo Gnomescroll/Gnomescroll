@@ -14,7 +14,6 @@
     A(SpawnChild, SpawnChild) \
     A(Dimension, Dimension) \
     A(WeaponTargeting, Targeting) \
-    A(MotionTargeting, Targeting) \
     A(DestinationTargeting, Targeting) \
     A(AgentTargeting, Targeting) \
     A(StateMachine, StateMachine) \

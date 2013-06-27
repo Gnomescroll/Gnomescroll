@@ -78,7 +78,6 @@ void load_mob_bomb_data()
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
     auto state = ADD_COMPONENT(StateMachine);
-    state->aggro = true;
     auto conf = state->configuration;
     conf->add_state("waiting", &do_wait);
     conf->add_state("chase_agent", &chase_agent);

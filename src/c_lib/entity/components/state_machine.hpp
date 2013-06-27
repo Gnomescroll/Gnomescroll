@@ -40,13 +40,9 @@ class StateMachineComponent: public Component
         StateMachineConfiguration<stateMachineAction>* configuration;
         StateMachine<stateMachineAction> state;
 
-        // miscellaneous behaviour flags. this should be a call() component
-        bool aggro;
-
     void load_settings_from(const Component* component)
     {
         BEGIN_COPY(StateMachineComponent);
-        COPY(aggro);
         this->state.load_configuration(_component->configuration);
         this->state.current_state = _component->configuration->start_state;
     }
@@ -60,9 +56,6 @@ class StateMachineComponent: public Component
 
     virtual void on_before_tick()
     {
-        this->process_current_event();
-        if (this->aggro)
-            check_agent_aggro(this->entity, this, NULL);
         this->process_current_event();
     }
 
@@ -96,7 +89,7 @@ class StateMachineComponent: public Component
 
     StateMachineComponent() :
         Component(COMPONENT_StateMachine, COMPONENT_INTERFACE_StateMachine),
-        owns_configuration(false), configuration(NULL), aggro(false)
+        owns_configuration(false), configuration(NULL)
     {}
 };
 

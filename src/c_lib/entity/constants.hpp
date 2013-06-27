@@ -65,7 +65,6 @@ typedef enum
 
     COMPONENT_SpawnChild,
 
-    COMPONENT_MotionTargeting,
     COMPONENT_WeaponTargeting,
     COMPONENT_DestinationTargeting,
     COMPONENT_AgentTargeting,

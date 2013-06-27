@@ -25,15 +25,11 @@ void load_mob_blub_data()
     auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.set_type("blue_blub");
 
-    #if DC_CLIENT
-    ADD_COMPONENT(HitPoints);
-    #endif
-    #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 50;
     health->health_max = 50;
-    #endif
 
+    #if DC_SERVER
     auto dest = ADD_COMPONENT(DestinationTargeting);
     dest->sight_range = 15.0f;
     dest->destination_choice_x = 20;
@@ -56,7 +52,6 @@ void load_mob_blub_data()
     auto waiting = ADD_COMPONENT(Waiting);
     waiting->wait_time = ONE_SECOND * 3;
 
-    #if DC_SERVER
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
 
@@ -70,7 +65,6 @@ void load_mob_blub_data()
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
     auto state = ADD_COMPONENT(StateMachine);
-    state->aggro = true;
     auto conf = state->configuration;
     conf->add_state("waiting", &do_wait);
     conf->add_state("chase_agent", &chase_agent);

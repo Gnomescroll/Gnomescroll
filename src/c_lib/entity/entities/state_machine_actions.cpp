@@ -10,18 +10,6 @@
 namespace Entities
 {
 
-void check_agent_aggro(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
-{
-    auto target = GET_COMPONENT(AgentTargeting, entity);
-    if (target->target_type != NULL_ENTITY_TYPE)
-        return;
-
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    target->lock_target(physics->get_position());
-    if (target->target_type == ENTITY_AGENT)
-        machine->receive_event("agent_targeted");
-}
-
 void go_to_next_destination(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);

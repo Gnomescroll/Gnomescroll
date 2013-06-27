@@ -7,7 +7,6 @@
 #include <entity/components/voxel_model.hpp>
 #include <entity/components/targeting.hpp>
 #include <entity/components/targeting/weapon_targeting.hpp>
-#include <entity/components/targeting/motion_targeting.hpp>
 #include <agent/_interface.hpp>
 
 namespace Entities

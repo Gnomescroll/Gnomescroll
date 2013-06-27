@@ -36,6 +36,7 @@ void draw_sprite_mobs()
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5f);
+    GL_ASSERT(GL_DEPTH_TEST, true);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, animations->texture_loader.texture);
     glBegin(GL_QUADS);
@@ -45,6 +46,7 @@ void draw_sprite_mobs()
             sprite_mob_list->objects[i]->draw();
 
     glEnd();
+    glDisable(GL_TEXTURE_2D);
     glDisable(GL_ALPHA_TEST);
     CHECK_GL_ERROR();
 }
