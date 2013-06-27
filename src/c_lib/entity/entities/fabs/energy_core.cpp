@@ -22,7 +22,7 @@ void load_energy_core_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
+    dims->set_height(1.0f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::energy_core;

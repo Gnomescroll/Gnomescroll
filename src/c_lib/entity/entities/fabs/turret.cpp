@@ -23,8 +23,8 @@ void load_turret_data()
     ADD_COMPONENT(Owner);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.9f;
-    dims->camera_height = 1.6f;
+    dims->set_height(1.9f);
+    dims->set_camera_height(1.6f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::turret;

@@ -22,7 +22,7 @@ void load_mob_bomb_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
+    dims->set_height(1.0f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::robot_bomb;

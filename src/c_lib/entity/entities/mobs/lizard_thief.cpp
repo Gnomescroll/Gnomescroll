@@ -20,11 +20,12 @@ void load_mob_lizard_thief_data()
 
     ADD_COMPONENT(PositionMomentum);
 
-    auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
-
     auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.set_type("lizard_thief");
+
+    auto dims = ADD_COMPONENT(Dimension);
+    dims->set_height(t_mob::get_mob_height(mob->mob.type) * 1.9f);
+    dims->set_width(t_mob::get_mob_width(mob->mob.type) * 1.9f);
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 80;

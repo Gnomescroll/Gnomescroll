@@ -18,7 +18,7 @@ void load_mob_spawner_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.9f;
+    dims->set_height(1.9f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::monster_spawner;

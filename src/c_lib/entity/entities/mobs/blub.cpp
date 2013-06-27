@@ -19,11 +19,12 @@ void load_mob_blub_data()
 
     ADD_COMPONENT(PositionMomentum);
 
-    auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
-
     auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.set_type("blue_blub");
+
+    auto dims = ADD_COMPONENT(Dimension);
+    dims->set_height(t_mob::get_mob_height(mob->mob.type) * 1.5f);
+    dims->set_width(t_mob::get_mob_width(mob->mob.type) * 1.5f);
 
     auto health = ADD_COMPONENT(HitPoints);
     health->health = 50;

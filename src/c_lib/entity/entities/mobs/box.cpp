@@ -21,8 +21,8 @@ void load_mob_robot_box_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 3.0f;
-    dims->camera_height = 2.5f;
+    dims->set_height(3.0f);
+    dims->set_camera_height(2.5f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::robot_box;
