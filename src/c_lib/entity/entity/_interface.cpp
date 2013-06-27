@@ -144,7 +144,7 @@ bool full(EntityType type)
 size_t get_components_needed(ComponentType type)
 {
     size_t ct = 0;
-    for (size_t i=0; i<MAX_ENTITY_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
         size_t uses = entity_data->get_components_needed(EntityType(i), type);
         ct += get_entity_max(EntityType(i)) * uses;
