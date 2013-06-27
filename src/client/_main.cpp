@@ -367,7 +367,6 @@ void draw_tick()
     GL_ASSERT(GL_BLEND, true);
     Skybox::draw();
 
-
     poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
