@@ -12,8 +12,6 @@
 namespace Entities
 {
 
-//static void slime_state_router(class Entity*, EntityState state);
-
 void load_mob_slime_data()
 {
     EntityType type = ENTITY_MONSTER_SLIME;

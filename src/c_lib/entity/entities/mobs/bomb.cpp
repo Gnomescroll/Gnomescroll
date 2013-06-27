@@ -13,8 +13,6 @@
 namespace Entities
 {
 
-//static void bomb_state_router(class Entity*, EntityState state);
-
 void load_mob_bomb_data()
 {
     EntityType type = ENTITY_MONSTER_BOMB;
@@ -88,8 +86,8 @@ void load_mob_bomb_data()
     conf->add_transition("waiting", "done_waiting", "wander", &go_to_next_destination);
     conf->add_transition("waiting", "agent_targeted", "chase_agent", NULL);
     conf->add_transition("wander", "agent_targeted", "chase_agent", NULL);
-    conf->add_transition("waiting", "agent_attacked", "chase_agent", NULL);
-    conf->add_transition("wander", "agent_attacked", "chase_agent", NULL);
+    conf->add_transition("waiting", "agent_attacked", "chase_agent", &target_attacker);
+    conf->add_transition("wander", "agent_attacked", "chase_agent", &target_attacker);
     conf->add_transition("wander", "at_destination", "waiting", &begin_wait);
     conf->add_transition("chase_agent", "agent_target_lost", "waiting", &begin_wait);
     conf->set_start_state("waiting");

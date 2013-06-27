@@ -15,7 +15,7 @@ namespace Components
 class StateMachineComponent;
 }
 
-typedef void (*stateMachineAction)(class Entities::Entity*, class Components::StateMachineComponent*);
+typedef void (*stateMachineAction)(class Entities::Entity*, class Components::StateMachineComponent*, void*);
 
 namespace Components
 {
@@ -27,9 +27,10 @@ class StateMachineComponent: public Component
 
     void process_current_event()
     {
-        stateMachineAction action = this->state.get_current_event_action();
+        void* event_data = NULL;
+        stateMachineAction action = this->state.get_current_event_action(event_data);
         if (action != NULL)
-            action(this->entity, this);
+            action(this->entity, this, event_data);
         this->state.update();
     }
 
@@ -39,7 +40,7 @@ class StateMachineComponent: public Component
         StateMachineConfiguration<stateMachineAction>* configuration;
         StateMachine<stateMachineAction> state;
 
-        // miscellaneous behaviour flags
+        // miscellaneous behaviour flags. this should be a call() component
         bool aggro;
 
     void load_settings_from(const Component* component)
@@ -61,7 +62,7 @@ class StateMachineComponent: public Component
     {
         this->process_current_event();
         if (this->aggro)
-            check_agent_aggro(this->entity, this);
+            check_agent_aggro(this->entity, this, NULL);
         this->process_current_event();
     }
 
@@ -69,7 +70,7 @@ class StateMachineComponent: public Component
     {
         stateMachineAction action = state.get_current_action();
         if (action != NULL)
-            action(this->entity, this);
+            action(this->entity, this, NULL);
     }
 
     virtual void on_after_tick()
@@ -80,6 +81,11 @@ class StateMachineComponent: public Component
     void receive_event(const char* name)
     {
         this->state.receive_event(name);
+    }
+
+    void receive_event(const char* name, void* event_data)
+    {
+        this->state.receive_event(name, event_data);
     }
 
     virtual ~StateMachineComponent()

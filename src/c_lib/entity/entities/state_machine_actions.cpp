@@ -10,7 +10,7 @@
 namespace Entities
 {
 
-void check_agent_aggro(Entity* entity, Components::StateMachineComponent* machine)
+void check_agent_aggro(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto target = GET_COMPONENT(AgentTargeting, entity);
     if (target->target_type != NULL_ENTITY_TYPE)
@@ -22,7 +22,7 @@ void check_agent_aggro(Entity* entity, Components::StateMachineComponent* machin
         machine->receive_event("agent_targeted");
 }
 
-void go_to_next_destination(Entity* entity, Components::StateMachineComponent* machine)
+void go_to_next_destination(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     Vec3 position = physics->get_position();
@@ -39,13 +39,13 @@ void go_to_next_destination(Entity* entity, Components::StateMachineComponent* m
     physics->set_angles(angles);
 }
 
-void begin_wait(Entity* entity, Components::StateMachineComponent* machine)
+void begin_wait(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto waiting = GET_COMPONENT_INTERFACE(Waiting, entity);
     waiting->tick = 0;
 }
 
-void do_wait(Entity* entity, Components::StateMachineComponent* machine)
+void do_wait(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto waiting = GET_COMPONENT_INTERFACE(Waiting, entity);
     waiting->tick++;
@@ -53,7 +53,7 @@ void do_wait(Entity* entity, Components::StateMachineComponent* machine)
         machine->receive_event("done_waiting");
 }
 
-void in_transit(Entity* entity, Components::StateMachineComponent* machine)
+void in_transit(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto dest_target = GET_COMPONENT(DestinationTargeting, entity);
 
@@ -72,14 +72,14 @@ void in_transit(Entity* entity, Components::StateMachineComponent* machine)
             if (dest_target->path_finished())
                 machine->receive_event("at_destination");
             else
-                go_to_next_destination(entity, machine);
+                go_to_next_destination(entity, machine, event_data);
         }
         else
             dest_target->orient_to_target(physics->get_position());
     }
 }
 
-void chase_agent(Entity* entity, Components::StateMachineComponent* machine)
+void chase_agent(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {   // TODO -- write a method that switches to STATE_WAITING under certain conditions
     // for slimes, this would be if we travelled too far from our original spawn location
     auto target = GET_COMPONENT(AgentTargeting, entity);
@@ -104,12 +104,20 @@ void chase_agent(Entity* entity, Components::StateMachineComponent* machine)
     target->move_on_surface();
 }
 
-void stick_to_surface(Entity* entity, Components::StateMachineComponent* machine)
+void stick_to_surface(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     physics->set_position(position);
+}
+
+void target_attacker(Entity* entity, class Components::StateMachineComponent* machine, void* event_data)
+{
+    IF_ASSERT(event_data == NULL) return;
+    auto target = GET_COMPONENT(AgentTargeting, entity);
+    AgentID agent_id = *reinterpret_cast<AgentID*>(event_data);
+    target->set_target(agent_id);
 }
 
 }   // Entities

@@ -138,6 +138,7 @@ class StateMachine
 
         StateMachineStateID current_state;
         StateMachineStateID pending_state;
+        void* pending_event_data;
         char pending_event[STATE_MACHINE_NAME_MAX_LEN];
 
     void load_configuration(StateMachineConfiguration<fptr>* configuration)
@@ -155,6 +156,13 @@ class StateMachine
         copy_string(this->pending_event, event, STATE_MACHINE_NAME_MAX_LEN);
     }
 
+    void receive_event(const char* event, void* event_data)
+    {
+        this->receive_event(event);
+        free(this->pending_event_data);
+        this->pending_event_data = event_data;
+    }
+
     fptr get_current_action()
     {   // Call this every tick to get the action function.
         // Then call the action function
@@ -163,10 +171,10 @@ class StateMachine
         return state->action;
     }
 
-    fptr get_current_event_action()
+    fptr get_current_event_action(void*& data)
     {   // Call this at the end of every tick to process the last event received
         // Make sure to call update() after this, so everything is properly flushed
-        return this->get_pending_event_action();
+        return this->get_pending_event_action(data);
     }
 
     void update()
@@ -176,22 +184,25 @@ class StateMachine
             this->current_state = this->pending_state;
         this->pending_state = NULL_STATE_MACHINE_STATE;
         this->pending_event[0] = '\0';
+        free(this->pending_event_data);
+        this->pending_event_data = NULL;
     }
 
     ~StateMachine()
     {
+        free(this->pending_event_data);
     }
 
     StateMachine() :
         configuration(NULL), current_state(NULL_STATE_MACHINE_STATE),
-        pending_state(NULL_STATE_MACHINE_STATE)
+        pending_state(NULL_STATE_MACHINE_STATE), pending_event_data(NULL)
     {
         memset(this->pending_event, 0, sizeof(this->pending_event));
     }
 
     private:
 
-    fptr get_pending_event_action()
+    fptr get_pending_event_action(void*& data)
     {
         if (this->pending_event[0] == '\0') return NULL;
         StateMachineState<fptr>* state = this->get_current_state();
@@ -199,6 +210,7 @@ class StateMachine
         StateMachineEvent<fptr>* event = state->get_event(this->pending_event);
         if (event == NULL) return NULL;
         this->pending_state = event->next_state;
+        data = this->pending_event_data;
         return event->action;
     }
 
