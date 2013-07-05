@@ -151,55 +151,57 @@ void generate_lab(int x, int y)
         {
             case 1:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             else
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             PrevX = x;
             x += CurrentSizeX;
             x = translate_point(x);
             break;
             case 2:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             else
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             PrevY = y;
             y += CurrentSizeY;
             y = translate_point(y);
             break;
             case 3:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             else
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             PrevZ = z;
             z += LAB_ROOM_HEIGHT;
+            if(z >= map_dim.z) z = map_dim.z - 1;
             break;
             case 4:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             else
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             PrevX = x;
             x -= CurrentSizeX;
             x = translate_point(x);
             break;
             case 5:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             else
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             PrevY = y;
             y -= CurrentSizeY;
             y = translate_point(y);
             break;
             case 6:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             else
-            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / sizeof(*LabBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + LAB_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), random_bool(), random_bool(), random_bool(), 1, random_bool(), random_bool(), random_bool());
             PrevZ = z;
             z -= LAB_ROOM_HEIGHT;
+            if(z < 0) z = 0;
             break;
         }
     }
@@ -254,53 +256,53 @@ void generate_house(int x, int y)
         {
             case 1:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevX = x;
             x += CurrentSizeX;
             x = translate_point(x);
             break;
             case 2:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevY = y;
             y += CurrentSizeY;
             y = translate_point(y);
             break;
             case 3:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevZ = z;
             z += HOUSE_ROOM_HEIGHT;
             break;
             case 4:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevX = x;
             x -= CurrentSizeX;
             x = translate_point(x);
             break;
             case 5:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevY = y;
             y -= CurrentSizeY;
             y = translate_point(y);
             break;
             case 6:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / sizeof(*HouseBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + HOUSE_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevZ = z;
             z -= HOUSE_ROOM_HEIGHT;
             break;
@@ -385,44 +387,44 @@ void generate_bunker(int x, int y)
         {
             case 1:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevX = x;
             x += CurrentSizeX;
             x = translate_point(x);
             break;
             case 2:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevY = y;
             y += CurrentSizeY;
             y = translate_point(y);
             break;
             case 3:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevZ = z;
             z -= BUNKER_ROOM_HEIGHT;
             break;
             case 4:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevX = x;
             x -= CurrentSizeX;
             x = translate_point(x);
             break;
             case 5:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 1, clamp_point(x + 5), clamp_point(y + 5), z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / sizeof(*BunkerBlock) - 1)], x, y, z, clamp_point(x + CurrentSizeX), clamp_point(y + CurrentSizeY), z + BUNKER_ROOM_HEIGHT, clamp_point(x + 5), clamp_point(y + 5), z + 1, clamp_point(PrevX + 5), clamp_point(PrevY + 5), PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevY = y;
             y -= CurrentSizeY;
             y = translate_point(y);
@@ -670,4 +672,12 @@ bool isArtificial(int x, int y)
     return true;
     else return false;
 }
+
+int clamp_point(int point) //assumes map_dim.x = map_dim.y
+{
+    if(point < 0) return 0;
+    if(point >= map_dim.x) return map_dim.x - 1;
+    return point;
+}
+
 }   // t_gen
