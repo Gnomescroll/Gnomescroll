@@ -526,12 +526,13 @@ inline void hitscan_entity_CtoS::handle()
                                    this->charge_progress + 1.0f);
         }
 
-        AgentID* attacker_id = (AgentID*)malloc(sizeof(AgentID));
-        *attacker_id = a->id;
-
         auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, obj);
         if (state_machine != NULL)
+        {
+            AgentID* attacker_id = (AgentID*)malloc(sizeof(AgentID));
+            *attacker_id = a->id;
             state_machine->receive_event("agent_attacked", (void*)attacker_id);
+        }
     }
 
     agent_hitscan_entity_StoC msg;

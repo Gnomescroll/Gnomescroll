@@ -13,8 +13,8 @@ static void verify_sprite_mob_config()
         SpriteMobProperty* p = &sprite_mob_properties->properties[i];
         if (!p->loaded) continue;
         GS_ASSERT(p->radius > 0.0f && p->radius <= 4.0f);
-        GS_ASSERT(p->width > 0 && p->width <= 1.0f);
-        GS_ASSERT(p->height > 0 && p->height <= 1.0f);
+        GS_ASSERT(p->width > 0 && p->width <= 8.0f);
+        GS_ASSERT(p->height > 0 && p->height <= 8.0f);
         GS_ASSERT(p->size > 0 && p->size <= 8.0f);
         GS_ASSERT(p->animation_group_id != NULL_SPRITE_ANIMATION_GROUP);
         GS_ASSERT(p->type != NULL_SPRITE_MOB_TYPE);
@@ -40,6 +40,7 @@ static void apply_automatic_properties()
     {
         SpriteMobProperty* p = &sprite_mob_properties->properties[i];
         if (!p->loaded) continue;
+        p->set_dimensions();
         p->set_radius();
     }
 }
@@ -72,9 +73,11 @@ void load_sprite_mob_config()
     //s->width = 0.5f;
     //s->height = 0.5f;
     add_animation("walk");
+    s->size = 1.9f;
     a->add_frame_strip(1, 1, 2);
 
     add_mob("blue_blub", "rdn");
+    s->size = 1.9f;
     add_animation("walk");
     a->add_frame_strip(1, 3, 2);
 

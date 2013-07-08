@@ -192,14 +192,25 @@ bool point_occupied_by_type(EntityType type, const Vec3i& position)
 
 void damage_entities_within_sphere(const EntityType* types, int n_types,
                                    const Vec3& position, float radius,
-                                   int damage)
+                                   int damage, AgentID attacker_id)
 {
+    IF_ASSERT(damage < 0) return;
+    if (!damage) return;
     int count = filter->within_sphere(entity_list, types, n_types, position, radius);
     for (int i=0; i<count; i++)
     {
         Entity* entity = filter->entities[i];
         auto health = GET_COMPONENT_INTERFACE(Health, entity);
-        if (health != NULL) health->take_damage(damage);
+        if (health != NULL)
+            health->take_damage(damage);
+
+        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
+        if (state_machine != NULL)
+        {
+            AgentID* attacker = (AgentID*)malloc(sizeof(attacker_id));
+            *attacker = attacker_id;
+            state_machine->receive_event("agent_attacked", (void*)attacker);
+        }
     }
 }
 

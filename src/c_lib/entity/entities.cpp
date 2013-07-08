@@ -45,9 +45,10 @@ static Vec3 get_default_spawn_position(Entity* entity)
         position.y = randrange(0, map_dim.y - 1);
         int z = randrange(1, map_dim.z-1);
         position.z = t_map::get_nearest_surface_block(position.x, position.y, z, h);
-    } while (position.z <= 0 && tries < MAX_TRIES);
+    } while (position.z <= 0 && tries++ < MAX_TRIES);
     if (tries == MAX_TRIES)
-        position.z = t_map::get_highest_open_block(0, 0);
+        position.z = t_map::get_highest_open_block(randrange(0, map_dim.x - 1),
+                                                   randrange(0, map_dim.y - 1));
     return vec3_add(vec3_init(position), vec3_init(0.5f, 0.5f, 0.0f));
 }
 

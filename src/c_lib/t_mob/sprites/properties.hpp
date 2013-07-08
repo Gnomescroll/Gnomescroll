@@ -12,6 +12,13 @@ class SpriteMobProperty: public Property<SpriteMobType>
         float height;   // as a fraction of the sprite height
         float radius;   // automatically set
 
+    void set_dimensions()
+    {   // multiplies width/height by size
+        // TODO -- get width/height from texture sheet loader
+        this->width *= this->size;
+        this->height *= this->size;
+    }
+
     void set_radius()
     {   // call this once, after width/height have been set
         this->radius = GS_MAX(this->width, this->height) * 0.5f * this->size;
