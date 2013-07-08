@@ -42,7 +42,8 @@ void init_crystals()
     crystals[i++] = t_mech::get_mech_type("blue_crystal");
     crystals[i++] = t_mech::get_mech_type("red_crystal");
     crystals[i++] = t_mech::get_mech_type("green_crystal");
-    for (int j=0; j<i; i++)
+    GS_ASSERT(i <= n_crystals);
+    for (int j=0; j<i; j++)
         GS_ASSERT(isValid(crystals[j]));
 
     bedrock = t_map::get_cube_type("bedrock");
@@ -58,6 +59,8 @@ void init_crystals()
     crystal_strata[i++] = 0.5f;
     crystal_strata[i++] = 0.5f;
     crystal_strata[i++] = 1.0f;
+
+    GS_ASSERT(i <= n_crystals * 2);
 
     for (int i=0; i<CRYSTAL_CLUSTER_RADIUS*2+1; i++)
         falloffs[i] = powf(CRYSTAL_CLUSTER_FALLOFF, i);
@@ -102,8 +105,11 @@ void place_crystal_cluster(const Vec3i& position, MechType crystal_id)
 MechType get_crystal_type(float percent_complete)
 {
     for (int i=0; i<n_crystals; i++)
-        if (percent_complete >= crystal_strata[2*i+0] && percent_complete < crystal_strata[2*i+1])
+        if (percent_complete >= crystal_strata[2*i+0] &&
+            percent_complete < crystal_strata[2*i+1])
+        {
             return crystals[i];
+        }
     GS_ASSERT(false);
     printf("%s Error: No crystal could be placed. "
            "Check that crystal_strata is continuous over [0,1]."
@@ -132,9 +138,9 @@ void populate_crystals()
     for (int j=0; j<map_dim.y; j++)
     {
         if (mrandf() > CRYSTAL_CLUSTER_PROBABILITY) continue;   // probability test
-        int id = t_map::get(i,j,k); // get cube
+        CubeType id = t_map::get(i, j, k); // get cube
         if (id != rock) continue;
-        if (t_map::get(i,j,k+1) != 0) continue; // check block above is open
+        if (t_map::get(i,j,k+1) != EMPTY_CUBE) continue; // check block above is open
 
         if (ct >= ct_max)
         {

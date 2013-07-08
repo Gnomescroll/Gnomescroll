@@ -97,12 +97,12 @@ void draw_agent_cube_selection(const Vec3i& position, Color color)
         int j = 3*vertex_index2[2*i+0];
         Vec3 q;
         for (int k=0; k<3; k++)
-            q.f[k] = p.f[i] + v_set2[j+k]*radius;
+            q.f[k] = p.f[k] + v_set2[j+k]*radius;
         glVertex3f(q.x, q.y, q.z);
 
         j = 3*vertex_index2[2*i+1];
         for (int k=0; k<3; k++)
-            q.f[k] = p.f[i] + v_set2[j+k]*radius;
+            q.f[k] = p.f[k] + v_set2[j+k]*radius;
         glVertex3f(q.x, q.y, q.z);
     }
     glEnd();

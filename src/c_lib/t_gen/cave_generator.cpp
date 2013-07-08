@@ -41,7 +41,7 @@ void generate_caves()
 
 void create_node(int x, int y, int z, int ox, int oy, int oz)
 {
-    printf("Creating a cave node from %d, %d, %d to %d, %d, %d...\n", x, y, z, ox, oy, oz);
+    //printf("Creating a cave node from %d, %d, %d to %d, %d, %d...\n", x, y, z, ox, oy, oz);
     generate_line(x, y, z, ox, oy, oz, EMPTY_CUBE, randrange(MIN_SIZE, MAX_SIZE));
     for(int tried = 0; tried < MAX_TRIES; tried++)
     if(randrange(0, 99) < NODE_PROBABILITY) create_node(ox, oy, oz, bounce_point(ox + randrange(0 - MAX_DISTANCE, MAX_DISTANCE)), bounce_point(oy + randrange(0 - MAX_DISTANCE, MAX_DISTANCE)), clamp_cave_height(oz + randrange(MAX_FALL, MAX_RISE)));
@@ -51,7 +51,7 @@ void create_node(int x, int y, int z, int ox, int oy, int oz)
 
 void create_hall(int x, int y, int z)
 {
-    printf("Creating a cave hall at %d, %d, %d...\n", x, y, z);
+    //printf("Creating a cave hall at %d, %d, %d...\n", x, y, z);
     for(int done = 0; done < N_HALL_SPHERES; done++)
     {
         x += randrange(0 - MIN_HALL_SPHERE_RADIUS, MIN_HALL_SPHERE_RADIUS);

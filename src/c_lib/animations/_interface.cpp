@@ -50,7 +50,7 @@ void draw_hitscan_effect()
 
 void draw_railtrail_effect()
 {
-    railtrail_effect_list->draw();
+    //railtrail_effect_list->draw();
 }
 
 void mining_laser_effect_tick()

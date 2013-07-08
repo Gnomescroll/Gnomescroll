@@ -97,7 +97,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     x86_64 = not i386
 
     # Disable awesomium until it is completely removed
-    awesomium = False
+    if not production:
+        awesomium = False
 
     optflag = '-O{0}'.format(optlevel)
     awe_stem = 'release'
@@ -213,6 +214,11 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         #'-fno-default-inline'
     ]
 
+    if production:
+        # This kills some good optimizations, the warnings are all from miniz
+        # Miniz should be compiled separately then linked against
+        extra_options.append('-fno-strict-aliasing')
+
     if OS == 'Linux' and not windows:
         # For some reason, this #define disappears... so put it here
         extra_options.append('-Dlinux')
@@ -257,7 +263,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     release builds
     #conf.env.append_value('LINKFLAGS', '--incremental')
     '''
-    # glew_inc_path = ['/usr/local/cuda/extras/CUPTI/include']
     glew_inc_path = ['../../../lib/win32/glew']
     conf.check(header_name='GL/glew.h', mandatory=True, includes=glew_inc_path)
 
@@ -464,14 +469,12 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.INCLUDES.append('/usr/include/x86_64-linux-gnu/c++/4.7/')
 
     if OS == 'Linux' and not windows:
-        if production:
-            lib_base_path = '$ORIGIN/./lib/lin{0}/'
-        else:
-            lib_base_path = '$ORIGIN/../lib/lin{0}/'
-        conf.env.RPATH += [lib_base_path.format(arch_label)]
+        lib_paths = ['$ORIGIN/./lib/lin{0}/', '$ORIGIN/../lib/lin{0}/']
+        conf.env.RPATH += [x.format(arch_label) for x in lib_paths]
         if awesomium:
-            conf.env.RPATH += [os.path.join(lib_base_path,
-                                            'awesomium/release')]
+            awepaths = [os.path.join(x, 'awesomium/release')
+                        for x in lib_paths]
+            conf.env.RPATH += [x.format(arch_label) for x in awepaths]
 
     conf.env.assimp = assimp
     conf.env.awesomium = awesomium

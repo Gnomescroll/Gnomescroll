@@ -126,6 +126,12 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         optflag,
     ]
 
+    if production:
+        # libev issue that the dev refuses to address,
+        # this may kill some good optimizations,
+        # the redis/libev module should be its own lib and linked in
+        extra_options.append('-fno-strict-aliasing')
+
     if OS == 'Linux' and not windows:
         extra_options.append('-Dlinux')
 

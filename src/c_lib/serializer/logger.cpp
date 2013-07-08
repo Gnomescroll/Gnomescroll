@@ -35,22 +35,26 @@ void init_logger()
     GS_ASSERT(entity_log == NULL);
 }
 
+static void close_log_files()
+{
+    #define CLOSEF(NAME) \
+        if (NAME##_log != NULL) { fclose(NAME##_log); NAME##_log = NULL; }
+    CLOSEF(map)
+    CLOSEF(mech)
+    CLOSEF(player)
+    CLOSEF(container)
+    CLOSEF(entity)
+    #undef CLOSEF
+}
+
 void teardown_logger()
 {
-    if (map_log != NULL) fclose(map_log);
-    if (mech_log != NULL) fclose(mech_log);
-    if (player_log != NULL) fclose(player_log);
-    if (container_log != NULL) fclose(container_log);
-    if (entity_log != NULL) fclose(entity_log);
+    close_log_files();
 }
 
 void set_log_paths(const char* save_folder)
 {
-    GS_ASSERT(player_log == NULL);
-    GS_ASSERT(container_log == NULL);
-    GS_ASSERT(map_log == NULL);
-    GS_ASSERT(mech_log == NULL);
-    GS_ASSERT(entity_log == NULL);
+    close_log_files();
 
     int wrote = 0;
 

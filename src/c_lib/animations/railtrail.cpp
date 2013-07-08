@@ -19,10 +19,10 @@ inline void RailTrailEffect::reset()
     //// spin particles
 //}
 
-void RailTrailEffect::draw(Vec3 camera)
-{
+//void RailTrailEffect::draw(Vec3 camera)
+//{
 
-}
+//}
 
 void RailTrailEffect::tick()
 {
@@ -101,7 +101,7 @@ void RailTrailEffect::tick()
     }
 }
 
-void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadratic radius
+void RailTrailEffect::draw_quad(const Vec3& p, float r, float theta, float phi) // quadratic radius
 { // with no rotation modifications, it faces upwards
     static const float tx_min = 0.0f;
     static const float tx_max = 1.0f;
@@ -153,33 +153,32 @@ void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quad
     glVertex3f(br.x, br.y, br.z);  // Bottom right
 }
 
-void RailTrailEffectList::draw()
-{
-    IF_ASSERT(current_camera == NULL) return;
-    if (this->num == 0) return;
+//void RailTrailEffectList::draw()
+//{
+    //IF_ASSERT(current_camera == NULL) return;
+    //if (this->num == 0) return;
 
-    //_LAST_TICK();
-    //_GET_MS_TIME();
+    ////_LAST_TICK();
+    ////_GET_MS_TIME();
 
-    glColor3ub(255,255,255);
+    //glColor3ub(255,255,255);
 
-    GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
-    GL_ASSERT(GL_BLEND, true);
+    //GL_ASSERT(GL_DEPTH_TEST, true);
+    //GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    //GL_ASSERT(GL_BLEND, true);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, hitscan_texture_id);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    //glEnable(GL_TEXTURE_2D);
+    //glBindTexture(GL_TEXTURE_2D, hitscan_texture_id);
+    //glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
-    glBegin(GL_QUADS);
+    //glBegin(GL_QUADS);
 
-    for (size_t i=0; i<this->num; i++)
-        a[i].draw(current_camera->get_position());
+    //for (size_t i=0; i<this->num; i++)
+        //a[i].draw(current_camera->get_position());
 
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-
-}
+    //glEnd();
+    //glDisable(GL_TEXTURE_2D);
+//}
 
 void RailTrailEffectList::tick()
 {

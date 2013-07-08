@@ -559,9 +559,9 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
     // add the features
-#if PRODUCTION
+    #if PRODUCTION
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
-#endif
+    #endif
 
     add_shrooms();
 
