@@ -251,6 +251,11 @@ class LightTextureGenerator2
                 values[3*(dim*_j+i)+2] = t3.z;
             }
         }
+
+        //min light level
+        values[3*(dim*0+0)+0] = 0.1;
+        values[3*(dim*0+0)+1] = 0.0;
+        values[3*(dim*0+0)+2] = 0.0;
     }
 
     //no light
