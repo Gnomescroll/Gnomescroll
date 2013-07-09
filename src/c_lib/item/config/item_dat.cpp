@@ -78,8 +78,8 @@ void load_item_dat()
     s->hitscan_bullet_effect_enum = 0;
     s->max_durability = 100;
     s->max_stack_size = 1;
-    s->object_damage_min = 15;
-    s->object_damage_max = 25;
+    s->object_damage_min = 20;
+    s->object_damage_max = 30;
     s->firing_rate = (5 * ONE_SECOND) / 6;
     s->firing_range = RIFLE_FIRING_RANGE;
     s->knockback = false;
@@ -297,8 +297,8 @@ void load_item_dat()
     s->hitscan_bullet_effect_enum = 0;
     s->max_durability = 100;
     s->max_stack_size = 1;
-    s->object_damage_min = 15;
-    s->object_damage_max = 25;
+    s->object_damage_min = 25;
+    s->object_damage_max = 35;
     s->firing_rate = (5 * ONE_SECOND) / 6;
     s->firing_range = RIFLE_FIRING_RANGE;
     s->knockback = false;

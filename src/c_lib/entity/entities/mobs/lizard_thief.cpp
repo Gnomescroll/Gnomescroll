@@ -64,13 +64,15 @@ void load_mob_lizard_thief_data()
     limiter->limit = MOB_BROADCAST_RATE;
 
     auto item_drop = ADD_COMPONENT(ItemDrop);
-    item_drop->drop->set_max_drop_types(2);
+    item_drop->drop->set_max_drop_types(3);
     item_drop->drop->set_max_drop_amounts("synthesizer_coin", 3);
     item_drop->drop->add_drop("synthesizer_coin", 1, 0.3f);
     item_drop->drop->add_drop("synthesizer_coin", 2, 0.1f);
     item_drop->drop->add_drop("synthesizer_coin", 3, 0.05f);
     item_drop->drop->set_max_drop_amounts("plasma_grenade", 10);
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
+    item_drop->drop->set_max_drop_amounts("led_torch", 5);
+    item_drop->drop->add_drop_range("led_torch", 1, 5, 0.2f);
 
     auto state = ADD_COMPONENT(StateMachine);
     auto conf = state->configuration;
