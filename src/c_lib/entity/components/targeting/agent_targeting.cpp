@@ -100,8 +100,9 @@ void AgentTargetingComponent::move_on_surface()
 
     float speed = this->speed / PHYSICS_TICK_RATE;
     float base_speed = speed;
-    if (this->get_target_distance(physics->get_position()) <
-        this->proximity_radius * this->proximity_radius)
+    float target_distance = this->get_target_distance(physics->get_position());
+    bool near_target = (target_distance < this->proximity_radius * this->proximity_radius);
+    if (near_target)
     {
         speed = 0.0f;
         this->jump_cooldown_max = this->jump_cooldown_nearby;
@@ -110,7 +111,8 @@ void AgentTargetingComponent::move_on_surface()
         this->jump_cooldown_max = this->jump_cooldown_en_route;
 
     CSKey jump = CS_NULL;
-    if (this->jump_near_player && on_ground(box.radius, position))
+    bool is_stuck = (this->ticks_stuck > this->stuck_threshold);
+    if ((this->jump_near_player || is_stuck) && on_ground(box.radius, position))
     {
         if (jump_cooldown_tick <= 0)
         {
@@ -118,12 +120,14 @@ void AgentTargetingComponent::move_on_surface()
             speed = base_speed;
             this->jump_cooldown_tick = this->jump_cooldown_max;
         }
+        this->ticks_stuck = 0;
     }
     else
     {
         speed = base_speed;
     }
 
+    Vec3 old_position = position;
     Agents::Agent* collided_agent = NULL;
     bool passed_through = move_with_terrain_collision(box, position, momentum,
                                                       ground_distance,
@@ -146,6 +150,17 @@ void AgentTargetingComponent::move_on_surface()
         apply_control_state(cs, speed, this->jump_force, position, momentum,
                             ground_distance);
     }
+
+    // consider ourselves stuck if we move at less than 1/8 our speed,
+    // and not because we're near our target.
+    Vec3 traveled = vec3_sub(position, old_position);
+    if ((!near_target || int(position.z) < int(this->get_target_position().z)) &&
+        vec3_length_squared(traveled) < (speed * speed * 0.0025f))
+    {   // multiply by 0.01 because speed is scaled by 0.1 in the motion
+        this->ticks_stuck++;
+    }
+    else
+        this->ticks_stuck = 0;
 
     #if DC_SERVER
     if (collided_agent != NULL && attack_tick <= 0)

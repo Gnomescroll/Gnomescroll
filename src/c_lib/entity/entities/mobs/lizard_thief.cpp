@@ -50,7 +50,7 @@ void load_mob_lizard_thief_data()
 
     auto agent = ADD_COMPONENT(AgentTargeting);
     agent->sight_range = 15.0f;
-    agent->speed = 0.24f;
+    agent->speed = 0.18f;
     agent->max_z_diff = 5;
     agent->max_lock_ticks = ONE_SECOND * 10;
     agent->proximity_radius = 2.1f;
