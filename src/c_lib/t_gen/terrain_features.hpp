@@ -55,8 +55,7 @@ bool blocks_are_invalid(CubeType arr[], int len)
 {
     for (int i = 0; i < len; i++)
     {
-        GS_ASSERT(t_map::isValidCube(arr[i]));
-        if (!t_map::isValidCube(arr[i]))
+        IF_ASSERT(!t_map::isValidCube(arr[i]))
             return true;
     }
     return false;
