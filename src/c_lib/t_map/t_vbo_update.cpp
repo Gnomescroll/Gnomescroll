@@ -68,8 +68,9 @@ void t_vbo_update_init()
     for (int i=0; i<16; i++)
     {
         //light_lookup[i] = (1.0/32.0)+((float)(i))/ ((float) (16-1)); //texel aligned
-        light_lookup[i] = (1.0/32.0)+ ((float)(i)) / ((float) (16)); //texel aligned
-        GS_ASSERT_ABORT(light_lookup[i] > 0.0 && light_lookup[i] < 1.0);
+        //light_lookup[i] = (1.0/32.0) + (i / 16.0f); //texel aligned
+        light_lookup[i] = (1.0f/32.0f) + (i / 16.0f); //texel aligned
+        GS_ASSERT(light_lookup[i] > 0.0f && light_lookup[i] < 1.0f);
     }
 }
 
