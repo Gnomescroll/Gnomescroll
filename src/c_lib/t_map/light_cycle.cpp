@@ -137,7 +137,7 @@ class LightTextureGenerator2
 {
     public:
         static const int dim = 16;
-        static const float LIGHT_FALLOFF_FACTOR;
+        //static const float LIGHT_FALLOFF_FACTOR;
         float values[3*dim*dim];
         //float values2[3*dim*dim];
         GLuint texture_array[1];
@@ -222,14 +222,14 @@ class LightTextureGenerator2
 
         for (int i=0; i<16; i++)
         {
-            float factor = falloff(15-i, LIGHT_FALLOFF_FACTOR);
+            float factor = falloff(15-i, 0.75f);
 
             L1[i] = vec3_scalar_mult(get_twist2(i, lightv), factor); //add in gamma twist latter
         }
 
         for (int i=0; i<16; i++)
         {
-            float factor = falloff(15-i, LIGHT_FALLOFF_FACTOR);
+            float factor = falloff(15-i, 0.75f);
             L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
         }
 
@@ -251,6 +251,11 @@ class LightTextureGenerator2
                 values[3*(dim*_j+i)+2] = t3.z;
             }
         }
+
+        //min light level
+        values[3*(dim*0+0)+0] = 0.020f;
+        values[3*(dim*0+0)+1] = 0.020f;
+        values[3*(dim*0+0)+2] = 0.035f;
     }
 
     //no light
@@ -332,7 +337,7 @@ class LightTextureGenerator2
     }
 };
 
-const float LightTextureGenerator2::LIGHT_FALLOFF_FACTOR = 0.66f;
+//const float LightTextureGenerator2::LIGHT_FALLOFF_FACTOR = 0.66f;
 #endif
 
 #if DC_CLIENT
