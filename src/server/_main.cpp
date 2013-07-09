@@ -17,8 +17,8 @@ void default_map_gen()
 
     t_map::map_post_processing();  // regolith stuff
     t_gen::generate_rock_layer();
-    t_gen::generate_caves();
-    //t_gen::excavate();
+    t_gen::generate_caves(1000);
+    t_gen::excavate();
     t_gen::populate_ore();
     t_gen::populate_crystals();
     //t_gen::generate_ruins();
@@ -232,7 +232,8 @@ void tick()
 
     int _t3 = _GET_MS_TIME();
 
-    if(_t3 - _t0 > 6)
+    int lighting_time_warn_threshold = 8;
+    if(_t3 - _t0 > lighting_time_warn_threshold)
         printf("WARNING: lighting update took %d ms; rolling= %d ms, skylight= %d ms, envlight= %d ms\n", _t3 - _t0, _t1-_t0, _t2-_t1, _t3-_t2);
 
     t_map::t_map_send_map_chunks();  //every tick
@@ -313,9 +314,9 @@ void tick()
     //Entities::spawn_monsters(ENTITY_MONSTER_BOMB, 50);
     //Entities::spawn_monsters(ENTITY_MONSTER_SPAWNER, 6);
     //Entities::spawn_monsters(ENTITY_MONSTER_SLIME, 100);
-    //Entities::spawn_slimes(100);
-    Entities::spawn_monsters(ENTITY_MONSTER_LIZARD_THIEF, 100);
-    Entities::spawn_monsters(ENTITY_MONSTER_BLUE_BLUB, 100);
+    Entities::spawn_slimes(128);
+    Entities::spawn_monsters(ENTITY_MONSTER_LIZARD_THIEF, 128);
+    Entities::spawn_monsters(ENTITY_MONSTER_BLUE_BLUB, 128);
 
     if (counter % 5 == 0)
         Components::relax_positions();  // body-body static force

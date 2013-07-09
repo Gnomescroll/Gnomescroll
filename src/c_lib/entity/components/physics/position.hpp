@@ -110,7 +110,8 @@ class PositionComponent: public PhysicsComponent
     {
         float delta = float(this->tick - this->previous_tick) / float(MOB_BROADCAST_RATE);
         Vec3 end = quadrant_translate_position(this->previous_position, this->position);
-        const float snap_distance_sq = 4.0f * 4.0f;
+        const float snap_distance = 16.0f;
+        const float snap_distance_sq = snap_distance * snap_distance;
         if (vec3_distance_squared(this->previous_position, end) > snap_distance_sq)
             this->computed_position = this->position;
         else
