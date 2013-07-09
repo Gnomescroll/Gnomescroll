@@ -16,13 +16,8 @@ namespace t_gen
 
 const float DOUBLE_PI = PI * 2;
 
-#if PRODUCTION
-const int GORGE_COUNT = 10;
-const int GORGE_LENGTH = 170;
-#else
-const int GORGE_COUNT = 45;
-const int GORGE_LENGTH = 170;
-#endif
+const int GORGE_COUNT = 4;
+const int GORGE_LENGTH = 100;
 
 const size_t NUM_LEAVES = 3;
 const size_t NUM_TRUNKS = 3;
@@ -558,10 +553,7 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_caps, NUM_SHROOMCAPS)) return;
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
-    // add the features
-    #if PRODUCTION
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
-    #endif
 
     add_shrooms();
 
