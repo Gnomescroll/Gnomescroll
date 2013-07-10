@@ -37,6 +37,12 @@ const float TREE_THRESHOLD = 0.997f;
 const float SHROOM_ZONE_THRESHOLD = 0.5f;  // move to a config file maybe
 const float SHROOM_THRESHOLD = 0.997f;
 
+//volcano stuff
+const float VOLCANO_PERSISTENCE = 0.7f;
+const float VOLCANO_OCTAVES = 4;
+const float VOLCANO_THRESHOLD = 0.9f;
+const float VOLCANO_MULTIPLY = 50; //the amount by which the difference in perlin is multiplied in the effect
+
 const int NUM_LOOKUP_ANGLES = 32;
 float* sin_lookup_table = NULL;
 float* cos_lookup_table = NULL;
@@ -268,6 +274,33 @@ void add_shrooms()
                 vertical_strip_of_solids_underneath(6, x,y,z))
             {
                 make_shroom(x,y,z);
+            }
+        }
+    }
+
+    free(noise);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
+}
+
+void add_volcanoes()
+{
+    int t = _GET_MS_TIME();
+    printf("\tvolcanoes......");
+    static CubeType rock = t_map::get_cube_type("rock");
+    IF_ASSERT(!t_map::isValidCube(rock)) return;
+    float* noise = t_gen::create_2d_noise_array(VOLCANO_PERSISTENCE, VOLCANO_OCTAVES, map_dim.x, map_dim.y);
+    IF_ASSERT(noise == NULL) return;
+
+    for (int x=0; x < map_dim.x; x++)
+    for (int y=0; y < map_dim.y; y++)
+    {
+        if (noise[x + y * map_dim.x] > VOLCANO_THRESHOLD)
+        {
+            if (t_map::get_highest_open_block(x, y) >= 16 && vertical_strip_of_solids_underneath(16, x, y, t_map::get_highest_open_block(x, y)) && t_map::get_highest_open_block(x, y) < map_dim.z - (1.0f - VOLCANO_THRESHOLD) * VOLCANO_MULTIPLY)
+            {
+                //printf("%f = open_block + %f * %f - %f * %f\n", t_map::get_highest_open_block(x, y) + noise[x + y * map_dim.x] * VOLCANO_MULTIPLY - VOLCANO_THRESHOLD * VOLCANO_MULTIPLY, noise[x + y * map_dim.x], VOLCANO_MULTIPLY, VOLCANO_THRESHOLD, VOLCANO_MULTIPLY);
+                for(int z = t_map::get_highest_open_block(x, y); z < t_map::get_highest_open_block(x, y) + noise[x + y * map_dim.x] * VOLCANO_MULTIPLY - VOLCANO_THRESHOLD * VOLCANO_MULTIPLY; z++)
+                t_map::set_fast(x, y, z, rock);
             }
         }
     }
@@ -562,6 +595,8 @@ void add_terrain_features()
 #if PRODUCTION
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
 #endif
+
+    //add_volcanoes(); //currently bugged
 
     add_shrooms();
 
