@@ -17,7 +17,7 @@ class HealthComponent: public Component
         virtual bool is_dead() = 0; // return life state
         virtual void die() = 0;     // should set dead to true
 
-    HealthComponent(ComponentType type) :
+    explicit HealthComponent(ComponentType type) :
         Component(type, COMPONENT_INTERFACE_Health)
     {}
 

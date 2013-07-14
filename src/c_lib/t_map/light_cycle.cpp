@@ -137,6 +137,7 @@ class LightTextureGenerator2
 {
     public:
         static const int dim = 16;
+        static const float LIGHT_FALLOFF_FACTOR;
         float values[3*dim*dim];
         //float values2[3*dim*dim];
         GLuint texture_array[1];
@@ -208,7 +209,7 @@ class LightTextureGenerator2
 
     }
 
-    void init3(float ttime)
+    void init(float ttime)
     {
 
         float lightv = calc_lightv(ttime);
@@ -221,14 +222,14 @@ class LightTextureGenerator2
 
         for (int i=0; i<16; i++)
         {
-            float factor = falloff(15-i, 0.75);
+            float factor = falloff(15-i, LIGHT_FALLOFF_FACTOR);
 
             L1[i] = vec3_scalar_mult(get_twist2(i, lightv), factor); //add in gamma twist latter
         }
 
         for (int i=0; i<16; i++)
         {
-            float factor = falloff(15-i, 0.75);
+            float factor = falloff(15-i, LIGHT_FALLOFF_FACTOR);
             L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
         }
 
@@ -250,6 +251,11 @@ class LightTextureGenerator2
                 values[3*(dim*_j+i)+2] = t3.z;
             }
         }
+
+        //min light level
+        values[3*(dim*0+0)+0] = 0.02f;
+        values[3*(dim*0+0)+1] = 0.02f;
+        values[3*(dim*0+0)+2] = 0.03f;
     }
 
     //no light
@@ -330,6 +336,8 @@ class LightTextureGenerator2
 
     }
 };
+
+const float LightTextureGenerator2::LIGHT_FALLOFF_FACTOR = 0.75f;
 #endif
 
 #if DC_CLIENT
@@ -338,6 +346,7 @@ class LightTextureGenerator
 {
     public:
         static const int dim = 16;
+        static const float LIGHT_FALLOFF_FACTOR;
         float values[3*dim*dim];
         float values2[3*dim*dim];
         GLuint texture_array[1];
@@ -354,30 +363,30 @@ class LightTextureGenerator
 
     }
 
-    void init()
-    {
-        struct Vec3 ul = vec3_init(0.0, 1.0, 0.0);  //darkness
-        struct Vec3 br = vec3_init(1.0, 0.0, 0.0);  //light
-        struct Vec3 ur = vec3_init(0.0, 0.0, 0.0);
-        struct Vec3 bl = vec3_init(0.0, 0.0, 0.0);
+    //void init()
+    //{
+        //struct Vec3 ul = vec3_init(0.0, 1.0, 0.0);  //darkness
+        //struct Vec3 br = vec3_init(1.0, 0.0, 0.0);  //light
+        //struct Vec3 ur = vec3_init(0.0, 0.0, 0.0);
+        //struct Vec3 bl = vec3_init(0.0, 0.0, 0.0);
 
-        for (int i=0; i<dim; i++)
-        {
-            float xlerp = float(i) / float(dim-1);
-            struct Vec3 t1 = vec3_lerp(ul, ur, xlerp);
-            struct Vec3 t2 = vec3_lerp(bl, br, xlerp);
+        //for (int i=0; i<dim; i++)
+        //{
+            //float xlerp = float(i) / float(dim-1);
+            //struct Vec3 t1 = vec3_lerp(ul, ur, xlerp);
+            //struct Vec3 t2 = vec3_lerp(bl, br, xlerp);
 
-            for (int j=0; j<dim; j++)
-            {
-                float ylerp = 1.0 - float(j) / float(dim-1);
-                struct Vec3 t3 = vec3_lerp(t1, t2, ylerp);
-                values[3*(dim*j+i)+0] = t3.x;
-                values[3*(dim*j+i)+1] = t3.y;
-                values[3*(dim*j+i)+2] = t3.z;
+            //for (int j=0; j<dim; j++)
+            //{
+                //float ylerp = 1.0 - float(j) / float(dim-1);
+                //struct Vec3 t3 = vec3_lerp(t1, t2, ylerp);
+                //values[3*(dim*j+i)+0] = t3.x;
+                //values[3*(dim*j+i)+1] = t3.y;
+                //values[3*(dim*j+i)+2] = t3.z;
 
-            }
-        }
-    }
+            //}
+        //}
+    //}
 
     /*
         Adjustments:
@@ -475,82 +484,49 @@ class LightTextureGenerator
         return b;
     }
 
-    void init2()
-    {
+    //void init2()
+    //{
 
-        //struct Vec3 d1 = vec3_init(1.6, 0.4, 0.4);
-        struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
+        ////struct Vec3 d1 = vec3_init(1.6, 0.4, 0.4);
+        //struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
 
-        struct Vec3 L1[16]; //natural light
-        struct Vec3 L2[16]; //artificial light
+        //struct Vec3 L1[16]; //natural light
+        //struct Vec3 L2[16]; //artificial light
 
 
-        for (int i=0; i<16; i++)
-        {
-            float factor = falloff(15-i, 0.75);
-            L1[i] = vec3_scalar_mult(get_twist(i), factor); //add in gamma twist latter
-        }
+        //for (int i=0; i<16; i++)
+        //{
+            //float factor = falloff(15-i, 0.75);
+            //L1[i] = vec3_scalar_mult(get_twist(i), factor); //add in gamma twist latter
+        //}
 
-        for (int i=0; i<16; i++)
-        {
-            float factor = falloff(15-i, 0.75);
-            L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
-        }
+        //for (int i=0; i<16; i++)
+        //{
+            //float factor = falloff(15-i, 0.75);
+            //L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
+        //}
 
-        for (int i=0; i<dim; i++)
-        {
+        //for (int i=0; i<dim; i++)
+        //{
 
-            for (int j=0; j<dim; j++)
-            {
-                int _i = i;
-                int _j = 15-j;
+            //for (int j=0; j<dim; j++)
+            //{
+                //int _i = i;
+                //int _j = 15-j;
 
-                struct Vec3 t3;
+                //struct Vec3 t3;
 
-                t3.x = L1[_i].x + L2[_j].x;
-                t3.y = L1[_i].y + L2[_j].y;
-                t3.z = L1[_i].z + L2[_j].z;
+                //t3.x = L1[_i].x + L2[_j].x;
+                //t3.y = L1[_i].y + L2[_j].y;
+                //t3.z = L1[_i].z + L2[_j].z;
 
-                values[3*(dim*j+i)+0] = t3.x;
-                values[3*(dim*j+i)+1] = t3.y;
-                values[3*(dim*j+i)+2] = t3.z;
+                //values[3*(dim*j+i)+0] = t3.x;
+                //values[3*(dim*j+i)+1] = t3.y;
+                //values[3*(dim*j+i)+2] = t3.z;
 
-            }
-        }
-
-/*
-        struct Vec3 ul;
-        struct Vec3 ur;
-        struct Vec3 br;
-        struct Vec3 bl;
-
-        ul = vec3_init(0.0, 1.0, 0.0);  //darkness
-        br = vec3_init(1.0, 0.0, 0.0);  //light
-
-        ur = vec3_init(0.0, 0.0, 0.0);
-        bl = vec3_init(0.0, 0.0, 0.0);
-
-        for (int i=0; i<dim; i++)
-        {
-            float xlerp = ((float) i) / ((float) (dim-1));
-
-            struct Vec3 t1 = vec3_lerp(ul, ur, xlerp);
-            struct Vec3 t2 = vec3_lerp(bl, br, xlerp);
-
-            for (int j=0; j<dim; j++)
-            {
-                float ylerp = 1.0 - ((float) j) / ((float) (dim-1));
-
-                struct Vec3 t3 = vec3_lerp(t1, t2, ylerp);
-
-                values[3*(dim*j+i)+0] = t3.x;
-                values[3*(dim*j+i)+1] = t3.y;
-                values[3*(dim*j+i)+2] = t3.z;
-
-            }
-        }
-*/
-    }
+            //}
+        //}
+    //}
 
     float calc_lightv(float ttime)
     {
@@ -596,7 +572,7 @@ class LightTextureGenerator
         return 1.0f;
     }
 
-    void init3(float ttime)
+    void init(float ttime)
     {
 
         float lightv = calc_lightv(ttime);
@@ -611,14 +587,14 @@ class LightTextureGenerator
 
         for (int i=0; i<16; i++)
         {
-            float factor = falloff(15-i, 0.75);
+            float factor = falloff(15-i, LIGHT_FALLOFF_FACTOR);
 
             L1[i] = vec3_scalar_mult(get_twist2(i, lightv), factor); //add in gamma twist latter
         }
 
         for (int i=0; i<16; i++)
         {
-            float factor = falloff(15-i, 0.75);
+            float factor = falloff(15-i, LIGHT_FALLOFF_FACTOR);
             L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
         }
 
@@ -704,6 +680,8 @@ class LightTextureGenerator
 
     }
 };
+
+const float LightTextureGenerator::LIGHT_FALLOFF_FACTOR = 0.75f;
 #endif
 
 class DayCycleController* DCC = NULL;
@@ -750,7 +728,7 @@ unsigned int generate_clut_light_texture()
         float _ttime = ttimec % 400;
         _ttime /= 400.0;
 
-        LTG->init3(_ttime);
+        LTG->init(_ttime);
         LTG->gen_textures();
     }
 

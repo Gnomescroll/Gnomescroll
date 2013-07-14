@@ -7,7 +7,6 @@
 #include <entity/components/spawn_child.cpp>
 #include <entity/components/voxel_model.cpp>
 #include <entity/components/dimension.cpp>
-#include <entity/components/targeting/motion_targeting.cpp>
 #include <entity/components/targeting/weapon_targeting.cpp>
 #include <entity/components/targeting/destination_targeting.cpp>
 #include <entity/components/targeting/agent_targeting.cpp>

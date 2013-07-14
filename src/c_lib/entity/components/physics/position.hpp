@@ -110,19 +110,21 @@ class PositionComponent: public PhysicsComponent
     {
         float delta = float(this->tick - this->previous_tick) / float(MOB_BROADCAST_RATE);
         Vec3 end = quadrant_translate_position(this->previous_position, this->position);
-        Vec3 new_position = vec3_interpolate(this->previous_position, end, delta);
-        new_position = translate_position(new_position);
-        if (vec3_equal_approximate(new_position, this->computed_position))
-        {
-            this->tick++;
-            return;
-        }
-        this->computed_position = new_position;
-
-        const float snap_distance_sq = 4.0f * 4.0f;
-        if (vec3_distance_squared(this->computed_position, this->position) > snap_distance_sq)
+        const float snap_distance = 16.0f;
+        const float snap_distance_sq = snap_distance * snap_distance;
+        if (vec3_distance_squared(this->previous_position, end) > snap_distance_sq)
             this->computed_position = this->position;
-
+        else
+        {
+            Vec3 new_position = vec3_interpolate(this->previous_position, end, delta);
+            new_position = translate_position(new_position);
+            if (vec3_equal_approximate(new_position, this->computed_position))
+            {
+                this->tick++;
+                return;
+            }
+            this->computed_position = new_position;
+        }
         this->position_changed = true;
         GS_ASSERT(vec3_is_valid(this->computed_position));
         GS_ASSERT(is_boxed_position(this->computed_position));

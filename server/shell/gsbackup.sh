@@ -12,5 +12,5 @@ fi
 # create backup
 
 mkdir -p /usr/freespace/gsbackups/
-date=`date +%m-%d-%Y-%R`
+date=`date +%m-%d-%Y-%H-%M`
 tar cvzf /usr/freespace/gsbackups/${latest}_${date}.tar.gz ${datapath}/${latest} --exclude="*.bak" --exclude="*.tmp"

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entity/entities/state_machine_actions.hpp>
+
 #include <entity/entities/fabs/base.hpp>
 #include <entity/entities/fabs/energy_core.hpp>
 #include <entity/entities/fabs/spawner.hpp>

@@ -44,7 +44,7 @@ void destroy_all();
 bool point_occupied_by_type(EntityType type, const Vec3i& position);
 void damage_entities_within_sphere(const EntityType* types, int n_types,
                                    const Vec3& position, float radius,
-                                   int damage);
+                                   int damage, AgentID attacker_id);
 void spawn_mobs();
 
 #if DC_SERVER

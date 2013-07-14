@@ -1,4 +1,4 @@
-#include "motion_targeting.hpp"
+#include "agent_targeting.hpp"
 
 #include <physics/vec3.hpp>
 #include <physics/motion.hpp>
@@ -100,8 +100,9 @@ void AgentTargetingComponent::move_on_surface()
 
     float speed = this->speed / PHYSICS_TICK_RATE;
     float base_speed = speed;
-    if (this->get_target_distance(physics->get_position()) <
-        this->proximity_radius * this->proximity_radius)
+    float target_distance = this->get_target_distance(physics->get_position());
+    bool near_target = (target_distance < this->proximity_radius * this->proximity_radius);
+    if (near_target)
     {
         speed = 0.0f;
         this->jump_cooldown_max = this->jump_cooldown_nearby;
@@ -110,7 +111,8 @@ void AgentTargetingComponent::move_on_surface()
         this->jump_cooldown_max = this->jump_cooldown_en_route;
 
     CSKey jump = CS_NULL;
-    if (this->jump_near_player && on_ground(box.radius, position))
+    bool is_stuck = (this->ticks_stuck > this->stuck_threshold);
+    if ((this->jump_near_player || is_stuck) && on_ground(box.radius, position))
     {
         if (jump_cooldown_tick <= 0)
         {
@@ -118,12 +120,14 @@ void AgentTargetingComponent::move_on_surface()
             speed = base_speed;
             this->jump_cooldown_tick = this->jump_cooldown_max;
         }
+        this->ticks_stuck = 0;
     }
     else
     {
         speed = base_speed;
     }
 
+    Vec3 old_position = position;
     Agents::Agent* collided_agent = NULL;
     bool passed_through = move_with_terrain_collision(box, position, momentum,
                                                       ground_distance,
@@ -147,6 +151,17 @@ void AgentTargetingComponent::move_on_surface()
                             ground_distance);
     }
 
+    // consider ourselves stuck if we move at less than 1/8 our speed,
+    // and not because we're near our target.
+    Vec3 traveled = vec3_sub(position, old_position);
+    if ((!near_target || int(position.z) < int(this->get_target_position().z)) &&
+        vec3_length_squared(traveled) < (speed * speed * 0.0025f))
+    {   // multiply by 0.01 because speed is scaled by 0.1 in the motion
+        this->ticks_stuck++;
+    }
+    else
+        this->ticks_stuck = 0;
+
     #if DC_SERVER
     if (collided_agent != NULL && attack_tick <= 0)
     {
@@ -161,8 +176,13 @@ void AgentTargetingComponent::move_on_surface()
 
 void AgentTargetingComponent::call()
 {
+    auto machine = GET_COMPONENT_INTERFACE(StateMachine, this->entity);
     if (this->target_type == NULL_ENTITY_TYPE)
     {
+        auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+        this->lock_target(physics->get_position());
+        if (this->target_type == ENTITY_AGENT && machine != NULL)
+            machine->receive_event("agent_targeted");
         this->ticks_locked = 0;
         return;
     }
@@ -173,9 +193,8 @@ void AgentTargetingComponent::call()
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 
-        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, this->entity);
-        if (state_machine != NULL && state_machine->router != NULL)
-            state_machine->router(this->entity, STATE_WAITING);
+        if (machine != NULL)
+            machine->receive_event("agent_target_lost");
     }
     this->jump_cooldown_tick = GS_MAX(this->jump_cooldown_tick - 1, 0);
     this->attack_tick = GS_MAX(this->attack_tick - 1, 0);

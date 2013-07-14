@@ -19,7 +19,7 @@ void load_base_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
+    dims->set_height(1.0f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::base;
@@ -34,17 +34,10 @@ void load_base_data()
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
-    #endif
-}
 
-void tick_base(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    IF_ASSERT(physics == NULL) return;
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 }
 

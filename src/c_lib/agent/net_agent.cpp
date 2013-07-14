@@ -526,27 +526,12 @@ inline void hitscan_entity_CtoS::handle()
                                    this->charge_progress + 1.0f);
         }
 
-        // set target on person attacking
-        auto motion_targeting = GET_COMPONENT(MotionTargeting, obj);
-        if (motion_targeting != NULL)
+        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, obj);
+        if (state_machine != NULL)
         {
-            if (motion_targeting->target_type == NULL_ENTITY_TYPE)
-                motion_targeting->set_target(ENTITY_AGENT, a->id);
-        }
-        else
-        {
-            auto agent_targeting = GET_COMPONENT(AgentTargeting, obj);
-            if (agent_targeting != NULL)
-            {
-                if (agent_targeting->target_type == NULL_ENTITY_TYPE)
-                    agent_targeting->set_target(a->id);
-                else    // reset ticks locked
-                    agent_targeting->ticks_locked = 0;
-
-                auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, obj);
-                if (state_machine != NULL && state_machine->router != NULL)
-                    state_machine->router(obj, STATE_CHASE_AGENT);
-            }
+            AgentID* attacker_id = (AgentID*)malloc(sizeof(AgentID));
+            *attacker_id = a->id;
+            state_machine->receive_event("agent_attacked", (void*)attacker_id);
         }
     }
 

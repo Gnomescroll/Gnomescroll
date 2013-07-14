@@ -18,11 +18,12 @@ static float s_buffer[6*(4*3)];
 void draw_axial_billboard_sprite(const Vec3& position, int texture_index,
                                  float texture_scale, int sprites_wide)
 {
+    texture_scale *= 0.5f;
     IF_ASSERT(sprites_wide <= 0) return;
     Vec3 pos = quadrant_translate_position(current_camera_position, position);
     pos.z += texture_scale;
 
-    if (!sphere_fulstrum_test(pos, texture_scale * 0.5f))
+    if (!sphere_fulstrum_test(pos, texture_scale))
         return;
 
     Vec3 up = vec3_init(0, 0, 1);
@@ -62,6 +63,7 @@ void draw_axial_billboard_sprite(const Vec3& position, int texture_index,
 void drawBillboardSprite(const Vec3& position, int texture_index,
                          float texture_scale, int sprites_wide)
 {
+    texture_scale *= 0.5f;
     IF_ASSERT(sprites_wide <= 0) return;
     Vec3 pos = quadrant_translate_position(current_camera_position, position);
     pos.z += texture_scale;    // draw from bottom

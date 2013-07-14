@@ -42,8 +42,18 @@ const vec3 luma_const = vec3(0.299, 0.587, 0.114);
 //B = (r+g+b) /3.0  //works best
 
 
-void main() 
+void main()
 {
+    vec4 tex = texture2DArray(base_texture, texCoord.xyz);
+    // We can't do the alpha test until the vbo generator can handle
+    /// generating vertices for sides that touch transparent sides
+    // Otherwise, a texture with any transparency provides a window
+    // into the world when placed next to a nontransparent block
+    //if(tex.a < 0.4) //alpha test
+    //{
+        //discard;
+    //}
+
 /*
     Can split into 3 bilinear interpolations
 */
@@ -51,15 +61,7 @@ void main()
     vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
     float tmp = dot(vx, lightMatrix * vy);
 
-    vec3 color = tmp*inColor;
-    vec4 tex = texture2DArray(base_texture, texCoord.xyz);
-
-    if(tex.a < 0.4) //alpha test
-    {
-        discard;
-    }
- 
-    color = color*tex.rgb*texture2D(clut_light_texture, Light).rgb;
+    vec3 color = tmp * inColor * tex.rgb * texture2D(clut_light_texture, Light).rgb;
 
     //color = color * skyLight;
     //float color_power = color.length();
@@ -93,7 +95,7 @@ void main()
     {
         float f = _clut_depth*(fogFragDepth - clut_start);
         f = clamp(f, 0.0f, 1.0f);
-        color.rgb = mix(color, color_clut, f); 
+        color.rgb = mix(color, color_clut, f);
     }
 
     //if(fogFragDepth > gl_Fog.start)
@@ -101,7 +103,7 @@ void main()
         //float f = gl_Fog.density * (fogFragDepth - gl_Fog.start);
         //float fogFactor = exp(-(f*f*f*f));
         //fogFactor = clamp(fogFactor, 0.0f, 1.0f);
-        //gl_FragColor.a = 1.0f-fogFactor; 
+        //gl_FragColor.a = 1.0f-fogFactor;
     //}
 
     gl_FragColor.rgb = color;

@@ -142,7 +142,7 @@ void init_components_config()
     CALL_LIST
     #undef A
 
-    for (size_t i=0; i<MAX_COMPONENT_TYPES; i++)
+    for (int i=0; i<MAX_COMPONENT_TYPES; i++)
     {
         if (component_lists[i] == NULL) continue;
         ComponentType type = ComponentType(i);
@@ -168,7 +168,7 @@ void init_components()
 void teardown_components()
 {
     if (component_lists != NULL)
-        for (size_t i=0; i<MAX_COMPONENT_TYPES; i++)
+        for (int i=0; i<MAX_COMPONENT_TYPES; i++)
             delete component_lists[i];
     free(component_lists);
 }
@@ -181,7 +181,7 @@ ComponentList* get_component_list(ComponentType type)
 
 void call_lists()
 {
-    for (size_t i=0; i<MAX_COMPONENT_TYPES; i++)
+    for (int i=0; i<MAX_COMPONENT_TYPES; i++)
     {
         ComponentList* list = component_lists[i];
         if (list != NULL && list->autocall)

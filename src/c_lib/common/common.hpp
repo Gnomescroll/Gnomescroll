@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <ctype.h>
 #include <time.h>
 
@@ -232,4 +233,12 @@ inline bool is_equal(float a, float b)
 {   // NOTE: epsilon isnt scaled to the values in question
     static const float epsilon = 0.0005f;
     return (fabsf(a - b) < epsilon);
+}
+
+void copy_string(char* dest, const char* src, size_t n)
+{
+    IF_ASSERT(n == 0 || dest == NULL || src == NULL) return;
+    strncpy(dest, src, n);
+    GS_ASSERT(dest[n - 1] == '\0');
+    dest[n - 1] = '\0';
 }

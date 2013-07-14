@@ -20,7 +20,7 @@ void load_agent_spawner_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.9f;
+    dims->set_height(1.9f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::agent_spawner;
@@ -43,6 +43,10 @@ void load_agent_spawner_data()
     item_drop->drop->set_max_drop_types(1);
     item_drop->drop->set_max_drop_amounts("agent_spawner", 1);
     item_drop->drop->add_drop("agent_spawner", 1, 1.0f);
+
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 
     #if DC_CLIENT
@@ -52,16 +56,6 @@ void load_agent_spawner_data()
     anim->size = 0.22f;
     anim->force = 5.0f;
     anim->color = Color(127, 31, 223);
-    #endif
-}
-
-void tick_agent_spawner(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
     #endif
 }
 

@@ -463,7 +463,7 @@ void draw_hud_text()
             press_help_tick++;
         }
 
-        draw_targeted_text();
+        //draw_targeted_text();
     }
     else
     {

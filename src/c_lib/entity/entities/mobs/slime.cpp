@@ -6,13 +6,11 @@
 #include <entity/components/dimension.hpp>
 #include <entity/components/voxel_model.hpp>
 #if DC_SERVER
-# include <entity/entities/mobs/state_machines.hpp>
+# include <entity/entities/state_machine_actions.hpp>
 #endif
 
 namespace Entities
 {
-
-static void slime_state_router(class Entity*, EntityState state);
 
 void load_mob_slime_data()
 {
@@ -23,7 +21,7 @@ void load_mob_slime_data()
     ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
+    dims->set_height(1.0f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::slime;
@@ -75,8 +73,12 @@ void load_mob_slime_data()
     item_drop->drop->add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
     auto state = ADD_COMPONENT(StateMachine);
-    state->state = STATE_WAITING;
-    state->router = &slime_state_router;
+    auto conf = state->configuration;
+    conf->add_state("waiting", &do_wait);
+    conf->add_state("chase_agent", &chase_agent);
+    conf->add_transition("waiting", "agent_targeted", "chase_agent", NULL);
+    conf->add_transition("chase_agent", "agent_target_lost", "waiting", &begin_wait);
+    conf->set_start_state("waiting");
 
     auto knockback = ADD_COMPONENT(Knockback);
     knockback->weight = 1.0f;
@@ -89,82 +91,6 @@ void load_mob_slime_data()
     anim->count_max = 40;
     anim->size = 0.2f;
     anim->force = 1.0f;
-    #endif
-}
-
-#if DC_SERVER
-static void slime_state_router(class Entity* entity, EntityState state)
-{
-    auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
-
-    switch (state)
-    {
-        case STATE_CHASE_AGENT:
-            if (machine->state == STATE_WAITING)
-                waiting_to_chase_agent(entity);
-            //else if (machine->state == STATE_IN_TRANSIT)
-                //in_transit_to_chase_agent(entity);
-            break;
-
-        //case STATE_IN_TRANSIT:
-            //if (machine->state == STATE_WAITING)
-                //waiting_to_in_transit(entity);
-            //else if (machine->state == STATE_CHASE_AGENT)
-                //chase_agent_to_in_transit(entity);
-            //break;
-
-        case STATE_WAITING:
-            if (machine->state == STATE_CHASE_AGENT)
-                chase_agent_to_waiting(entity);
-            //else if (machine->state == STATE_IN_TRANSIT)
-                //in_transit_to_waiting(entity);
-            break;
-
-        case STATE_IN_TRANSIT:
-        case STATE_NONE:
-            GS_ASSERT(false);
-            break;
-    }
-}
-#endif
-
-void tick_mob_slime(Entity* entity)
-{
-    #if DC_SERVER
-    auto machine = GET_COMPONENT_INTERFACE(StateMachine, entity);
-
-    switch (machine->state)
-    {
-        case STATE_WAITING:
-            //waiting_for_agent(entity);
-            break;
-
-        //case STATE_IN_TRANSIT:
-            //in_transit(entity);
-            //break;
-
-        case STATE_CHASE_AGENT:
-            chase_agent(entity);
-            break;
-
-        case STATE_IN_TRANSIT:
-        case STATE_NONE:
-            GS_ASSERT(false);
-            break;
-    }
-
-    if (machine->state != STATE_CHASE_AGENT)
-    {   // aggro nearby agent
-        auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-        Vec3 position = physics->get_position();
-
-        auto target = GET_COMPONENT(AgentTargeting, entity);
-        target->lock_target(position);
-
-        if (target->target_type == ENTITY_AGENT)
-            machine->router(entity, STATE_CHASE_AGENT);
-    }
-
     #endif
 }
 

@@ -10,13 +10,40 @@ namespace Components
 
 class DimensionComponent: public Component
 {
-    public:
+    private:
+        bool camera_height_set;
         float height;
         float camera_height;
+        float width;
+
+    public:
+
+    void set_height(float height)
+    {
+        this->height = height;
+        if (!this->camera_height_set)
+            this->camera_height = height;
+    }
+
+    void set_camera_height(float camera_height)
+    {
+        this->camera_height = camera_height;
+        this->camera_height_set = true;
+    }
+
+    void set_width(float width)
+    {
+        this->width = width;
+    }
 
     float get_height()
     {
         return this->height;
+    }
+
+    float get_width()
+    {
+        return this->width;
     }
 
     int get_integer_height()
@@ -38,13 +65,15 @@ class DimensionComponent: public Component
         BEGIN_COPY(DimensionComponent);
         COPY(height);
         COPY(camera_height);
+        COPY(width);
     }
 
     virtual ~DimensionComponent() {}
 
     DimensionComponent() :
         Component(COMPONENT_Dimension, COMPONENT_INTERFACE_Dimension),
-        height(1.0f), camera_height(0.0f)
+        camera_height_set(false), height(1.0f), camera_height(1.0f),
+        width(1.0f)
     {}
 };
 

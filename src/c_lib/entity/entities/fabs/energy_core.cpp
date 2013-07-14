@@ -22,7 +22,7 @@ void load_energy_core_data()
     ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
-    dims->height = 1.0f;
+    dims->set_height(1.0f);
 
     auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::energy_core;
@@ -50,6 +50,10 @@ void load_energy_core_data()
     item_drop->drop->add_drop("small_charge_pack", 4, 0.5f);
     item_drop->drop->add_drop("small_charge_pack", 5, 0.3f);
     item_drop->drop->add_drop("small_charge_pack", 6, 0.2f);
+
+    auto state = ADD_COMPONENT(StateMachine);
+    auto conf = state->configuration;
+    conf->add_state("idle", &stick_to_surface);
     #endif
 
     #if DC_CLIENT
@@ -59,18 +63,6 @@ void load_energy_core_data()
     anim->size = 0.22f;
     anim->force = 5.0f;
     anim->color = Color(59, 99, 17);
-    #endif
-}
-
-void tick_energy_core(Entity* entity)
-{
-    #if DC_SERVER
-    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
-    IF_ASSERT(physics == NULL) return;
-
-    Vec3 position = physics->get_position();
-    position.z = stick_to_terrain_surface(position);
-    physics->set_position(position);
     #endif
 }
 

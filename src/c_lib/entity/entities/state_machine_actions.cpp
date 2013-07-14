@@ -1,4 +1,4 @@
-#pragma once
+#include "state_machine_actions.hpp"
 
 #include <entity/components/physics.hpp>
 #include <entity/components/targeting/destination_targeting.hpp>
@@ -10,7 +10,7 @@
 namespace Entities
 {
 
-static void go_to_next_destination(Entity* entity)
+void go_to_next_destination(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     Vec3 position = physics->get_position();
@@ -27,57 +27,21 @@ static void go_to_next_destination(Entity* entity)
     physics->set_angles(angles);
 }
 
-static void waiting_to_in_transit(Entity* entity)
-{
-    go_to_next_destination(entity);
-    auto state = GET_COMPONENT_INTERFACE(StateMachine, entity);
-    state->state = STATE_IN_TRANSIT;
-}
-
-static void waiting_to_chase_agent(Entity* entity)
-{   // assumes target already locked
-    auto state = GET_COMPONENT_INTERFACE(StateMachine, entity);
-    state->state = STATE_CHASE_AGENT;
-}
-
-static void in_transit_to_waiting(Entity* entity)
+void begin_wait(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto waiting = GET_COMPONENT_INTERFACE(Waiting, entity);
     waiting->tick = 0;
-
-    auto state = GET_COMPONENT_INTERFACE(StateMachine, entity);
-    state->state = STATE_WAITING;
 }
 
-static void in_transit_to_chase_agent(Entity* entity)
-{   // assumes target already locked
-    auto state = GET_COMPONENT_INTERFACE(StateMachine, entity);
-    state->state = STATE_CHASE_AGENT;
-}
-
-static void chase_agent_to_waiting(Entity* entity)
-{
-    auto waiting = GET_COMPONENT_INTERFACE(Waiting, entity);
-    waiting->tick = 0;
-
-    auto state = GET_COMPONENT_INTERFACE(StateMachine, entity);
-    state->state = STATE_WAITING;
-}
-
-static void chase_agent_to_in_transit(Entity* entity)
-{   // unused
-    GS_ASSERT(false);
-}
-
-static void waiting(Entity* entity)
+void do_wait(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto waiting = GET_COMPONENT_INTERFACE(Waiting, entity);
     waiting->tick++;
     if (waiting->ready())
-        waiting_to_in_transit(entity);
+        machine->receive_event("done_waiting");
 }
 
-static void in_transit(Entity* entity)
+void in_transit(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {
     auto dest_target = GET_COMPONENT(DestinationTargeting, entity);
 
@@ -87,23 +51,23 @@ static void in_transit(Entity* entity)
     dest_target->move_on_surface();
     if (!physics->get_changed())
     {   // failed to move
-        in_transit_to_waiting(entity);
+        machine->receive_event("at_destination");
     }
     else
     {   // check at destination
         if (dest_target->check_at_destination())
         {
             if (dest_target->path_finished())
-                in_transit_to_waiting(entity);
+                machine->receive_event("at_destination");
             else
-                go_to_next_destination(entity);
+                go_to_next_destination(entity, machine, event_data);
         }
         else
             dest_target->orient_to_target(physics->get_position());
     }
 }
 
-static void chase_agent(Entity* entity)
+void chase_agent(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
 {   // TODO -- write a method that switches to STATE_WAITING under certain conditions
     // for slimes, this would be if we travelled too far from our original spawn location
     auto target = GET_COMPONENT(AgentTargeting, entity);
@@ -112,7 +76,7 @@ static void chase_agent(Entity* entity)
     target->check_target_alive();
     if (target->target_type == NULL_ENTITY_TYPE)
     {
-        chase_agent_to_waiting(entity);
+        machine->receive_event("agent_target_lost");
         return;
     }
 
@@ -126,6 +90,22 @@ static void chase_agent(Entity* entity)
 
     // move towards target
     target->move_on_surface();
+}
+
+void stick_to_surface(Entity* entity, Components::StateMachineComponent* machine, void* event_data)
+{
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
+    Vec3 position = physics->get_position();
+    position.z = stick_to_terrain_surface(position);
+    physics->set_position(position);
+}
+
+void target_attacker(Entity* entity, class Components::StateMachineComponent* machine, void* event_data)
+{
+    IF_ASSERT(event_data == NULL) return;
+    auto target = GET_COMPONENT(AgentTargeting, entity);
+    AgentID agent_id = *reinterpret_cast<AgentID*>(event_data);
+    target->set_target(agent_id);
 }
 
 }   // Entities

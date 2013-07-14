@@ -28,6 +28,11 @@ float euclidean_distance(const struct Vec3i& a, const struct Vec3i& b);
 int diagonal_distance(const struct Vec3i& a, const struct Vec3i& b);
 int manhattan_distance(const struct Vec3i& a, const struct Vec3i& b);
 
+inline int vec3i_distance_squared(const struct Vec3i& a, const struct Vec3i& b)
+{
+    return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+}
+
 inline int vec3i_length_squared(const struct Vec3i& a)
 {
     return a.x * a.x + a.y * a.y + a.z * a.z;
@@ -89,4 +94,22 @@ inline struct Vec3i vec3i_abs(struct Vec3i a)
 inline int vec3i_volume(const struct Vec3i& p)
 {
     return abs(p.x * p.y * p.z);
+}
+
+inline Vec3i vec3i_min(const struct Vec3i& a, const struct Vec3i& b)
+{
+    Vec3i c;
+    c.x = GS_MIN(a.x, b.x);
+    c.y = GS_MIN(a.y, b.y);
+    c.z = GS_MIN(a.z, b.z);
+    return c;
+}
+
+inline Vec3i vec3i_max(const struct Vec3i& a, const struct Vec3i& b)
+{
+    Vec3i c;
+    c.x = GS_MAX(a.x, b.x);
+    c.y = GS_MAX(a.y, b.y);
+    c.z = GS_MAX(a.z, b.z);
+    return c;
 }

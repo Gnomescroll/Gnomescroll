@@ -219,3 +219,10 @@ _ReSharper*/
 *.resharper
 
 *.i
+
+# build package files
+gnomescroll_windows_*
+gnomescroll_windows32_*
+gnomescroll_linux32_*
+gnomescroll_windows64_*
+gnomescroll_linux64_*

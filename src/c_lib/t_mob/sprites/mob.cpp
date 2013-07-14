@@ -36,6 +36,7 @@ void draw_sprite_mobs()
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5f);
+    GL_ASSERT(GL_DEPTH_TEST, true);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, animations->texture_loader.texture);
     glBegin(GL_QUADS);
@@ -45,6 +46,7 @@ void draw_sprite_mobs()
             sprite_mob_list->objects[i]->draw();
 
     glEnd();
+    glDisable(GL_TEXTURE_2D);
     glDisable(GL_ALPHA_TEST);
     CHECK_GL_ERROR();
 }
@@ -91,8 +93,8 @@ bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float rang
         const Vec3 right = vec3_normalize(vec3_cross(forward, up));
 
         float d = 1000000.0f;
-        float width = get_mob_width(m->type);
-        float height = get_mob_height(m->type);
+        float width = get_mob_width(m->type) * 0.5f;
+        float height = get_mob_height(m->type) * 0.5f;
         if (!line_plane_intersection(position, direction, p, width, height,
                                      forward, right, up, d))
             continue;

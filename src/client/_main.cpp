@@ -322,7 +322,6 @@ void draw_tick()
     poll_mouse();
     Animations::draw_textured_voxel_particles(); //moved out of transparent
 
-
     poll_mouse();
     //visualize_line(); //debug
     //visualize_bounding_box();
@@ -335,10 +334,10 @@ void draw_tick()
             t_mech::draw_selected_mech_bounding_box();
     }
 
-    GL_ASSERT(GL_BLEND, false);
+    poll_mouse();
+    t_mob::draw_sprite_mobs();
 
     CHECK_GL_ERROR();
-
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
 
@@ -367,7 +366,6 @@ void draw_tick()
     poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Skybox::draw();
-
 
     poll_mouse();
     GL_ASSERT(GL_BLEND, true);
@@ -407,9 +405,6 @@ void draw_tick()
     GL_ASSERT(GL_BLEND, true);
 
     glDisable(GL_BLEND);
-
-    poll_mouse();
-    t_mob::draw_sprite_mobs();
 
     glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_TRUE);   //END
