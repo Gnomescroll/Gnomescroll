@@ -5,6 +5,14 @@ then
     ZIPNAME="Gnomescroll.zip"
 fi
 
+if [ -d ~/Desktop/"$ZIPNAME"/ ]; then
+    rm ~/Desktop/"$ZIPNAME"
+fi
+
+if [ -d ~/Desktop/Gnomescroll.app/ ]; then
+    rm -rf ~/Desktop/Gnomescroll.app/
+fi
+
 rm -rf `pwd`/Gnomescroll.app/
 
 cd ~/dc_mmo/src

@@ -33,8 +33,8 @@ fi
 
 zip -r "$f".zip "$f"
 
-# rsync the package to the server
-rsync -v -e ssh "$f".zip root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".zip
+# copy the package to the server
+scp "$f".zip root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".zip
 
 # Copy to dropbox so we can get a copy to test in the vm
 mv "$f".zip ~/Dropbox/Public

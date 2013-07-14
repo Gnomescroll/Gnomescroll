@@ -49,7 +49,7 @@ rm -rf ~/gs_build/"$f"
 # Move the folder to our stash
 mv "$f" ~/gs_build/
 
-# rsync the package to the server
-rsync -v -e ssh "$f".tar.gz root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".tar.gz
+# copy the package to the server
+scp "$f".tar.gz root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".tar.gz
 
 rm "$f".tar.gz
