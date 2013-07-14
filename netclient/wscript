@@ -461,6 +461,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.RPATH += ['$ORIGIN/./lib', './lib',
                            '$ORIGIN/../lib/win32/lib',
                            '$ORIGIN/../lib/win32/dll',
+                           '$ORIGIN/./lib/win32/lib',
+                           '$ORIGIN/./lib/win32/dll',
                            '$ORIGIN/../lib/win32']
         if awesomium:
             rpath = '$ORIGIN/./lib/win32/awesomium/lib/{0}'.format(awe_stem)

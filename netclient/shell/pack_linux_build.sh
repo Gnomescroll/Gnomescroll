@@ -8,12 +8,16 @@ fi
 
 if [ $arch != "32" ] && [ $arch != "64" ]; then
     echo "Unknown architecture:" $arch
-    exit
+    exit 1
 fi
 
 ./waf production
 ./waf
 version=`cat ../src/c_lib/common/version.h | grep GS_VERSION | cut -d " " -f 3`
+if [[ $version == */* ]]; then
+    echo "Invalid version:" $version
+    exit 1
+fi
 f="gnomescroll_linux"$arch"_"$version
 
 if [ -d "$f" ]; then
@@ -47,3 +51,5 @@ mv "$f" ~/gs_build/
 
 # rsync the package to the server
 rsync -v -e ssh "$f".tar.gz root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".tar.gz
+
+rm "$f".tar.gz
