@@ -72,7 +72,7 @@ def check_clang(conf, use_clang=None):
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
               production=False, awesomium=True, awesomium_debug=False,
-              assimp=True, use_clang=None, auth=False, windows=False,
+              assimp=False, use_clang=None, auth=False, windows=False,
               i386=None):
     OS = platform.system()
     conf.env.os = OS
@@ -96,6 +96,10 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         i386 = (arch == '32bit')
     x86_64 = not i386
 
+    # TODO -- deprecate awesomium fully. We can't do 64 builds with it,
+    # it bloats the download size immensely, it prevents valgrinding,
+    # it has been known to corrupt chromium installations and itself,
+    # and it has no indication of improving
     # Disable awesomium until it is completely removed
     if not production:
         awesomium = False
@@ -107,7 +111,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     prodflag = '-DPRODUCTION={0}'.format(int(production))
     if production:
         awesomium = True
-        assimp = True
         auth = True
         # Force 32-bit compilation in production, until awesomium is removed
         i386 = True
@@ -399,7 +402,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    mandatory=True)
 
     if awesomium:
-        if OS == 'Windows':
+        if OS == 'Windows' or windows:
             awesomium_lib_path = '../lib/win32/awesomium/lib/{0}/'
             awesomium_lib_path = awesomium_lib_path.format(awe_stem)
             awesomium_include_path = '../lib/win32/awesomium/include/'
@@ -420,7 +423,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    uselib_store='AWESOMIUM')
 
     if assimp:
-        if OS == 'Windows':
+        if OS == 'Windows' or windows:
             assimp_lib = 'Assimp32'
             assimp_lib_path = ['../lib/win32/lib/', '../lib/win32/dll/']
             assimp_inc_path = ['../lib/win32/assimp/']
@@ -915,6 +918,15 @@ class windows_ctx(ConfigurationContext):
 def windows(ctx):
     configure(ctx, use_clang=False, windows=True, i386=True, assimp=False,
               awesomium=False)
+
+
+class windows_prod_ctx(ConfigurationContext):
+    cmd = 'windows_production'
+    fun = 'windows_production'
+
+
+def windows_production(ctx):
+    configure(ctx, use_clang=False, windows=True, i386=True, production=True)
 
 
 class address_sanitizer_ctx(ConfigurationContext):
