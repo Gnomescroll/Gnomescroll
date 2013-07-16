@@ -106,7 +106,7 @@ void create_health_change_indicator(const BoundingBox& box, const Vec3& position
     b->set_state(
         position.x + (RADIUS_FACTOR * box.radius * (2*randf() - 1)),
         position.y + (RADIUS_FACTOR * box.radius * (2*randf() - 1)),
-        position.z + (RADIUS_FACTOR * box.radius * (2*randf() - 1) * 0.5f),
+        position.z + box.height * 0.5f * (2 * randf() - 1) * RADIUS_FACTOR,
         (2*randf()-1)*STRAY_SPEED,
         (2*randf()-1)*STRAY_SPEED,
         (2*randf()-1)*STRAY_SPEED);

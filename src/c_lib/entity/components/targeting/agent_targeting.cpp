@@ -129,10 +129,10 @@ void AgentTargetingComponent::move_on_surface()
 
     Vec3 old_position = position;
     Agents::Agent* collided_agent = NULL;
-    bool passed_through = move_with_terrain_collision(box, position, momentum,
-                                                      ground_distance,
-                                                      &collided_agent);
-    if (passed_through)
+    CollisionStatus status = move_with_terrain_collision(
+        box, position, momentum, ground_distance, &collided_agent);
+
+    if (status != COLLISION_STATUS_STUCK)
     {
         ControlState cs;
         cs.seq = 0;  // doesn't matter, but initialise it
@@ -148,7 +148,7 @@ void AgentTargetingComponent::move_on_surface()
         }
         #endif
         apply_control_state(cs, speed, this->jump_force, position, momentum,
-                            ground_distance);
+                            ground_distance, status);
     }
 
     // consider ourselves stuck if we move at less than 1/8 our speed,

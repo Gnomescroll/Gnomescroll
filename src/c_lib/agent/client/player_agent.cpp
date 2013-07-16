@@ -37,29 +37,28 @@ void PlayerAgent::set_player_agent_id(AgentID id)
 */
 void PlayerAgent::update_client_side_prediction_interpolated()
 {
-    int _t = int(_GET_MS_TIME());
+    int t = int(_GET_MS_TIME());
     int last_tick = int(_LAST_TICK());
 
     Vec3 vs0 = s0.get_position();
     Vec3 vs1 = s1.get_position();
     vs0 = quadrant_translate_position(current_camera_position, vs0);
     vs1 = quadrant_translate_position(current_camera_position, vs1);
-    float dist = vec3_distance(vs0, vs1);
+    float dist = vec3_distance_squared(vs0, vs1);
 
     // calculate interpolation delta
     // if the distance travelled is extreme, dont interpolate (delta=1)
     // this is because of the teleport in map wrapping
     // the player will suddenly jump ~512 meters, with a noticable interpolation flicker in between
-    static const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
+    const float SKIP_INTERPOLATION_THRESHOLD = 1.0f;
     float delta = 1.0f;
-    if (dist < SKIP_INTERPOLATION_THRESHOLD)
+    if (dist < SKIP_INTERPOLATION_THRESHOLD * SKIP_INTERPOLATION_THRESHOLD)
     {
-        delta = float(_t - last_tick) / 33.0f;
-        if (delta > 1.0f) delta = 1.0f;
-        IF_ASSERT(delta < 0.0f) delta = 0.0f;
+        delta = float(t - last_tick) / 33.0f;
+        delta = GS_MAX(0.0f, GS_MIN(1.0f, delta));
     }
 
-    vs0 = vec3_scalar_mult(vs0, 1.0f-delta);
+    vs0 = vec3_scalar_mult(vs0, 1.0f - delta);
     vs1 = vec3_scalar_mult(vs1, delta);
     Vec3 v = vec3_add(vs0, vs1);
     v = translate_position(v);
