@@ -343,7 +343,7 @@ void toggle_camera_mode()
 void init_input_state()
 {   // set input_state defaults
 
-    input_state.mouse_bound = Options::mouse_bound;
+    set_mouse_bind(Options::mouse_bound);
     #if PRODUCTION
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
@@ -354,7 +354,7 @@ void init_input_state()
 
     input_state.login_mode = false;
 
-    input_state.rebind_mouse = input_state.mouse_bound;
+    set_mouse_rebind(input_state.mouse_bound);
 
     input_state.draw_hud = true;
     input_state.vbo_debug = false;
@@ -1440,10 +1440,6 @@ void active_event_handler(SDL_Event* event)
             }
         }
     }
-
-    //if (event->active.state & SDL_APPINPUTFOCUS || event->active.state & SDL_APPMOUSEFOCUS)
-        //if (event->active.gain)
-            //input_state.mouse_bound = input_state.rebind_mouse;
 }
 
 #ifdef __clang__

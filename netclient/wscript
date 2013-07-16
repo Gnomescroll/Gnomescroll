@@ -71,7 +71,7 @@ def check_clang(conf, use_clang=None):
 
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
-              production=False, awesomium=True, awesomium_debug=False,
+              production=False, awesomium=False, awesomium_debug=False,
               assimp=False, use_clang=None, auth=False, windows=False,
               i386=None):
     OS = platform.system()
@@ -101,14 +101,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     # it has been known to corrupt chromium installations and itself,
     # and it has no indication of improving
     # Disable awesomium until it is completely removed
-    if not production:
-        awesomium = False
+    #if not production:
+        #awesomium = False
 
-    optflag = '-O{0}'.format(optlevel)
-    awe_stem = 'release'
-    if awesomium_debug:
-        awe_stem = 'debug'
-    prodflag = '-DPRODUCTION={0}'.format(int(production))
     if production:
         awesomium = True
         auth = True
@@ -117,6 +112,16 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         x86_64 = False
     if auth:
         awesomium = True
+
+    if awesomium:
+        i386 = True
+        x86_64 = False
+
+    optflag = '-O{0}'.format(optlevel)
+    awe_stem = 'release'
+    if awesomium_debug:
+        awe_stem = 'debug'
+    prodflag = '-DPRODUCTION={0}'.format(int(production))
     aweflag = '-DGS_AWESOMIUM={0}'.format(int(awesomium))
     assimpflag = '-DGS_ASSIMP={0}'.format(int(assimp))
     authflag = '-DGS_AUTH={0}'.format(int(auth))
@@ -461,6 +466,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.RPATH += ['$ORIGIN/./lib', './lib',
                            '$ORIGIN/../lib/win32/lib',
                            '$ORIGIN/../lib/win32/dll',
+                           '$ORIGIN/./lib/win32/lib',
+                           '$ORIGIN/./lib/win32/dll',
                            '$ORIGIN/../lib/win32']
         if awesomium:
             rpath = '$ORIGIN/./lib/win32/awesomium/lib/{0}'.format(awe_stem)

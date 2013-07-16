@@ -107,9 +107,9 @@ bool collides_with_agents(const BoundingBox& box, const Vec3& position, Agents::
     return false;
 }
 
-bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
-                                 Vec3& velocity, float& ground_distance,
-                                 Agents::Agent** collided_agent)
+CollisionStatus move_with_terrain_collision(
+    const BoundingBox& box, Vec3& position, Vec3& velocity,
+    float& ground_distance, Agents::Agent** collided_agent)
 {   // returns false if it collided before moving
     // Note: ground_distance is the difference between the surface z point below
     // the old position and the new position's z point. its weird but its
@@ -122,7 +122,7 @@ bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
         velocity.x = 0.0f;
         velocity.y = 0.0f;
         velocity.z = GS_MAX(velocity.z, 0.0f);
-        return false;
+        return COLLISION_STATUS_STUCK;
     }
 
     Vec3 p = translate_position(vec3_add(position, velocity));
@@ -136,7 +136,7 @@ bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
 
     bool collision_y = collides_with_terrain_xy(box.radius, box.height, p.x, p.y, position.z);
     if (!collision_y && collided_agent != NULL && !agent_collision)
-        collides_with_agents(box, vec3_init(p.x, p.y, position.z), *collided_agent);
+        agent_collision = collides_with_agents(box, vec3_init(p.x, p.y, position.z), *collided_agent);
     if (collision_y) p.y = position.y;
 
     Agents::Agent* agent = NULL;
@@ -178,14 +178,17 @@ bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
     if (p.z == solid_z) velocity.z = 0.0f;
     position = translate_position(p);
     ground_distance = position.z - solid_z;
-    return true;
+
+    if (collision_x || collision_y)
+        return COLLISION_STATUS_COLLIDED;
+    else
+        return COLLISION_STATUS_CLEAR;
 }
 
-bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
-                                 Vec3& velocity, float& ground_distance)
+CollisionStatus move_with_terrain_collision(
+    const BoundingBox& box, Vec3& position, Vec3& velocity, float& ground_distance)
 {
-    return move_with_terrain_collision(box, position, velocity,
-                                       ground_distance, NULL);
+    return move_with_terrain_collision(box, position, velocity, ground_distance, NULL);
 }
 
 #define GROUND_MARGIN 0.003f
@@ -227,7 +230,8 @@ inline bool can_stand_up(float radius, float box_h, float x, float y, float z)
 }
 
 void apply_control_state(const ControlState& cs, float speed, float jump_force,
-                         Vec3& position, Vec3& velocity, float ground_distance)
+                         Vec3& position, Vec3& velocity, float ground_distance,
+                         CollisionStatus collision)
 {
     // unpack control state variables
     bool forward   = cs.cs & CS_FORWARD;
@@ -284,25 +288,34 @@ void apply_control_state(const ControlState& cs, float speed, float jump_force,
         cs_vy += -speed*sinf(pi * (cs.theta + 0.5f));
     }
 
+    bool is_moving = false;
     const float precision = 0.00005f;
     if (fabsf(cs_vx) < precision)
         cs_vx = 0.0f;
+    else
+        is_moving = true;
     if (fabsf(cs_vy) < precision)
         cs_vy = 0.0f;
+    else
+        is_moving = true;
 
-    //if (cs_vx < -precision || cs_vx > precision ||
-        //cs_vy < -precision || cs_vy > precision)
-    if (cs_vx || cs_vy)
+    if (is_moving)
     {   // normalize diagonal motion
         float len = 1.0f/sqrtf(cs_vx*cs_vx + cs_vy*cs_vy);
         cs_vx *= speed * len;
         cs_vy *= speed * len;
     }
 
-    //velocity.x = cs_vx;
-    //velocity.y = cs_vy;
-    velocity.x = interpolate(velocity.x, cs_vx, XY_VELOCITY_INTERPOLATION);
-    velocity.y = interpolate(velocity.y, cs_vy, XY_VELOCITY_INTERPOLATION);
+    if (collision == COLLISION_STATUS_COLLIDED)
+    {
+        velocity.x = cs_vx;
+        velocity.y = cs_vy;
+    }
+    else
+    {
+        velocity.x = interpolate(velocity.x, cs_vx, XY_VELOCITY_INTERPOLATION);
+        velocity.y = interpolate(velocity.y, cs_vy, XY_VELOCITY_INTERPOLATION);
+    }
 
     if (jetpack)
     {
@@ -443,15 +456,15 @@ bool agent_collides_terrain(Agent* a)
 //}
 
 //takes an agent state and control state and returns new agent state
-class AgentState agent_tick(const struct ControlState& cs,
-                            const BoundingBox& box, class AgentState as)
+class AgentState agent_tick(const ControlState& cs, const BoundingBox& box,
+                            class AgentState as)
 {
     Vec3 position = as.get_position();
     Vec3 velocity = as.get_velocity();
     float ground_distance = 0.0f;
-    bool passed_through = move_with_terrain_collision(box, position, velocity,
-                                              ground_distance);
-    if (!passed_through)
+    CollisionStatus status = move_with_terrain_collision(box, position, velocity,
+                                                         ground_distance);
+    if (status == COLLISION_STATUS_STUCK)
     {
         as.set_position(position);
         as.set_velocity(velocity);
@@ -467,7 +480,7 @@ class AgentState agent_tick(const struct ControlState& cs,
         speed = AGENT_SPEED_CROUCHED;
 
     apply_control_state(cs, speed, AGENT_JUMP_POWER, position, velocity,
-                        ground_distance);
+                        ground_distance, status);
 
     as.theta = cs.theta;
     as.phi = cs.phi;

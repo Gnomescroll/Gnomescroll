@@ -126,48 +126,42 @@ void close_all_containers();
 void set_mouse_bind(bool bind)
 {
     input_state.mouse_bound = bind;
-    //printf("Set mouse bind: %d\n", bind);
 }
 
 void set_mouse_rebind(bool rebind)
 {
     input_state.rebind_mouse = rebind;
-    //printf("Set mouse rebind: %d\n", rebind);
 }
 
 void trigger_keys_held_down();
 
 namespace Input
 {   // TODO -- namespace everything
+
 void begin_login_mode()
 {
-    //printf("Begin login mode 1. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
-
+    set_mouse_rebind(input_state.mouse_bound);
+    set_mouse_bind(false);
     input_state.login_mode = true;
     enable_login_window();
-
-    //printf("Begin login mode 2. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
 }
 
 void end_login_mode()
 {
-    //printf("End login mode 1. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
-
     disable_login_window();
     input_state.login_mode = false;
 
-    //printf("End login mode 2. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
+    //// stupid hack
+    //#if PRODUCTION
+    //set_mouse_bind(true);
+    //set_mouse_rebind(true);
+    //#else
+    //set_mouse_bind(false);
+    //set_mouse_rebind(false);
+    //#endif
 
-    // stupid hack
-    #if PRODUCTION
-    set_mouse_bind(true);
-    set_mouse_rebind(true);
-    #else
-    set_mouse_bind(false);
-    set_mouse_rebind(false);
-    #endif
-
-    //printf("End login mode 3. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
+    set_mouse_bind(input_state.rebind_mouse);
+    set_mouse_rebind(Options::mouse_bound);
 }
 
 }   // Input
