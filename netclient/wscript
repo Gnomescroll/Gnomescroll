@@ -590,6 +590,8 @@ def copy_awesomium_dlls(ctx):
     awe_dll_path = awe_dll_path.format(ctx.env.awe_stem)
     for f in os.listdir(awe_dll_path):
         if f == 'locales':
+            if not os.path.exists('./locales'):
+                os.mkdir('./locales')
             _path = os.path.join(awe_dll_path, f)
             for loc in os.listdir(_path):
                 shutil.copy2(os.path.join(_path, loc),
