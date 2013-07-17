@@ -98,5 +98,6 @@ void generate_room(CubeType material, int minx, int miny, int minz, int maxx, in
 void init_cities(void);
 void find_closest_road_spot(int x, int y);
 bool isArtificial(int x, int y);
+int clamp_point(int point);
 
 }   // t_gen
