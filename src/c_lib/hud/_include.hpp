@@ -13,4 +13,5 @@
 #include <hud/harvest_bar.hpp>
 #include <hud/radiation_meter.hpp>
 #include <hud/_interface.cpp>
+#include <hud/guide.hpp>
 

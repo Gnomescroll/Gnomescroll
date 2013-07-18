@@ -25,20 +25,19 @@ void generate_sphere(const struct Vec3i& position, int radius, CubeType material
 
 void generate_line(Vec3i start, Vec3i end, CubeType material, int thickness)
 {
-    start = translate_position(start);
-    end = translate_position(end);
-    end = quadrant_translate_position(start, end);
-    const int distance_sq = vec3i_distance_squared(start, end);
-    const int distance = ceilf(sqrtf(distance_sq));
-    const int thickness_sq = thickness * thickness;
-    const int boundary = distance_sq + thickness_sq + distance * thickness;
     Vec3i min = vec3i_min(start, end);
     Vec3i max = vec3i_max(start, end);
+    min.x = translate_point(min.x - thickness);
+    min.y = translate_point(min.y - thickness);
+    min.z = translate_point(min.z - thickness);
+    max.x = translate_point(max.x + thickness);
+    max.y = translate_point(max.y + thickness);
+    max.z = translate_point(max.z + thickness);
     Vec3i p;
     for(p.x = min.x; p.x <= max.x; p.x++)
     for(p.y = min.y; p.y <= max.y; p.y++)
     for(p.z = min.z; p.z <= max.z; p.z++)
-        if (vec3i_distance_squared(start, end) < boundary)
+        if (sqrtf(vec3i_distance_squared(start, p)) + sqrtf(vec3i_distance_squared(end, p)) < thickness + sqrtf(vec3i_distance_squared(start, end)))
             t_map::set(translate_position(p), material);
 }
 
