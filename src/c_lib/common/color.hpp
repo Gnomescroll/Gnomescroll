@@ -12,6 +12,13 @@ class Color
             };
         };
 
+    #if DC_CLIENT
+    void set_gl() const
+    {
+        glColor4ub(this->r, this->g, this->b, this->a);
+    }
+    #endif
+
     Color() :
         r(0), g(0), b(0), a(0xFF)
     {}

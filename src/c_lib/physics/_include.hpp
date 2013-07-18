@@ -9,6 +9,7 @@
 #include <physics/motion.cpp>
 #include <physics/pathfinding.cpp>
 #include <physics/quadrant.cpp>
+#include <physics/vec2.hpp>
 #include <physics/vec3i.cpp>
 #include <physics/vec3.cpp>
 #include <physics/vec4.hpp>

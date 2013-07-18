@@ -63,7 +63,7 @@ class Font
         return data.size;
     }
 
-    explicit Font(char* fn);
+    explicit Font(const char* fn);
 };
 
 void reset_default();

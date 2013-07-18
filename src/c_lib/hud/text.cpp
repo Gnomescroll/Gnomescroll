@@ -284,6 +284,11 @@ void Text::set_position(float x, float y)
     this->refy = y;
 }
 
+void Text::set_position(const Vec2& position)
+{
+    this->set_position(position.x, position.y);
+}
+
 void Text::set_scale(float scale)
 {
     this->scale = scale;
@@ -449,6 +454,25 @@ Text::Text() :
     shadowed(false)
 {
     this->reset_alignment();
+}
+
+Text::Text(const Text& t) :
+    text_len(0),
+    format_len(0),
+    formatted_extra_len(0),
+    formatted(false),
+    id(-1),
+    depth(-1.0f),
+    scale(1.0f),
+    color(Color(255,255,255,255)),
+    text(NULL),
+    format(NULL),
+    x(0.0f), y(0.0f),
+    refx(0.0f),refy(0.0f),
+    shadowed(false)
+{
+    this->reset_alignment();
+    this->_copy(t);
 }
 
 Text::~Text()

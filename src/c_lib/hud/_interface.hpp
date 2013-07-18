@@ -27,4 +27,4 @@ void end_harvest_bar();
 bool tick_harvest_bar();
 void draw_harvest_bar(int x, int y);
 
-}
+}   // Hud

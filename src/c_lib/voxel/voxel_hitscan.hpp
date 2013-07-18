@@ -32,16 +32,20 @@ class VoxelHitscanTarget: public VoxelHitscanElement
     public:
         Vec3i voxel;
 
-        void copy_vhe(const VoxelHitscanElement* vhe);
-        void print()
-        {
-            printf("Target:\n");
-            printf("id   %d\n", this->entity_id);
-            printf("type %d\n", this->entity_type);
-            printf("part %d\n", this->part_id);
-            printf("voxel: ");
-            vec3i_print(this->voxel);
-        }
+    void copy_vhe(const VoxelHitscanElement* vhe);
+    void print()
+    {
+        printf("Target:\n");
+        printf("id   %d\n", this->entity_id);
+        printf("type %d\n", this->entity_type);
+        printf("part %d\n", this->part_id);
+        printf("voxel: ");
+        vec3i_print(this->voxel);
+    }
+
+    VoxelHitscanTarget() :
+        VoxelHitscanElement(), voxel(vec3i_init(0))
+    {}
 };
 
 class VoxelHitscanList

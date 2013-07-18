@@ -182,15 +182,15 @@ class WorldHitscanResult
     }
 
     WorldHitscanResult() :
-        type(HITSCAN_TARGET_NONE), distance(FAR_AWAY),
+        type(HITSCAN_TARGET_NONE), distance(FAR_AWAY), collision_point(vec3_init(FAR_AWAY)),
         start_position(vec3_init(0)), direction(vec3_init(0, 0, 1)), range(128),
         block_hit(false), block_position(vec3i_init(0)),
-        block_open_position(vec3i_init(0)),
-        block_side(vec3i_init(0, 0, 1)), cube_type(ERROR_CUBE),
-        block_distance(FAR_AWAY), voxel_hit(false), voxel_distance(FAR_AWAY),
-        voxel_collision_point(vec3_init(0)), mech_hit(false),
-        mech_id(NULL_MECH_ID), mech_distance(FAR_AWAY),
+        block_open_position(vec3i_init(0)), block_side(vec3i_init(0, 0, 1)),
+        cube_type(ERROR_CUBE), block_distance(FAR_AWAY), voxel_hit(false),
+        voxel_distance(FAR_AWAY), voxel_collision_point(vec3_init(0)),
+        mech_hit(false), mech_id(NULL_MECH_ID), mech_distance(FAR_AWAY),
         sprite_mob_hit(false), sprite_mob_id(NULL_SPRITE_MOB),
+        sprite_mob_entity_id(NULL_ENTITY), sprite_mob_entity_type(NULL_ENTITY_TYPE),
         sprite_mob_distance(FAR_AWAY), sprite_mob_collision_point(vec3_init(0))
     {}
 };

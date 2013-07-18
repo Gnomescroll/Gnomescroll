@@ -10,7 +10,7 @@ void draw_line(const Color& color,
                float x0, float y0, float z0,
                float x1, float y1, float z1)
 {
-    glColor3ub(color.r, color.g, color.b);
+    color.set_gl();
     glBegin(GL_LINES);
     glVertex3f(x0,y0,z0);  // origin of the line
     glVertex3f(x1,y1,z1);  // ending point of the line
@@ -23,48 +23,55 @@ void draw_line(const Color& color, const struct Vec3& a, const struct Vec3& b)
 }
 
 
-void draw_point(Color color, float x, float y, float z)
+void draw_point(const Color& color, float x, float y, float z)
 {
-    glColor3ub(color.r, color.g, color.b);
+    color.set_gl();
     glBegin(GL_POINTS);
     glVertex3f(x,y,z);  // single point
     glEnd();
 }
 
-
-void draw_rect(Color color, float x, float y, float w, float h)
+void draw_rect(const Color& color, const Vec2& position, const Vec2& dimension)
 {
-    float x1 = x;
-    float y1 = y;
-    float x2 = x + w;
-    float y2 = y + h;
-
-    glColor3ub(color.r, color.g, color.b);
+    Vec2 p = position;
+    Vec2 q = vec2_add(position, dimension);
+    color.set_gl();
     glBegin(GL_QUADS);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y1);
-    glVertex2f(x2, y2);
-    glVertex2f(x1, y2);
+    glVertex2f(p.x, p.y);
+    glVertex2f(q.x, p.y);
+    glVertex2f(q.x, q.y);
+    glVertex2f(p.x, q.y);
     glEnd();
+    glColor4ub(255, 255, 255, 255);
 }
 
+void draw_rect(const Color& color, float x, float y, float w, float h)
+{
+    draw_rect(color, vec2_init(x, y), vec2_init(w, h));
+}
 
-void draw_border_rect(Color color, float x, float y, float w, float h)
+void draw_border_rect(const Color& color, float x, float y, float w, float h, int line_width)
 {   // draws from top left corner
-    float x1 = x;
-    float y1 = y;
-    float x2 = x + w;
-    float y2 = y - h;
-
-    glColor3ub(color.r, color.g, color.b);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y1);
-    glVertex2f(x2, y2);
-    glVertex2f(x1, y2);
-    glEnd();
+    draw_border_rect(color, vec2_init(x, y), vec2_init(w, h), line_width);
 }
 
+void draw_border_rect(const Color& color, const Vec2& position, const Vec2& dimension, float line_width)
+{
+    Vec2 p = position;
+    Vec2 q = vec2_init(p.x + dimension.x, p.y + dimension.y);
+    GLfloat _line_width;
+    glGetFloatv(GL_LINE_WIDTH, &_line_width);
+    glLineWidth(line_width);
+    color.set_gl();
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(p.x, p.y);
+    glVertex2f(q.x, p.y);
+    glVertex2f(q.x, q.y);
+    glVertex2f(p.x, q.y);
+    glEnd();
+    glColor4ub(255, 255, 255, 255);
+    glLineWidth(_line_width);
+}
 
 void draw_bound_texture(float x, float y, float w, float h, float z)
 {   // y coordinates start along the bottom

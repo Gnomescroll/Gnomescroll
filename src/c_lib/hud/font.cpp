@@ -219,7 +219,7 @@ struct Glyph Font::get_missing_glyph(unsigned char c)
     return glyph;
 }
 
-void Font::get_string_pixel_dimension(const char* str, int *length, int *height)
+void Font::get_string_pixel_dimension(const char* str, int* length, int* height)
 {
     char c;
     int i = 0;
@@ -242,14 +242,18 @@ void Font::get_string_pixel_dimension(const char* str, int *length, int *height)
         if (g.yoff < miny)
             miny = g.yoff;
     }
-    *length = len;
-    if (len <= 0)
-        *height = font->data.line_height;
-    else
-        *height = maxy - miny;
+    if (length != NULL)
+        *length = len;
+    if (height != NULL)
+    {
+        if (len <= 0)
+            *height = font->data.line_height;
+        else
+            *height = maxy - miny;
+    }
 }
 
-Font::Font(char* fn) :
+Font::Font(const char* fn) :
     alpha(true), missing_glyph('?')
 {
     // init glyphs
@@ -265,14 +269,16 @@ Font::Font(char* fn) :
         glyphs[i].available = 0;
     }
 
-    if (strlen(fn) > 32)
+    IF_ASSERT(!sizeof(data.file)) return;
+    IF_ASSERT(strlen(fn) > sizeof(data.file) - 1)
     {
-        printf("WARNING: font file %s name length > 32\n",fn);
-        fn[32+1] = '\0';
+        printf("WARNING: font file %s name length > %d\n", fn, int(sizeof(data.file) - 1));
+        return;
     }
 
     // save filename
-    strcpy(data.file, fn);
+    strncpy(data.file, fn, sizeof(data.file));
+    data.file[sizeof(data.file) - 1] = '\0';
 
     parse_font_file();  // gets all metadata (line height, png file) and glyphs
     load_font_png();    // load font png from acquired filename

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <physics/vec2.hpp>
 #include <common/template/object_list.hpp>
 #include <common/color.hpp>
 
@@ -57,6 +58,14 @@ class Text
         return this->formatted;
     }
 
+    size_t length()
+    {
+        if (this->text == NULL)
+            return 0;
+        else
+            return strlen(this->text);
+    }
+
     void set_text(const char* text);
     void set_format(const char* format);
     void set_format_extra_length(int size);
@@ -65,6 +74,7 @@ class Text
     void set_color(Color color);
 
     void set_position(float x, float y);
+    void set_position(const Vec2& position);
     void set_scale(float scale);
     void set_depth(float depth);
     void draw_centered();
@@ -81,9 +91,22 @@ class Text
     // needed, because this object is tracked in a SimpleObjectList
     // which does swaps on objects
     // and we hold a reference to dynamically allocated memory
-    void operator=(Text& t)
+
+    Text& operator=(const Text& t)
     {
-        if (this == &t) return;
+        if (this != &t)
+            this->_copy(t);
+        return *this;
+    }
+
+    Text(const Text& t);
+    explicit Text(int id);
+    Text();
+    ~Text();
+
+    private:
+    void _copy(const Text& t)
+    {
         this->set_text(t.text);
         this->set_format(t.format);
         this->formatted_extra_len = t.formatted_extra_len;
@@ -98,10 +121,6 @@ class Text
         this->alignment = t.alignment;
         this->shadowed = t.shadowed;
     }
-
-    explicit Text(int id);
-    Text();
-    ~Text();
 };
 
 void* set_and_update_array_range(unsigned int n, unsigned int* max,

@@ -12,6 +12,8 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
                                Vec3& collision_point, float& distance,
                                class VoxelHitscanTarget& target)
 {
+    distance = 0;
+    collision_point = vec3_init(INT_MAX);
     const float range_sq = range * range;
     Vec3 dest = vec3_init(0);
     VoxelHitscanElement* target_hit = NULL;
@@ -29,7 +31,7 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
 
         Vec3 p = quadrant_translate_position(pos, vhe->vv->world_matrix.c);
         float distance_sq = vec3_distance_squared(pos, p);
-        if (distance > range_sq)
+        if (distance_sq > range_sq)
             continue;
 
         Vec3 collision;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <physics/vec2.hpp>
 #include <common/color.hpp>
 
 struct VertexDraw
@@ -14,10 +15,12 @@ struct Quad
     struct VertexDraw vertex[4];
 };
 
-void draw_rect(Color color, float x, float y, float w, float h);
+void draw_rect(const Color& color, float x, float y, float w, float h);
+void draw_rect(const Color& color, const Vec2& position, const Vec2& dimension);
 void draw_line(const Color& color, float x0, float y0, float z0, float x1, float y1, float z1);
-void draw_point(Color color, float x0, float y0, float z0);
-void draw_border_rect(Color color, float x, float y, float w, float h);
+void draw_point(const Color& color, float x0, float y0, float z0);
+void draw_border_rect(const Color& color, float x, float y, float w, float h, float line_width=1);
+void draw_border_rect(const Color& color, const Vec2& position, const Vec2& dimension, float line_width);
 
 void draw_line(const Color& color, const struct Vec3& a, const struct Vec3& b);
 

@@ -10,6 +10,7 @@
 #include <item/_interface.hpp>
 #include <item/toolbelt/_interface.hpp>
 #include <t_map/_interface.hpp>
+#include <hud/form.hpp>
 #include <hud/_interface.hpp>
 
 /* Configuration */
@@ -260,6 +261,8 @@ static void draw_weapon_charge_meter()
     glColor4ub(255, 255, 255, 255);
 }
 
+static LoginForm login_form;
+
 void draw_hud_textures()
 {
     // meters
@@ -271,10 +274,11 @@ void draw_hud_textures()
     float ratio = float(ClientState::player_agent.jetpack.fuel) / float(Agents::JETPACK_FUEL_MAX);
     meter_graphic.draw(0,0, w,h, ratio, MeterGraphic::METANCH_LEFT);
 
-    #if !PRODUCTION
+    login_form.set_position(vec2_init(_xresf/4.0f, _yresf/2.0f));
+    login_form.draw();
+
     draw_weapon_cooldown_meter();
     draw_weapon_charge_meter();
-    #endif
 
     if (!hud_draw_settings.draw) return;
 
@@ -491,6 +495,8 @@ void draw_hud_text()
             return;
         }
     }
+
+    login_form.draw_text();
 
     if (input_state.admin_controls)
     {
