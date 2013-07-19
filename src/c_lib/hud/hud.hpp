@@ -98,6 +98,7 @@ class HUD
 
 extern TerminalRenderer terminal_renderer;
 
+extern FormScreen auth_screen;
 extern LoginForm login_form;
 extern CreateAccountForm create_account_form;
 

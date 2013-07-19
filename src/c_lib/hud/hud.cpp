@@ -17,6 +17,7 @@
 namespace Hud
 {
 
+FormScreen auth_screen;
 LoginForm login_form;
 CreateAccountForm create_account_form;
 
@@ -271,12 +272,7 @@ void draw_hud_textures()
 
     if (input_state.login_mode)
     {
-        float xq = _xresf / 3.0f;
-        float y = _yresf * (5.0f/8.0f);
-        login_form.set_position(vec2_init(xq - login_form.width()*0.5f, y));
-        login_form.draw();
-        create_account_form.set_position(vec2_init(2*xq - create_account_form.width()*0.5f, y));
-        create_account_form.draw();
+        auth_screen.draw();
         return;
     }
 
@@ -433,8 +429,7 @@ void draw_hud_text()
 
     if (input_state.login_mode)
     {
-        login_form.draw_text();
-        create_account_form.draw_text();
+        auth_screen.draw_text();
         end_font_draw();
         return;
     }
@@ -646,6 +641,16 @@ void draw_hud_text()
 
 void HUD::init()
 {
+    auth_screen.init(2);
+    auth_screen.add_form(&login_form);
+    auth_screen.add_form(&create_account_form);
+    float xq = _xresf / 2.0f;
+    float y = _yresf * (1.0f/8.0f);
+    login_form.set_position(vec2_init(xq - login_form.width()*0.5f, y * 6));
+    login_form.focus();
+    create_account_form.set_position(vec2_init(xq - create_account_form.width()*0.5f, y * 3));
+    create_account_form.unfocus();
+
     IF_ASSERT(this->inited) return;
     IF_ASSERT(HudFont::font == NULL) return;
     using HudText::text_list;

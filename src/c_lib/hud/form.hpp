@@ -80,6 +80,22 @@ class Form
         }
     }
 
+    void focus()
+    {
+        if (this->focused >= 0) return;
+        this->focused = 0;
+        InputBox* input = this->get_focused_input();
+        IF_ASSERT(input == NULL) return;
+        input->focus();
+    }
+
+    void unfocus()
+    {
+        for (int i=0; i<this->n_inputs; i++)
+            this->inputs[i]->unfocus();
+        this->focused = -1;
+    }
+
     void backspace()
     {
         InputBox* input = this->get_focused_input();
@@ -149,9 +165,14 @@ class Form
         return this->inputs[this->focused];
     }
 
-    void save()
+    virtual void save()
     {
         // write entered data to text file
+    }
+
+    virtual void load()
+    {
+        // load data from text file
     }
 
     void draw()
@@ -202,7 +223,7 @@ class Form
     virtual void submit() = 0;
 
     explicit Form(int n_inputs) :
-        inputs(NULL), input_index(0), n_inputs(n_inputs), focused(0),
+        inputs(NULL), input_index(0), n_inputs(n_inputs), focused(-1),
         position(vec2_init(0))
     {
         IF_ASSERT(this->n_inputs <= 0) return;
@@ -287,6 +308,57 @@ class CreateAccountForm: public Form
     }
 
     virtual ~CreateAccountForm() {}
+};
+
+
+class FormScreen
+{
+    public:
+        Form** forms;
+        int n_forms;
+        int max_forms;
+
+    #define ARGS(A...) A
+
+    #define FORWARD(METHOD, A, C) \
+        void METHOD(A) \
+        { \
+            for (int i=0; i<this->n_forms; i++) \
+                this->forms[i]->METHOD(C); \
+        }
+
+    FORWARD(click, ARGS(Vec2i cursor), ARGS(cursor));
+    FORWARD(hover, ARGS(Vec2i cursor), ARGS(cursor));
+    FORWARD(insert, ARGS(char c), ARGS(c));
+    FORWARD(enter, ARGS(), ARGS());
+    FORWARD(tab, ARGS(), ARGS());
+    FORWARD(backspace, ARGS(), ARGS());
+    FORWARD(cursor_right, ARGS(), ARGS());
+    FORWARD(cursor_left, ARGS(), ARGS());
+    FORWARD(draw, ARGS(), ARGS());
+    FORWARD(draw_text, ARGS(), ARGS());
+
+    #undef FORWARD
+    #undef ARGS
+
+    void add_form(Form* form)
+    {
+        IF_ASSERT(this->forms == NULL) return;
+        IF_ASSERT(this->n_forms >= this->max_forms) return;
+        this->forms[this->n_forms++] = form;
+    }
+
+    void init(int max_forms)
+    {
+        this->max_forms = max_forms;
+        IF_ASSERT(max_forms <= 0) return;
+        this->forms = (Form**)calloc(max_forms, sizeof(*this->forms));
+    }
+
+    FormScreen() :
+        forms(NULL), n_forms(0), max_forms(0)
+    {
+    }
 };
 
 }   // Hud

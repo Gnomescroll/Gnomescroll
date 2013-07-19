@@ -122,7 +122,7 @@ class InputBox
 
     explicit InputBox(UIInputType type) :
         type(type), label_margin(2), focused(false),
-        position(vec2_init(0)), border(vec2_init(8)), dims(vec2_init(250, 30)),
+        position(vec2_init(0)), border(vec2_init(8)), dims(vec2_init(400, 30)),
         border_color(Color(10, 150, 50)),
         background_color(Color(0, 100, 10, 64))
     {
@@ -360,7 +360,7 @@ class InputTextBox: public InputBox
     }
 
     InputTextBox() :
-        InputBox(UI_INPUT_TEXT), max_text_length(26),
+        InputBox(UI_INPUT_TEXT), max_text_length(43),
         cursor(0), cursor_width(6), cursor_color(Color(150, 150, 150)),
         password(false)
     {

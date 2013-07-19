@@ -585,24 +585,24 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 
 void auth_form_key_down_handler(SDL_Event* event)
 {
-    using Hud::login_form;
+    using Hud::auth_screen;
 
     switch (event->key.keysym.sym)
     {
         case SDLK_TAB:
-            login_form.tab();
+            auth_screen.tab();
             return;
         case SDLK_RETURN:
-            login_form.enter();
+            auth_screen.enter();
             return;
         case SDLK_BACKSPACE:
-            login_form.backspace();
+            auth_screen.backspace();
             return;
         case SDLK_LEFT:
-            login_form.cursor_left();
+            auth_screen.cursor_left();
             return;
         case SDLK_RIGHT:
-            login_form.cursor_right();
+            auth_screen.cursor_right();
             return;
         default:
             break;
@@ -614,7 +614,7 @@ void auth_form_key_down_handler(SDL_Event* event)
     if (t < 0 || t > 127)
         return;
 
-    login_form.insert(char(t));
+    auth_screen.insert(char(t));
 }
 
 void auth_form_mouse_up_handler(SDL_Event* event)
@@ -626,7 +626,7 @@ void auth_form_mouse_up_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            Hud::login_form.click(v);
+            Hud::auth_screen.click(v);
             break;
         default:
             return;
@@ -638,7 +638,7 @@ void auth_form_mouse_motion_handler(SDL_Event* event)
     Vec2i v;
     SDL_GetMouseState(&v.x, &v.y);
     v.y = _yres - v.y;
-    Hud::login_form.hover(v);
+    Hud::auth_screen.hover(v);
 }
 
 
