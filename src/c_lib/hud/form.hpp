@@ -56,15 +56,96 @@ class Form
         Vec2 position;
         HudText::Text label;
 
+    void tab()
+    {
+        this->cycle();
+    }
+
+    void enter()
+    {
+        InputBox* input = this->get_focused_input();
+        if (input == NULL) return;
+        switch (input->type)
+        {
+            case UI_INPUT_BUTTON:
+                this->submit();
+                break;
+            case UI_INPUT_CHECKBOX:
+                input->enter();
+                break;
+            case UI_INPUT_TEXT:
+            case UI_INPUT_NULL:
+            default:
+                break;
+        }
+    }
+
+    void backspace()
+    {
+        InputBox* input = this->get_focused_input();
+        if (input != NULL)
+            input->backspace();
+    }
+
+    void insert(char c)
+    {
+        InputBox* input = this->get_focused_input();
+        if (input != NULL)
+            input->insert(c);
+    }
+
+    void click(const Vec2i& cursor)
+    {
+        this->focused = -1;
+        for (int i=0; i<this->n_inputs; i++)
+        {
+            this->inputs[i]->click(cursor);
+            if (this->inputs[i]->focused)
+                this->focused = i;
+            if (this->inputs[i]->type == UI_INPUT_BUTTON &&
+                reinterpret_cast<Button*>(this->inputs[i])->activated)
+            {
+                this->submit();
+                break;
+            }
+        }
+    }
+
+    void hover(const Vec2i& cursor)
+    {
+        for (int i=0; i<this->n_inputs; i++)
+            this->inputs[i]->hover(cursor);
+    }
+
+    void cursor_left()
+    {
+        InputBox* input = this->get_focused_input();
+        if (input != NULL)
+            input->cursor_left();
+    }
+
+    void cursor_right()
+    {
+        InputBox* input = this->get_focused_input();
+        if (input != NULL)
+            input->cursor_right();
+    }
+
     void cycle()
     {
+        InputBox* input = this->get_focused_input();
+        if (input == NULL) return;
+        input->unfocus();
         this->focused = (this->focused + 1) % this->n_inputs;
+        input = this->get_focused_input();
+        if (input != NULL)
+            input->focus();
     }
 
     InputBox* get_focused_input()
     {
-        IF_ASSERT(this->focused < 0 || this->focused >= this->n_inputs)
-            return NULL;
+        if (this->focused < 0) return NULL;
+        IF_ASSERT(this->focused >= this->n_inputs) return NULL;
         return this->inputs[this->focused];
     }
 
@@ -97,6 +178,24 @@ class Form
             this->inputs[i]->set_position(p);
             p.y -= this->inputs[i]->dims.y;
         }
+    }
+
+    int width() const
+    {
+        int w = -1;
+        for (int i=0; i<this->n_inputs; i++)
+            if (this->inputs[i]->dims.x > w)
+                w = this->inputs[i]->dims.x;
+        return w;
+    }
+
+    int height() const
+    {
+        int h = -1;
+        for (int i=0; i<this->n_inputs; i++)
+            if (this->inputs[i]->dims.y > h)
+                h = this->inputs[i]->dims.y;
+        return h;
     }
 
     virtual const char* name() = 0;

@@ -5,12 +5,21 @@
 #include <hud/text.hpp>
 #include <hud/font.hpp>
 
+typedef enum
+{
+    UI_INPUT_NULL,
+    UI_INPUT_BUTTON,
+    UI_INPUT_TEXT,
+    UI_INPUT_CHECKBOX,
+} UIInputType;
+
 namespace Hud
 {
 
 class InputBox
 {
     public:
+        UIInputType type;
         HudText::Text label;
         int label_margin;
         bool focused;
@@ -21,8 +30,20 @@ class InputBox
         Color border_color;
         Color background_color;
 
-    virtual void hover(const Vec2& cursor) {}
-    virtual void click(const Vec2& cursor) {}
+    virtual void hover(const Vec2i& cursor)
+    {
+    }
+
+    virtual void click(const Vec2i& cursor)
+    {
+        if (this->contains_point(cursor))
+            this->focus();
+        else
+            this->unfocus();
+    }
+
+    virtual void cursor_left() {}
+    virtual void cursor_right() {}
 
     void focus()
     {
@@ -34,9 +55,9 @@ class InputBox
         this->focused = false;
     }
 
-    bool contains_point(const Vec2& point)
+    bool contains_point(const Vec2i& point)
     {
-        return point_in_rect(point, this->position, this->dims);
+        return point_in_rect(vec2_init(point), this->position, this->dims);
     }
 
     void set_position(const Vec2& position)
@@ -99,14 +120,18 @@ class InputBox
         this->label.draw();
     }
 
-    InputBox() :
-        label_margin(2), focused(false),
-        position(vec2_init(0)), border(vec2_init(8)), dims(vec2_init(200, 30)),
+    explicit InputBox(UIInputType type) :
+        type(type), label_margin(2), focused(false),
+        position(vec2_init(0)), border(vec2_init(8)), dims(vec2_init(250, 30)),
         border_color(Color(10, 150, 50)),
         background_color(Color(0, 100, 10, 64))
     {
         memset(this->name, 0, sizeof(this->name));
     }
+
+    virtual void backspace() {}
+    virtual void insert(char c) {}
+    virtual void enter() {}
 
     virtual ~InputBox() {}
 
@@ -130,9 +155,20 @@ class InputCheckBox: public InputBox
     public:
         bool checked;
 
-    virtual void click(const Vec2& cursor)
+    virtual void click(const Vec2i& cursor)
     {
-        if (!this->contains_point(cursor)) return;
+        if (this->contains_point(cursor))
+        {
+            this->focus();
+            this->toggle();
+        }
+        else
+            this->unfocus();
+    }
+
+    virtual void enter()
+    {
+        if (!this->focused) return;
         this->toggle();
     }
 
@@ -163,7 +199,7 @@ class InputCheckBox: public InputBox
     }
 
     InputCheckBox() :
-        InputBox(), checked(false)
+        InputBox(UI_INPUT_CHECKBOX), checked(false)
     {
         this->background_color.a = 0xFF;
     }
@@ -204,7 +240,10 @@ class InputCheckBox: public InputBox
         d.x = width;
         d.y = this->dims.y - this->border.y * 0.5f;
         p.x -= d.x * 0.5f;
-        draw_rect(Color(32, 32, 32, 128), p, d);
+        unsigned char alpha = 128;
+        if (this->focused)
+            alpha = 196;
+        draw_rect(Color(32, 32, 32, alpha), p, d);
     }
 };
 
@@ -213,6 +252,7 @@ class InputTextBox: public InputBox
     public:
 
         HudText::Text text;
+        size_t max_text_length;
         int cursor;
         int cursor_width;
         Color text_color;
@@ -229,6 +269,16 @@ class InputTextBox: public InputBox
         return this->text.text;
     }
 
+    virtual void cursor_left()
+    {
+        this->set_cursor(this->cursor - 1);
+    }
+
+    virtual void cursor_right()
+    {
+        this->set_cursor(this->cursor + 1);
+    }
+
     void set_cursor(int x)
     {
         x = GS_MIN(x, int(this->text.length()));
@@ -236,9 +286,10 @@ class InputTextBox: public InputBox
         this->cursor = x;
     }
 
-    void insert(char c)
+    virtual void insert(char c)
     {
         GS_ASSERT(this->focused);
+        if (this->text.length() >= this->max_text_length) return;
         size_t length_needed = this->text.length() + 1;
         if (length_needed > int(this->scratch_len)) return;
 
@@ -250,11 +301,15 @@ class InputTextBox: public InputBox
         this->set_cursor(this->cursor + 1);
     }
 
-    void backspace()
+    virtual void backspace()
     {
         GS_ASSERT(this->focused);
         if (cursor <= 0) return;
-        this->text.text[this->cursor - 1] = '\0';
+        strncpy(this->scratch, this->text.text, this->cursor);
+        strncpy(&this->scratch[this->cursor - 1], &this->text.text[this->cursor],
+                this->scratch_len - this->cursor + 1);
+        this->scratch[this->scratch_len] = '\0';
+        this->text.set_text(this->scratch);
         this->set_cursor(this->cursor - 1);
     }
 
@@ -305,7 +360,8 @@ class InputTextBox: public InputBox
     }
 
     InputTextBox() :
-        cursor(0), cursor_width(6),  cursor_color(Color(150, 150, 150)),
+        InputBox(UI_INPUT_TEXT), max_text_length(26),
+        cursor(0), cursor_width(6), cursor_color(Color(150, 150, 150)),
         password(false)
     {
         this->text.set_text("");
@@ -331,9 +387,9 @@ class InputTextBox: public InputBox
         offset.y += this->border.y * 0.5f;
 
         int cursor_width = this->cursor_width;
-        if (this->text.text[0] != '\0' && HudFont::font != NULL)
+        if (HudFont::font != NULL)
         {
-            HudFont::Glyph glyph = HudFont::font->get_glyph(this->text.text[0]);
+            HudFont::Glyph glyph = HudFont::font->get_glyph(' ');
             cursor_width = glyph.w;
         }
         draw_rect(this->cursor_color, offset, vec2_init(cursor_width, cursor_height));
@@ -343,10 +399,9 @@ class InputTextBox: public InputBox
 class Button: public InputBox
 {
     public:
-
         bool activated;
 
-    virtual void hover(const Vec2& cursor)
+    virtual void hover(const Vec2i& cursor)
     {
         if (this->contains_point(cursor))
             this->focus();
@@ -354,7 +409,7 @@ class Button: public InputBox
             this->unfocus();
     }
 
-    virtual void click(const Vec2& cursor)
+    virtual void click(const Vec2i& cursor)
     {
         if (!this->contains_point(cursor)) return;
         this->activated = true;
@@ -394,14 +449,14 @@ class Button: public InputBox
 
         Vec2 p = this->position;
         p.y += height + this->border.y;
-        p.x += this->dims.x / 2 - width / 2;
+        p.x += (this->dims.x - width) * 0.5f;
         this->label.set_position(p);
         this->label.draw();
         CHECK_GL_ERROR();
     }
 
     Button() :
-        InputBox(), activated(false)
+        InputBox(UI_INPUT_BUTTON), activated(false)
     {
         this->background_color.a = 0xFF;
     }

@@ -92,9 +92,9 @@ void wait_for_login()
 
         // awesomium
         hud_projection();
-        Awesomium::draw();
-
-        Hud::draw_awesomium_message();
+        //Awesomium::draw();
+        //Hud::draw_awesomium_message();
+        Hud::draw();
         CHECK_GL_ERROR();
 
         _swap_buffers();

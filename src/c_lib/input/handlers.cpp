@@ -169,10 +169,10 @@ void toggle_admin_controls()
 void enable_login_window()
 {
     #if GS_AUTH
-    if (input_state.login_window) return;
-    input_state.login_window = true;
-    update_awesomium_window_state();
-    Hud::clear_prompt(Hud::open_login_text);
+    //if (input_state.login_window) return;
+    //input_state.login_window = true;
+    //update_awesomium_window_state();
+    //Hud::clear_prompt(Hud::open_login_text);
     #endif
 }
 
@@ -582,6 +582,65 @@ void chat_key_up_handler(SDL_Event* event){}
 void chat_mouse_down_handler(SDL_Event* event){}
 void chat_mouse_up_handler(SDL_Event* event){}
 void chat_mouse_motion_handler(SDL_Event* event){}
+
+void auth_form_key_down_handler(SDL_Event* event)
+{
+    using Hud::login_form;
+
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_TAB:
+            login_form.tab();
+            return;
+        case SDLK_RETURN:
+            login_form.enter();
+            return;
+        case SDLK_BACKSPACE:
+            login_form.backspace();
+            return;
+        case SDLK_LEFT:
+            login_form.cursor_left();
+            return;
+        case SDLK_RIGHT:
+            login_form.cursor_right();
+            return;
+        default:
+            break;
+    }
+
+    int t = getUnicodeValue(event->key.keysym);
+    t = (t) ? t : event->key.keysym.sym;
+
+    if (t < 0 || t > 127)
+        return;
+
+    login_form.insert(char(t));
+}
+
+void auth_form_mouse_up_handler(SDL_Event* event)
+{
+    Vec2i v;
+    SDL_GetMouseState(&v.x, &v.y);
+    v.y = _yres - v.y;
+
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            Hud::login_form.click(v);
+            break;
+        default:
+            return;
+    }
+}
+
+void auth_form_mouse_motion_handler(SDL_Event* event)
+{
+    Vec2i v;
+    SDL_GetMouseState(&v.x, &v.y);
+    v.y = _yres - v.y;
+    Hud::login_form.hover(v);
+}
+
 
 /* Container / HUD */
 
@@ -1007,7 +1066,15 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.awesomium)
+    if (input_state.login_mode)
+    {
+        if (event->key.keysym.sym == SDLK_ESCAPE)
+            enable_quit();
+        else
+            auth_form_key_down_handler(event);
+    }
+
+    else if (input_state.awesomium)
     {
         switch (event->key.keysym.sym)
         {
@@ -1320,6 +1387,8 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
+    if (input_state.login_mode)
+        auth_form_mouse_up_handler(event);
     if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
     else if (input_state.agent_inventory || input_state.container_block)
@@ -1344,7 +1413,9 @@ void mouse_motion_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.awesomium)
+    if (input_state.login_mode)
+        auth_form_mouse_motion_handler(event);
+    else if (input_state.awesomium)
         Awesomium::SDL_mouse_event(event);
     else if (input_state.agent_inventory || input_state.container_block)
         container_mouse_motion_handler(event);
@@ -1384,7 +1455,7 @@ void key_state_handler(Uint8 *keystate, int numkeys)
     char misc2 = 0;
     char misc3 = 0;
 
-    if (!input_state.chat && !input_state.awesomium)
+    if (!input_state.chat && !input_state.awesomium && !input_state.login_mode)
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
             agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet,

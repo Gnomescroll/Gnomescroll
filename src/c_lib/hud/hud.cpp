@@ -269,15 +269,21 @@ void draw_hud_textures()
     int w = _xres / 4;
     int h = _yres / 128;
 
+    if (input_state.login_mode)
+    {
+        float xq = _xresf / 3.0f;
+        float y = _yresf * (5.0f/8.0f);
+        login_form.set_position(vec2_init(xq - login_form.width()*0.5f, y));
+        login_form.draw();
+        create_account_form.set_position(vec2_init(2*xq - create_account_form.width()*0.5f, y));
+        create_account_form.draw();
+        return;
+    }
+
     // jetpack
     glColor4ub(255,255,255,115); // white, more than half translucent
     float ratio = float(ClientState::player_agent.jetpack.fuel) / float(Agents::JETPACK_FUEL_MAX);
     meter_graphic.draw(0,0, w,h, ratio, MeterGraphic::METANCH_LEFT);
-
-    login_form.set_position(vec2_init(_xresf/4.0f, _yresf/2.0f));
-    login_form.draw();
-    create_account_form.set_position(vec2_init(3 * _xresf/4.0f, _yresf/2.0f));
-    create_account_form.draw();
 
     draw_weapon_cooldown_meter();
     draw_weapon_charge_meter();
@@ -422,6 +428,16 @@ void draw_hud_text()
     if (!hud_draw_settings.draw) return;
 
     start_font_draw();
+    HudFont::reset_default();
+    set_texture();
+
+    if (input_state.login_mode)
+    {
+        login_form.draw_text();
+        create_account_form.draw_text();
+        end_font_draw();
+        return;
+    }
 
     if (!has_error())
     {
@@ -497,9 +513,6 @@ void draw_hud_text()
             return;
         }
     }
-
-    login_form.draw_text();
-    create_account_form.draw_text();
 
     if (input_state.admin_controls)
     {
