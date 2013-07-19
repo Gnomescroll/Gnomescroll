@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdio.h>
 #include <hud/input.hpp>
 
 namespace Hud
@@ -32,7 +33,7 @@ class Form
 
     #undef REGISTER_INPUT
 
-    void check_all_loaded()
+    void sanity_check()
     {
         for (int i=0; i<this->n_inputs; i++)
             GS_ASSERT(this->inputs[i] != NULL);
@@ -56,6 +57,10 @@ class Form
         Vec2 position;
         HudText::Text label;
 
+    virtual void added_to_screen()
+    {
+    }
+
     void tab()
     {
         this->cycle();
@@ -67,13 +72,13 @@ class Form
         if (input == NULL) return;
         switch (input->type)
         {
+            case UI_INPUT_TEXT:
             case UI_INPUT_BUTTON:
                 this->submit();
                 break;
             case UI_INPUT_CHECKBOX:
                 input->enter();
                 break;
-            case UI_INPUT_TEXT:
             case UI_INPUT_NULL:
             default:
                 break;
@@ -108,6 +113,35 @@ class Form
         InputBox* input = this->get_focused_input();
         if (input != NULL)
             input->insert(c);
+    }
+
+    void erase_save(const char* name)
+    {
+        char* path = this->get_save_file_path(name);
+        IF_ASSERT(path == NULL) return;
+        remove(path);
+        free(path);
+    }
+
+    char* get_save_file_path(const char* name)
+    {
+        if (name == NULL) name = this->name();
+        using ClientState::active_system_data_path;
+        IF_ASSERT(name == NULL || name[0] == '\0')
+            return NULL;
+        const char fmt[] = "%s/%s";
+        char* path = (char*)malloc(strlen(active_system_data_path) + strlen(name) + sizeof(fmt));
+        sprintf(path, fmt, active_system_data_path, name);
+        return path;
+    }
+
+    FILE* get_save_file(const char* fn, const char* mode)
+    {
+        char* path = this->get_save_file_path(fn);
+        IF_ASSERT(path == NULL) return NULL;
+        FILE* f = fopen(path, mode);
+        free(path);
+        return f;
     }
 
     void click(const Vec2i& cursor)
@@ -165,14 +199,90 @@ class Form
         return this->inputs[this->focused];
     }
 
-    virtual void save()
+    InputBox* get_input_by_name(const char* name)
     {
-        // write entered data to text file
+        for (int i=0; i<this->n_inputs; i++)
+            if (strcmp(this->inputs[i]->get_name(), name) == 0)
+                return this->inputs[i];
+        return NULL;
     }
 
-    virtual void load()
+    virtual void save(const char* fn)
     {
-        // load data from text file
+        FILE* f = this->get_save_file(fn, "w");
+        IF_ASSERT(f == NULL) return;
+
+        for (int i=0; i<this->n_inputs; i++)
+            if (this->inputs[i]->save)
+            {
+                const char* name = this->inputs[i]->get_name();
+                IF_ASSERT(name == NULL || name[0] == '\0') continue;
+                const char* value = this->inputs[i]->get_value();
+                size_t wrote = fwrite(name, sizeof(*name), strlen(name), f);
+                GS_ASSERT(wrote == strlen(name));
+                wrote = fwrite("=", sizeof(char), sizeof("=") - 1, f);
+                GS_ASSERT(wrote == sizeof("=") - 1);
+                if (value != NULL)
+                {
+                    wrote = fwrite(value, sizeof(*value), strlen(value), f);
+                    GS_ASSERT(wrote == strlen(value));
+                }
+                wrote = fwrite("\n", sizeof(char), sizeof("\n") - 1, f);
+                GS_ASSERT(wrote == sizeof("\n") - 1);
+            }
+
+        fclose(f);
+    }
+
+    void load(const char* fn)
+    {
+        char* path = this->get_save_file_path(fn);
+        IF_ASSERT(path == NULL) return;
+        size_t len = 0;
+        char* data = read_file_to_buffer(path, &len);
+        if (data == NULL) return;
+
+        const size_t iiv_len = 63;
+        char* input_name = (char*)malloc(InputBox::name_max_length + 1);
+        char* value = (char*)malloc(iiv_len + 1);
+        size_t iin = 0;
+        size_t iiv = 0;
+        bool on_input_name = true;
+        for (size_t i=0; i<len; i++)
+        {
+            char c = data[i];
+            if (c == '=')
+            {
+                iiv = 0;
+                on_input_name = false;
+                input_name[iin] = '\0';
+            }
+            else if (c == '\n')
+            {
+                value[iiv] = '\0';
+                on_input_name = true;
+                iin = 0;
+
+                InputBox* input = this->get_input_by_name(input_name);
+                IF_ASSERT(input == NULL) break;
+                input->set_value(value);
+            }
+            else if (on_input_name)
+            {
+                IF_ASSERT(iin >= InputBox::name_max_length) break;
+                input_name[iin++] = c;
+            }
+            else
+            {
+                IF_ASSERT(iiv >= iiv_len) break;
+                value[iiv++] = c;
+            }
+        }
+
+        free(input_name);
+        free(value);
+        free(data);
+        free(path);
     }
 
     void draw()
@@ -252,24 +362,33 @@ class LoginForm: public Form
         return "Login";
     }
 
+    virtual void added_to_screen()
+    {
+        this->load("credentials");
+    }
+
     virtual void submit()
     {
         for (int i=0; i<this->n_inputs; i++)
             printf("%s: %s\n", this->inputs[i]->get_name(), this->inputs[i]->get_value());
+        if (this->remember->get_value()[0] == 't')
+            this->save("credentials");
+        else
+            this->erase_save("credentials");
     }
 
     LoginForm() :
         Form(4)
     {
         this->username = (InputTextBox*)this->register_text_input("username");
+        this->username->save = true;
         this->password = (InputTextBox*)this->register_text_input("password");
         this->password->password = true;
+        this->password->save = true;
         this->remember = (InputCheckBox*)this->register_checkbox_input("remember");
+        this->remember->save = true;
         this->submit_button = (Button*)this->register_button_input("submit");
-        this->check_all_loaded();
-
-        this->username->set_text("rdn");
-        this->password->set_text("password");
+        this->sanity_check();
     }
 
     virtual ~LoginForm() {}
@@ -293,18 +412,25 @@ class CreateAccountForm: public Form
     {
         for (int i=0; i<this->n_inputs; i++)
             printf("%s: %s\n", this->inputs[i]->get_name(), this->inputs[i]->get_value());
+        if (this->remember->get_value()[0] == 't')
+            this->save("credentials");
+        else
+            this->erase_save("credentials");
     }
 
     CreateAccountForm() :
         Form(5)
     {
         this->username = (InputTextBox*)this->register_text_input("username");
+        this->username->save = true;
         this->email = (InputTextBox*)this->register_text_input("email");
         this->password = (InputTextBox*)this->register_text_input("password");
+        this->password->save = true;
         this->password->password = true;
         this->remember = (InputCheckBox*)this->register_checkbox_input("remember");
+        this->remember->save = true;
         this->submit_button = (Button*)this->register_button_input("submit");
-        this->check_all_loaded();
+        this->sanity_check();
     }
 
     virtual ~CreateAccountForm() {}
@@ -346,6 +472,7 @@ class FormScreen
         IF_ASSERT(this->forms == NULL) return;
         IF_ASSERT(this->n_forms >= this->max_forms) return;
         this->forms[this->n_forms++] = form;
+        form->added_to_screen();
     }
 
     void init(int max_forms)

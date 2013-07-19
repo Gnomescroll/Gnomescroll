@@ -110,8 +110,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         # Force 32-bit compilation in production, until awesomium is removed
         i386 = True
         x86_64 = False
-    if auth:
-        awesomium = True
 
     if awesomium:
         i386 = True
@@ -880,7 +878,7 @@ class auth_ctx(ConfigurationContext):
 
 
 def auth(ctx):
-    configure(ctx, awesomium=True, auth=True)
+    configure(ctx, auth=True)
 
 
 class noassimp_ctx(ConfigurationContext):

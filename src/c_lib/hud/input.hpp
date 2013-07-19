@@ -19,6 +19,7 @@ namespace Hud
 class InputBox
 {
     public:
+        static const size_t name_max_length = 63;
         UIInputType type;
         HudText::Text label;
         int label_margin;
@@ -29,6 +30,7 @@ class InputBox
         Color label_color;
         Color border_color;
         Color background_color;
+        bool save;
 
     virtual void hover(const Vec2i& cursor)
     {
@@ -76,6 +78,8 @@ class InputBox
     }
 
     virtual const char* get_value() = 0;
+    virtual void set_value(const char* value) = 0;
+
     void set_name(const char* name)
     {
         strncpy(this->name, name, this->name_max_length);
@@ -124,7 +128,8 @@ class InputBox
         type(type), label_margin(2), focused(false),
         position(vec2_init(0)), border(vec2_init(8)), dims(vec2_init(400, 30)),
         border_color(Color(10, 150, 50)),
-        background_color(Color(0, 100, 10, 64))
+        background_color(Color(0, 100, 10, 64)),
+        save(false)
     {
         memset(this->name, 0, sizeof(this->name));
     }
@@ -136,7 +141,6 @@ class InputBox
     virtual ~InputBox() {}
 
     protected:
-        static const size_t name_max_length = 63;
         char name[name_max_length + 1];
 
     virtual void draw_border()
@@ -183,6 +187,19 @@ class InputCheckBox: public InputBox
             return "t";
         else
             return "f";
+    }
+
+    virtual void set_value(const char* value)
+    {
+        if (value[0] == 't')
+            this->checked = true;
+        else if (value[0] == 'f')
+            this->checked = false;
+        else
+        {
+            GS_ASSERT(false);
+            printf("Attempted to set checkbox value to: %s\n", value);
+        }
     }
 
     virtual void draw()
@@ -264,9 +281,14 @@ class InputTextBox: public InputBox
         return this->text.text;
     }
 
-    const char* get_text() const
+    virtual void set_value(const char* value)
     {
-        return this->text.text;
+        bool go_to_end = false;
+        if (this->cursor == int(this->text.length()))
+            go_to_end = true;
+        this->text.set_text(value);
+        if (go_to_end)
+            this->cursor = int(this->text.length());
     }
 
     virtual void cursor_left()
@@ -317,16 +339,6 @@ class InputTextBox: public InputBox
     {
         this->text.set_text("");
         this->cursor = 0;
-    }
-
-    void set_text(const char* text)
-    {
-        bool go_to_end = false;
-        if (this->cursor == int(this->text.length()))
-            go_to_end = true;
-        this->text.set_text(text);
-        if (go_to_end)
-            this->cursor = int(this->text.length());
     }
 
     virtual void draw()
@@ -422,9 +434,14 @@ class Button: public InputBox
         return a;
     }
 
-    const char* get_value()
+    virtual const char* get_value()
     {
         return this->label.text;
+    }
+
+    virtual void set_value(const char* value)
+    {
+        this->label.set_text(value);
     }
 
     virtual void draw()

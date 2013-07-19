@@ -1216,11 +1216,11 @@ void key_down_handler(SDL_Event* event)
     // these should occur for all of Chat, Agents::Agent and Camera
     switch (event->key.keysym.sym)
     {
-        #if !PRODUCTION
-        case SDLK_n:
-            Awesomium::send_json_settings(Options::settings);
-            break;
-        #endif
+        //#if !PRODUCTION
+        //case SDLK_n:
+            //Awesomium::send_json_settings(Options::settings);
+            //break;
+        //#endif
 
         case SDLK_HOME:
             save_screenshot();

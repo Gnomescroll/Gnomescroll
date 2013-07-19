@@ -12,9 +12,9 @@
 # define GS_AUTH 0
 #endif
 
-#if GS_AUTH && !GS_AWESOMIUM
-# error GS_AUTH is enabled by GS_AWESOMIUM is not
-#endif
+//#if GS_AUTH && !GS_AWESOMIUM
+//# error GS_AUTH is enabled by GS_AWESOMIUM is not
+//#endif
 
 #ifndef GS_ASSIMP
 # define GS_ASSIMP 1
