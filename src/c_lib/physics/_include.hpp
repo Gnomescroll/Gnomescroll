@@ -9,9 +9,10 @@
 #include <physics/motion.cpp>
 #include <physics/pathfinding.cpp>
 #include <physics/quadrant.cpp>
-#include <physics/vec2.hpp>
-#include <physics/vec3i.cpp>
+#include <physics/vec2.cpp>
+#include <physics/vec2i.cpp>
 #include <physics/vec3.cpp>
+#include <physics/vec3i.cpp>
 #include <physics/vec4.hpp>
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>

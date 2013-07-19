@@ -13,29 +13,24 @@ class Form
         int n_inputs;
         int focused;
 
-    InputTextBox* register_text_input(const char* name)
-    {
-        IF_ASSERT(this->input_index >= this->n_inputs) return NULL;
-        InputTextBox* input = new InputTextBox;
-        this->inputs[this->input_index] = input;
-        input->set_name(name);
-        if (this->input_index == 0)
-            input->focus();
-        this->input_index++;
-        return input;
-    }
+    #define REGISTER_INPUT(TYPE, LABEL) \
+        TYPE* register_##LABEL##_input(const char* name) \
+        { \
+            IF_ASSERT(this->input_index >= this->n_inputs) return NULL; \
+            TYPE* input = new TYPE; \
+            this->inputs[this->input_index] = input; \
+            input->set_name(name); \
+            if (this->input_index == 0) \
+                input->focus(); \
+            this->input_index++; \
+            return input; \
+        }
 
-    InputCheckBox* register_checkbox_input(const char* name)
-    {
-        IF_ASSERT(this->input_index >= this->n_inputs) return NULL;
-        InputCheckBox* input = new InputCheckBox;
-        this->inputs[this->input_index] = input;
-        input->set_name(name);
-        if (this->input_index == 0)
-            input->focus();
-        this->input_index++;
-        return input;
-    }
+    REGISTER_INPUT(Button, button)
+    REGISTER_INPUT(InputCheckBox, checkbox)
+    REGISTER_INPUT(InputTextBox, text)
+
+    #undef REGISTER_INPUT
 
     void check_all_loaded()
     {
@@ -43,7 +38,23 @@ class Form
             GS_ASSERT(this->inputs[i] != NULL);
     }
 
+    virtual void draw_label()
+    {
+        if (!this->n_inputs) return;
+        this->label.set_text(this->name());
+        this->label.set_color(Color(180, 220, 180));
+        Vec2 p = this->position;
+        p.y += this->label.get_height();
+        p.y += this->inputs[0]->dims.y + this->inputs[0]->border.y * 0.5f;
+        p.x += (this->inputs[0]->dims.x - this->label.get_width()) * 0.5f;
+        this->label.set_position(p);
+        this->label.draw();
+    }
+
     public:
+
+        Vec2 position;
+        HudText::Text label;
 
     void cycle()
     {
@@ -74,10 +85,12 @@ class Form
         for (int i=0; i<this->n_inputs; i++)
             if (this->inputs[i] != NULL)
                 this->inputs[i]->draw_text();
+        this->draw_label();
     }
 
     void set_position(const Vec2& position)
     {
+        this->position = position;
         Vec2 p = position;
         for (int i=0; i<this->n_inputs; i++)
         {
@@ -90,7 +103,8 @@ class Form
     virtual void submit() = 0;
 
     explicit Form(int n_inputs) :
-        inputs(NULL), input_index(0), n_inputs(n_inputs), focused(0)
+        inputs(NULL), input_index(0), n_inputs(n_inputs), focused(0),
+        position(vec2_init(0))
     {
         IF_ASSERT(this->n_inputs <= 0) return;
         this->inputs = (InputBox**)calloc(this->n_inputs, sizeof(*this->inputs));
@@ -111,10 +125,11 @@ class LoginForm: public Form
         InputTextBox* username;
         InputTextBox* password;
         InputCheckBox* remember;
+        Button* submit_button;
 
     virtual const char* name()
     {
-        return "login";
+        return "Login";
     }
 
     virtual void submit()
@@ -124,12 +139,13 @@ class LoginForm: public Form
     }
 
     LoginForm() :
-        Form(3)
+        Form(4)
     {
         this->username = (InputTextBox*)this->register_text_input("username");
         this->password = (InputTextBox*)this->register_text_input("password");
         this->password->password = true;
         this->remember = (InputCheckBox*)this->register_checkbox_input("remember");
+        this->submit_button = (Button*)this->register_button_input("submit");
         this->check_all_loaded();
 
         this->username->set_text("rdn");
@@ -145,12 +161,12 @@ class CreateAccountForm: public Form
         InputTextBox* username;
         InputTextBox* email;
         InputTextBox* password;
-        InputTextBox* confirm;
         InputCheckBox* remember;
+        Button* submit_button;
 
     virtual const char* name()
     {
-        return "create_account";
+        return "Create Account";
     }
 
     virtual void submit()
@@ -166,9 +182,8 @@ class CreateAccountForm: public Form
         this->email = (InputTextBox*)this->register_text_input("email");
         this->password = (InputTextBox*)this->register_text_input("password");
         this->password->password = true;
-        this->confirm = (InputTextBox*)this->register_text_input("confirm");
-        this->confirm->password = true;
         this->remember = (InputCheckBox*)this->register_checkbox_input("remember");
+        this->submit_button = (Button*)this->register_button_input("submit");
         this->check_all_loaded();
     }
 

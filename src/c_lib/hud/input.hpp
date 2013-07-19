@@ -10,10 +10,6 @@ namespace Hud
 
 class InputBox
 {
-    protected:
-        static const size_t name_max_length = 63;
-        char name[name_max_length + 1];
-
     public:
         HudText::Text label;
         int label_margin;
@@ -25,6 +21,9 @@ class InputBox
         Color border_color;
         Color background_color;
 
+    virtual void hover(const Vec2& cursor) {}
+    virtual void click(const Vec2& cursor) {}
+
     void focus()
     {
         this->focused = true;
@@ -33,6 +32,11 @@ class InputBox
     void unfocus()
     {
         this->focused = false;
+    }
+
+    bool contains_point(const Vec2& point)
+    {
+        return point_in_rect(point, this->position, this->dims);
     }
 
     void set_position(const Vec2& position)
@@ -69,7 +73,7 @@ class InputBox
         this->draw_label();
     }
 
-    void draw_label()
+    virtual void draw_label()
     {
         if (HudFont::font == NULL) return;
         const char* _name = this->get_name();
@@ -79,7 +83,8 @@ class InputBox
         size_t colon_pos = strlen(name);
         if (colon_pos == name_max_length)
             colon_pos -= 1;
-        name[colon_pos] = ':';
+        name[colon_pos++] = ':';
+        name[colon_pos] = '\0';
 
         int width = 0;
         HudFont::font->get_string_pixel_dimension(name, &width, NULL);
@@ -95,7 +100,7 @@ class InputBox
     }
 
     InputBox() :
-        label_margin(4), focused(false),
+        label_margin(2), focused(false),
         position(vec2_init(0)), border(vec2_init(8)), dims(vec2_init(200, 30)),
         border_color(Color(10, 150, 50)),
         background_color(Color(0, 100, 10, 64))
@@ -104,6 +109,20 @@ class InputBox
     }
 
     virtual ~InputBox() {}
+
+    protected:
+        static const size_t name_max_length = 63;
+        char name[name_max_length + 1];
+
+    virtual void draw_border()
+    {
+        draw_border_rect(this->border_color, this->position, this->dims, this->border.x);
+    }
+
+    virtual void draw_background()
+    {
+        draw_rect(this->background_color, this->position, this->dims);
+    }
 };
 
 class InputCheckBox: public InputBox
@@ -111,9 +130,10 @@ class InputCheckBox: public InputBox
     public:
         bool checked;
 
-    void set(bool value)
+    virtual void click(const Vec2& cursor)
     {
-        this->checked = value;
+        if (!this->contains_point(cursor)) return;
+        this->toggle();
     }
 
     void toggle()
@@ -131,14 +151,61 @@ class InputCheckBox: public InputBox
 
     virtual void draw()
     {
-        // TODO
+        this->draw_background();
+        this->draw_border();
+        this->draw_checkbox();
+    }
+
+    virtual void draw_text()
+    {
+        this->draw_checkbox_text();
+        this->draw_label();
     }
 
     InputCheckBox() :
-        checked(false)
-    {}
+        InputBox(), checked(false)
+    {
+        this->background_color.a = 0xFF;
+    }
 
     virtual ~InputCheckBox() {}
+
+    protected:
+
+        HudText::Text checked_text;
+
+    void draw_checkbox_text()
+    {
+        if (this->checked)
+        {
+            this->checked_text.set_text("yes");
+            this->checked_text.set_color(Color(224, 64, 64));
+        }
+        else
+        {
+            this->checked_text.set_text("no");
+            this->checked_text.set_color(Color(96, 96, 96));
+        }
+        Vec2 p = this->position;
+        p.x += this->dims.x * 0.5f;
+        p.x -= this->checked_text.get_width() * 0.5f;
+        p.y += this->checked_text.get_height() + this->border.y;
+        this->checked_text.set_position(p);
+        this->checked_text.draw();
+    }
+
+    void draw_checkbox()
+    {
+        Vec2 p = this->position;
+        p.x += dims.x * 0.5f;
+        int width = 0;
+        HudFont::font->get_string_pixel_dimension("-yes-", &width, NULL);
+        Vec2 d;
+        d.x = width;
+        d.y = this->dims.y - this->border.y * 0.5f;
+        p.x -= d.x * 0.5f;
+        draw_rect(Color(32, 32, 32, 128), p, d);
+    }
 };
 
 class InputTextBox: public InputBox
@@ -271,16 +338,86 @@ class InputTextBox: public InputBox
         }
         draw_rect(this->cursor_color, offset, vec2_init(cursor_width, cursor_height));
     }
+};
 
-    void draw_border()
+class Button: public InputBox
+{
+    public:
+
+        bool activated;
+
+    virtual void hover(const Vec2& cursor)
     {
-        draw_border_rect(this->border_color, this->position, this->dims, this->border.x);
+        if (this->contains_point(cursor))
+            this->focus();
+        else
+            this->unfocus();
     }
 
-    void draw_background()
+    virtual void click(const Vec2& cursor)
     {
-        draw_rect(this->background_color, this->position, this->dims);
+        if (!this->contains_point(cursor)) return;
+        this->activated = true;
     }
+
+    bool was_activated()
+    {
+        bool a = this->activated;
+        this->activated = false;
+        return a;
+    }
+
+    const char* get_value()
+    {
+        return this->label.text;
+    }
+
+    virtual void draw()
+    {
+        this->draw_background();
+        this->draw_border();
+    }
+
+    virtual void draw_label()
+    {
+        if (HudFont::font == NULL) return;
+
+        this->label.set_text(this->get_name());
+        if (this->focused)
+            this->label.set_color(Color(220, 220, 220));
+        else
+            this->label.set_color(Color(128, 128, 128));
+
+        int width = 0;
+        int height = 0;
+        HudFont::font->get_string_pixel_dimension(this->label.text, &width, &height);
+
+        Vec2 p = this->position;
+        p.y += height + this->border.y;
+        p.x += this->dims.x / 2 - width / 2;
+        this->label.set_position(p);
+        this->label.draw();
+        CHECK_GL_ERROR();
+    }
+
+    Button() :
+        InputBox(), activated(false)
+    {
+        this->background_color.a = 0xFF;
+    }
+
+    virtual ~Button() {}
+
+    protected:
+
+    virtual void draw_background()
+    {
+        Vec2 b = vec2_scalar_mult(this->border, 0.5f);
+        Vec2 p = vec2_add(this->position, b);
+        Vec2 d = vec2_sub(this->dims, b);
+        draw_rect(this->background_color, p, d);
+    }
+
 };
 
 }   // Hud

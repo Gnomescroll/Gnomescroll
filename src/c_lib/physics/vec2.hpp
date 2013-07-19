@@ -1,11 +1,13 @@
 #pragma once
 
 
+struct Vec2i;
+
 struct Vec2
 {
     union
     {
-        int f[2];
+        float f[2];
         struct
         {
             float x, y;
@@ -28,6 +30,8 @@ struct Vec2 vec2_init(float x, float y)
     v.y = y;
     return v;
 }
+
+struct Vec2 vec2_init(const struct Vec2i& a);
 
 struct Vec2 vec2_add(const Vec2& a, const Vec2& b)
 {
@@ -52,4 +56,10 @@ struct Vec2 vec2_scalar_mult(const Vec2& a, float k)
     v.x *= k;
     v.y *= k;
     return v;
+}
+
+bool point_in_rect(const Vec2& point, const Vec2& position, const Vec2& dimension)
+{
+    return (point.x > position.x && point.x < position.x + dimension.x &&
+            point.y > position.y && point.y < position.y + dimension.y);
 }

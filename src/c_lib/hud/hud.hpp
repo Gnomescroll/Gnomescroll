@@ -5,6 +5,7 @@
 #include <hud/meter.hpp>
 #include <hud/scoreboard.hpp>
 #include <hud/terminal_renderer.hpp>
+#include <hud/form.hpp>
 
 namespace Hud
 {
@@ -95,7 +96,10 @@ class HUD
     ~HUD();
 };
 
-TerminalRenderer terminal_renderer;
+extern TerminalRenderer terminal_renderer;
+
+extern LoginForm login_form;
+extern CreateAccountForm create_account_form;
 
 // meter
 extern MeterGraphic meter_graphic;

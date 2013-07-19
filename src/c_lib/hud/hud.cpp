@@ -17,7 +17,11 @@
 namespace Hud
 {
 
-/* Strings */
+LoginForm login_form;
+CreateAccountForm create_account_form;
+
+TerminalRenderer terminal_renderer;
+MeterGraphic meter_graphic;
 
 static const char help_text[] =
 "    Key:            Action:\n"
@@ -68,9 +72,7 @@ static struct HudDrawSettings
     bool vbo_debug;
     bool admin_controls;
     bool terminal_is_open;
-}   hud_draw_settings;
-
-MeterGraphic meter_graphic;
+} hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
 {   // sanitize
@@ -261,8 +263,6 @@ static void draw_weapon_charge_meter()
     glColor4ub(255, 255, 255, 255);
 }
 
-static LoginForm login_form;
-
 void draw_hud_textures()
 {
     // meters
@@ -276,6 +276,8 @@ void draw_hud_textures()
 
     login_form.set_position(vec2_init(_xresf/4.0f, _yresf/2.0f));
     login_form.draw();
+    create_account_form.set_position(vec2_init(3 * _xresf/4.0f, _yresf/2.0f));
+    create_account_form.draw();
 
     draw_weapon_cooldown_meter();
     draw_weapon_charge_meter();
@@ -497,6 +499,7 @@ void draw_hud_text()
     }
 
     login_form.draw_text();
+    create_account_form.draw_text();
 
     if (input_state.admin_controls)
     {
