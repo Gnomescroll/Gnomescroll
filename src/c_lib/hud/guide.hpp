@@ -88,6 +88,18 @@ namespace guide
     "tutorial is avaliable on gnomescroll.com/how-to-play, the wiki is on wiki.gnomescroll.com,\n"
     "and live help is avaliable on gnomescroll.com/contact.\n";
 
+    //mobs
+    static const char* blub_desc =
+    "This is a blue blub. It is a monster and might attack you. If you kill it, it will explode\n"
+    "and drop some explosives.\n";
+
+    static const char* slime_desc =
+    "This is a green slime. It can jump around and is hostile. Whenever you hear its jumping,\n"
+    "watch out!\n";
+
+    static const char* lizard_desc =
+    "This is a lizard thief. It is hostile and can shoot you with a lazer beam from its mouth.\n"
+
     CubeType regolith;
     CubeType rock;
     CubeType iridium;
@@ -132,12 +144,26 @@ namespace guide
                 if (agent != NULL)
                 Hud::set_prompt(agent->status.name);
             }
-            else
-            Hud::set_prompt(Entities::get_entity_name(hitscan.voxel_target.entity_type));
+            else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "blub")
+            Hud::set_prompt(blub_desc);
+            else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "slime")
+            Hud::set_prompt(slime_desc);
+            else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "lizard_thief")
+            Hud::set_prompt(lizard_desc);
             break;
 
             case HITSCAN_TARGET_BLOCK:
-            Hud::set_prompt(t_map::get_cube_pretty_name(hitscan.cube_type));
+            if(hitscan.cube_type == regolith) Hud::set_prompt(regolith_desc);
+            else if(hitscan.cube_type == rock) Hud::set_prompt(rock_desc);
+            else if(hitscan.cube_type == iridium) Hud::set_prompt(iridium_desc);
+            else if(hitscan.cube_type == iron) Hud::set_prompt(iron_desc);
+            else if(hitscan.cube_type == copper) Hud::set_prompt(copper_desc);
+            else if(hitscan.cube_type == gallium) Hud::set_prompt(gallium_desc);
+            else if(hitscan.cube_type == silicon) Hud::set_prompt(silicon_desc);
+            else if(hitscan.cube_type == methice) Hud::set_prompt(methice_desc);
+            else if(hitscan.cube_type == coal) Hud::set_prompt(coal_desc);
+            else if(hitscan.cube_type == furnace) Hud::set_prompt(furnace_desc);
+            else if(hitscan.cube_type == crafting) Hud::set_prompt(crafting_desc);
             break;
 
             case HITSCAN_TARGET_MECH:
@@ -153,14 +179,6 @@ namespace guide
                     else
                     Hud::set_prompt(t_mech::get_mech_pretty_name(mtype));
                 }
-            }
-            break;
-
-            case HITSCAN_TARGET_SPRITE_MOB:
-            {
-                t_mob::SpriteMob* mob = t_mob::get_sprite_mob(hitscan.sprite_mob_id);
-                if (mob != NULL)
-                Hud::set_prompt(t_mob::get_mob_pretty_name(mob->type));
             }
             break;
 
