@@ -73,7 +73,7 @@ def check_clang(conf, use_clang=None):
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
               production=False, awesomium=False, awesomium_debug=False,
               assimp=False, use_clang=None, auth=False, windows=False,
-              i386=None):
+              i386=None, live_auth=False):
     OS = platform.system()
     conf.env.os = OS
 
@@ -123,6 +123,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     aweflag = '-DGS_AWESOMIUM={0}'.format(int(awesomium))
     assimpflag = '-DGS_ASSIMP={0}'.format(int(assimp))
     authflag = '-DGS_AUTH={0}'.format(int(auth))
+    live_authflag = '-DUSE_LIVE_AUTH={0}'.format(int(live_auth))
 
     arch_label = '32'
     if x86_64:
@@ -216,6 +217,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         warning_sound_flag,
         optflag,
         authflag,
+        live_authflag,
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
@@ -443,6 +445,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    includes=map(os.path.abspath, assimp_inc_path),
                    uselib_store='ASSIMP')
 
+    if OS == 'Linux' and auth:
+        conf.check(lib='curl', libpath=[libpath], uselib_store='curl')
+
     conf.env.INCLUDES += ['../src/c_lib', '../src', '../src/net_lib']
 
     if OS == 'Windows' or windows:
@@ -470,14 +475,13 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         if awesomium:
             rpath = '$ORIGIN/./lib/win32/awesomium/lib/{0}'.format(awe_stem)
             conf.env.RPATH += [rpath]
-    else:
-        conf.env.RPATH += ['/lib', '/usr/lib', '/usr/local/lib']
 
     if x86_64:
         conf.env.INCLUDES.append('/usr/include/x86_64-linux-gnu/c++/4.7/')
 
     if OS == 'Linux' and not windows:
         lib_paths = ['$ORIGIN/./lib/lin{0}/', '$ORIGIN/../lib/lin{0}/']
+        conf.env.RPATH += ['/lib', '/usr/lib', '/usr/local/lib']
         conf.env.RPATH += [x.format(arch_label) for x in lib_paths]
         if awesomium:
             awepaths = [os.path.join(x, 'awesomium/release')
@@ -489,6 +493,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     conf.env.awe_stem = awe_stem
     conf.env.production = production
     conf.env.build_modules = False
+    conf.env.auth = auth
     conf.env.i386 = i386
     conf.env.x86_64 = x86_64
     conf.env.windows = windows
@@ -521,6 +526,10 @@ def build(bld):
     png_libs = ['png']
     time_lib = ['rt']
 
+    auth_libs = []
+    if bld.env.auth:
+        auth_libs = ['curl']
+
     includes = []
     libs = []
     if OS == 'Windows':
@@ -546,7 +555,7 @@ def build(bld):
         features='cxx cxxprogram',
         source=['../src/client/_client.cpp'],
         use=use,
-        lib=sound_libraries + png_libs + debug_libs,
+        lib=sound_libraries + png_libs + debug_libs + auth_libs,
         includes=includes,
         libpath=libs,
         framework=sound_framework,
@@ -879,6 +888,15 @@ class auth_ctx(ConfigurationContext):
 
 def auth(ctx):
     configure(ctx, auth=True)
+
+
+class live_auth_ctx(ConfigurationContext):
+    cmd = 'live_auth'
+    fun = 'live_auth'
+
+
+def live_auth(ctx):
+    configure(ctx, auth=True, live_auth=True)
 
 
 class noassimp_ctx(ConfigurationContext):

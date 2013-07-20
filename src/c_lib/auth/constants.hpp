@@ -25,8 +25,8 @@ typedef enum
  */
 
 // Switch to gnomescroll.com when site is live
-#if PRODUCTION
-# define GNOMESCROLL_URL "http://gnomescroll.com"
+#if PRODUCTION || USE_LIVE_AUTH
+# define GNOMESCROLL_URL "https://gnomescroll.com/"
 # define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"    // WARNING -- might have to remove the beginning '.'
 #else
 # define GNOMESCROLL_URL "http://127.0.0.1:5002"

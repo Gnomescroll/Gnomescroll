@@ -1,5 +1,7 @@
 #pragma once
 
+#include <auth/web.hpp>
+
 namespace Auth
 {
 
@@ -18,5 +20,15 @@ inline bool is_valid_user_id(const UserID user_id);
 void run_tests();
 
 void update();
+
+
+#if !GS_AUTH
+bool token_failure = false;
+bool token_available = false;
+void init_packets() {}
+void teardown() {}
+void init() {}
+void update() {}
+#endif
 
 }   // Auth
