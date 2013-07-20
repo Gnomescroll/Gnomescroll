@@ -1,4 +1,5 @@
 #include <hud/hud.hpp>
+#include <t_map/t_properties.hpp>
 
 namespace guide
 {
@@ -87,17 +88,32 @@ namespace guide
     "tutorial is avaliable on gnomescroll.com/how-to-play, the wiki is on wiki.gnomescroll.com,\n"
     "and live help is avaliable on gnomescroll.com/contact.\n";
 
-    CubeType regolith = t_map::get_cube_type("regolith");
-    CubeType rock = t_map::get_cube_type("rock");
-    CubeType iridium = t_map::get_cube_type("iridium_ore");
-    CubeType iron = t_map::get_cube_type("iron_ore");
-    CubeType copper = t_map::get_cube_type("copper_ore");
-    CubeType gallium = t_map::get_cube_type("gallium_ore");
-    CubeType silicon = t_map::get_cube_type("silicon_ore");
-    CubeType methice = t_map::get_cube_type("methane_ice");
-    CubeType coal = t_map::get_cube_type("coal");
-    CubeType furnace = t_map::get_cube_type("smelter_basic");
-    CubeType crafting = t_map::get_cube_type("crafting_bench_basic");
+    CubeType regolith;
+    CubeType rock;
+    CubeType iridium;
+    CubeType iron;
+    CubeType copper;
+    CubeType gallium;
+    CubeType silicon;
+    CubeType methice;
+    CubeType coal;
+    CubeType furnace;
+    CubeType crafting;
+
+    void init()
+    {
+        regolith = t_map::get_cube_type("regolith");
+        rock = t_map::get_cube_type("rock");
+        iridium = t_map::get_cube_type("iridium_ore");
+        iron = t_map::get_cube_type("iron_ore");
+        copper = t_map::get_cube_type("copper_ore");
+        gallium = t_map::get_cube_type("gallium_ore");
+        silicon = t_map::get_cube_type("silicon_ore");
+        methice = t_map::get_cube_type("methane_ice");
+        coal = t_map::get_cube_type("coal");
+        furnace = t_map::get_cube_type("smelter_basic");
+        crafting = t_map::get_cube_type("crafting_bench_basic");
+    }
 
     void draw_guide()
     {
