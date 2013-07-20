@@ -11,7 +11,7 @@ if [ $arch != "32" ] && [ $arch != "64" ]; then
     exit 1
 fi
 
-./waf production
+./waf configure --release=production --arch=$arch
 ./waf
 version=`cat ../src/c_lib/common/version.h | grep GS_VERSION | cut -d " " -f 3`
 if [[ $version == */* ]]; then

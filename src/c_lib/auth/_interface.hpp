@@ -21,14 +21,4 @@ void run_tests();
 
 void update();
 
-
-#if !GS_AUTH
-bool token_failure = false;
-bool token_available = false;
-void init_packets() {}
-void teardown() {}
-void init() {}
-void update() {}
-#endif
-
 }   // Auth

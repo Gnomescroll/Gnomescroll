@@ -12,6 +12,7 @@ typedef unsigned char uint8_t;
 #endif
 
 #include <auth/hmac-sha256.h>
+#include <auth/packets.hpp>
 
 namespace Auth
 {

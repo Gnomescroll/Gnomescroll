@@ -8,8 +8,8 @@ import platform
 import shutil
 import subprocess
 import shlex
-from waflib import Errors
-from waflib import Tools
+from waflib import Errors, Tools, Options
+from waflib.Build import BuildContext
 
 Tools.c_preproc.go_absolute = True
 
@@ -70,12 +70,40 @@ def check_clang(conf, use_clang=None):
     return use_clang
 
 
-def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
-              production=False, awesomium=False, awesomium_debug=False,
-              assimp=False, use_clang=None, auth=False, windows=False,
-              i386=None, live_auth=False):
+def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
+    add_flags = []
+    rm_flags = []
+    link_flags = []
+
+    windows = Options.options.windows
+    production = (Options.options.release.startswith('production'))
+    use_clang = None
+    if production or windows:
+        use_clang = False
+    elif Options.options.compiler == 'clang':
+        use_clang = True
+    elif Options.options.compiler:
+        use_clang = False
+    optlevel = int(Options.options.optimize)
+    live_auth = Options.options.live_auth
+    auth = Options.options.auth or live_auth or production
+    if production:
+        optlevel = 3
+        auth = True
+
     OS = platform.system()
     conf.env.os = OS
+
+    if Options.options.release == 'production_dev':
+        add_flags += ['-DPRODUCTION_DEV=1']
+
+    if production:
+        add_flags += ['-DNDEBUG']
+        rm_flags += ['-ggdb', '-g']
+
+    if Options.options.efence:
+        add_flags += ['-lefence']
+
 
     ''' NOTE:
     If compiling a 32bit library from 64bit ubuntu, you need to install
@@ -92,28 +120,27 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     '''
 
     arch = platform.architecture()[0]
-    if i386 is None:
+    if windows:
+        i386 = True
+    elif Options.options.arch:
+        i386 = (Options.options.arch == 'i386' or Options.options.arch == '32')
+    else:
         i386 = (arch == '32bit')
     x86_64 = not i386
 
-    # TODO -- deprecate awesomium fully. We can't do 64 builds with it,
-    # it bloats the download size immensely, it prevents valgrinding,
-    # it has been known to corrupt chromium installations and itself,
-    # and it has no indication of improving
-    # Disable awesomium until it is completely removed
-    #if not production:
-        #awesomium = False
+    if Options.options.asan:
+        asan_path = os.environ.get('ASAN_PATH')
+        if not asan_path:
+            raise ValueError('ASAN_PATH not defined in your environment')
+        add_flags += ['-fsanitize=address', '-fno-omit-frame-pointer',
+                     '-fno-common']
+        link_flags += ['-fsanitize=address']
+        os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
 
-    if production:
-        awesomium = True
-        auth = True
-        # Force 32-bit compilation in production, until awesomium is removed
-        i386 = True
-        x86_64 = False
-
-    if awesomium:
-        i386 = True
-        x86_64 = False
+    if Options.options.profile:
+        conf.env.CFLAGS.append('-pg')
+        conf.env.CXXFLAGS.append('-pg')
+        conf.env.append_value('LINKFLAGS', '-pg')
 
     optflag = '-O{0}'.format(optlevel)
     awe_stem = 'release'
@@ -446,7 +473,16 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    uselib_store='ASSIMP')
 
     if OS == 'Linux' and auth:
-        conf.check(lib='curl', libpath=[libpath], uselib_store='curl')
+        conf.check(lib='curl', libpath=[libpath],
+                   includes=['../../lib/lin{0}/include'.format(arch_label)],
+                   uselib_store='CURL')
+        conf.check(header_name='curl/curlbuild.h',
+                   lib='curl',
+                   use='curl',
+                   uselib_store='CURL',
+                   includes=['../../lib/lin{0}/include'.format(arch_label)],
+                   fragment='#include <curl/curl.h>' + MAIN_TEST_CODE,
+                   mandatory=True)
 
     conf.env.INCLUDES += ['../src/c_lib', '../src', '../src/net_lib']
 
@@ -492,12 +528,32 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     conf.env.awesomium = awesomium
     conf.env.awe_stem = awe_stem
     conf.env.production = production
-    conf.env.build_modules = False
+    conf.env.build_modules = Options.options.modules
     conf.env.auth = auth
     conf.env.i386 = i386
     conf.env.x86_64 = x86_64
     conf.env.windows = windows
     assert i386 != x86_64
+
+    print_options()
+
+
+def print_options():
+    print '======================'
+    print 'User provided options:'
+    o = Options.options
+    print 'Arch:', o.arch
+    print 'Live Auth:', o.live_auth
+    print 'Windows:', o.windows
+    print 'Asan:', o.asan
+    print 'Release:', o.release
+    print 'Force Debug:', o.force_debug
+    print 'Compiler:', o.compiler
+    print 'Auth:', o.auth
+    print 'Optimize:', o.optimize
+    print 'Profile:', o.profile
+    print 'Efence:', o.efence
+    print 'Modules:', o.modules
 
 
 def build(bld):
@@ -651,320 +707,30 @@ def install_bin(env, target, srcdir, outdir, dest_target=None):
     return _install_bin
 
 
-from waflib.Build import BuildContext
-
-
 BuildContext.build_modules = build_modules
 
-from waflib.Configure import ConfigurationContext
 
-
-class optimized_ctx(ConfigurationContext):
-    cmd = 'optimized'
-    fun = 'optimized'
-
-from waflib.Configure import ConfigurationContext
-
-
-class build_modules_ctx(ConfigurationContext):
-    cmd = 'modules'
-    fun = 'modules'
-
-
-class optimized2_ctx(ConfigurationContext):
-    cmd = 'optimized2'
-    fun = 'optimized2'
-
-
-class debug_ctx(ConfigurationContext):
-    cmd = 'debug'
-    fun = 'debug'
-
-
-class lint_ctx(ConfigurationContext):
-    cmd = 'lint'
-    fun = 'lint'
-
-
-class profile_ctx(ConfigurationContext):
-    cmd = 'profile'
-    fun = 'profile'
-
-
-class profile_opt_ctx(ConfigurationContext):
-    cmd = 'profile_opt'
-    fun = 'profile_opt'
-
-
-class exceptions_ctx(ConfigurationContext):
-    cmd = 'exceptions'
-    fun = 'exceptions'
-
-
-class production_ctx(ConfigurationContext):
-    cmd = 'production'
-    fun = 'production'
-
-
-class production_dev_ctx(ConfigurationContext):
-    cmd = 'production_dev'
-    fun = 'production_dev'
-
-
-class linux_production_ctx(ConfigurationContext):
-    cmd = 'linux'
-    fun = 'linux'
-
-
-class linux64_production_ctx(ConfigurationContext):
-    cmd = 'linux64'
-    fun = 'linux64'
-
-
-class efence_ctx(ConfigurationContext):
-    cmd = 'efence'
-    fun = 'efence'
-
-
-def modules(ctx):
-    configure(ctx)
-    ctx.env.build_modules = True
-
-
-def efence(ctx):
-    configure(ctx, add_flags=['-lefence'])
-
-
-def linux(ctx):
-    production(ctx, add=['-shared-libgcc'])
-
-
-def linux64(ctx):
-    production(ctx, add=['-m64', '-shared-libgcc'])
-
-
-def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-DNDEBUG', '-Winline'], optlevel=3,
-              rm_flags=rm + ['-ggdb', '-g'], production=True, use_clang=False)
-
-# developers' build of the production build
-
-
-def production_dev(ctx, add=[], rm=[]):
-    configure(
-        ctx, add_flags=add + ['-DPRODUCTION_DEV=1', '-Winline'], optlevel=3,
-        rm_flags=rm + ['-ggdb', '-g'], production=True, use_clang=False)
-
-
-def profile(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-pg')
-    ctx.env.CXXFLAGS.append('-pg')
-    ctx.env.append_value('LINKFLAGS', '-pg')
-
-
-def profile_opt(ctx):
-    configure(ctx, optlevel=3)
-    ctx.env.CFLAGS.append('-pg')
-    ctx.env.CXXFLAGS.append('-pg')
-    ctx.env.append_value('LINKFLAGS', '-pg')
-
-
-def optimized(ctx):
-    configure(ctx, optlevel=3)
-    # ctx.env.CXXFLAGS.append('-mtune=native')
-    # ctx.env.CXXFLAGS.append('-march=native')
-
-# run time profile optimization
-
-
-def optimized2(ctx):
-    configure(ctx, optlevel=3)
-    ctx.env.CXXFLAGS.append('-Winline')
-    # ctx.env.CXXFLAGS.append('-fprofile-generate')
-
-
-def debug(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-fstack-protector-all')
-    ctx.env.CXXFLAGS.append('-fstack-protector-all')
-
-
-def exceptions(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.remove('-fno-exceptions')
-    ctx.env.CXXFLAGS.remove('-fno-exceptions')
-    # ctx.check(header_name='libnoise/noise.h',
-                # lib='noise',
-               # use='libnoise',
-               # includes=['/usr/include'],
-               # fragment='#include <libnoise/noise.h>',
-               # mandatory=True)
-
-# dont use this. it was an attempt to use GCC flags to lint the C/C++ code
-# just throws a shit ton of errors starting from the SDL libraries
-
-
-def lint(ctx):
-    configure(ctx)
-    lint_flags = [
-        '-ansi',
-        '-fno-common',
-        '-fshort-enums',
-        '-pedantic',
-        '-undef',
-        '-W',
-        '-Waggregate-return',
-        '-Wall',
-        '-Wcast-align',
-        '-Wcast-qual',
-        '-Wconversion',
-        '-Wmissing-declarations',
-        '-Wredundant-decls',
-        '-Wmissing-prototypes',
-        '-Wnested-externs',
-        '-Wpointer-arith',
-        '-Wshadow',
-        '-Wstrict-prototypes',
-        #'-Wtraditional',
-        '-Wwrite-strings',
-        '-Weffc++',
-    ]
-    ctx.env.CFLAGS += lint_flags
-    ctx.env.CXXFLAGS += lint_flags
-
-
-class prodtest_ctx(ConfigurationContext):
-    cmd = 'prodtest'
-    fun = 'prodtest'
-
-
-def prodtest(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-Winline', '-DNOSTRIPSYMBOLS'],
-              rm_flags=rm, production=True, use_clang=False)
-
-
-class production_dbg_ctx(ConfigurationContext):
-    cmd = 'production_dbg'
-    fun = 'production_dbg'
-
-
-def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-DNDEBUG', '-Winline'], optlevel=3,
-              rm_flags=rm, production=True, use_clang=False)
-
-
-class awesomium_ctx(ConfigurationContext):
-    cmd = 'awe'
-    fun = 'awe'
-
-
-def awe(ctx):
-    configure(ctx, awesomium=True)
-
-
-class awesomium_dbg_ctx(ConfigurationContext):
-    cmd = 'awedbg'
-    fun = 'awedbg'
-
-
-def awedbg(ctx):
-    configure(ctx, awesomium=True, awesomium_debug=True)
-
-
-class noawe_ctx(ConfigurationContext):
-    cmd = 'noawe'
-    fun = 'noawe'
-
-
-def noawe(ctx):
-    configure(ctx, awesomium=False, auth=False)
-
-
-class auth_ctx(ConfigurationContext):
-    cmd = 'auth'
-    fun = 'auth'
-
-
-def auth(ctx):
-    configure(ctx, auth=True)
-
-
-class live_auth_ctx(ConfigurationContext):
-    cmd = 'live_auth'
-    fun = 'live_auth'
-
-
-def live_auth(ctx):
-    configure(ctx, auth=True, live_auth=True)
-
-
-class noassimp_ctx(ConfigurationContext):
-    cmd = 'noass'
-    fun = 'noass'
-
-
-def noass(ctx):
-    configure(ctx, assimp=False)
-
-
-class clang_ctx(ConfigurationContext):
-    cmd = 'clang'
-    fun = 'clang'
-
-
-def clang(ctx):
-    configure(ctx, use_clang=True)
-
-
-class gcc_ctx(ConfigurationContext):
-    cmd = 'gcc'
-    fun = 'gcc'
-
-
-def gcc(ctx):
-    configure(ctx, use_clang=False)
-
-
-class i386_ctx(ConfigurationContext):
-    cmd = '32'
-    fun = 'i386'
-
-
-def i386(ctx):
-    configure(ctx, i386=True)
-
-
-class windows_ctx(ConfigurationContext):
-    cmd = 'windows'
-    fun = 'windows'
-
-
-def windows(ctx):
-    configure(ctx, use_clang=False, windows=True, i386=True, assimp=False,
-              awesomium=False)
-
-
-class windows_prod_ctx(ConfigurationContext):
-    cmd = 'windows_production'
-    fun = 'windows_production'
-
-
-def windows_production(ctx):
-    configure(ctx, use_clang=False, windows=True, i386=True, production=True)
-
-
-class address_sanitizer_ctx(ConfigurationContext):
-    cmd = 'asan'
-    fun = 'asan'
-
-
-def asan(ctx, add=[], rm=[]):
-    asan_path = os.environ.get('ASAN_PATH')
-    if not asan_path:
-        raise ValueError('ASAN_PATH not defined in your environment')
-    flags = ['-fsanitize=address', '-fno-omit-frame-pointer', '-fno-common']
-    link_flags = ['-fsanitize=address']
-    os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
-    configure(ctx, add_flags=add + flags, rm_flags=rm, link_flags=link_flags,
-              optlevel=3)
+def options(opt):
+    opt.add_option('--arch', type='choice', action='store', default='',
+                   choices=['', 'i386', 'x86_64', '32', '64'],
+                   help='Target arch to build for')
+    opt.add_option('--live-auth', action='store_true', default=False,
+                   help='Authenticate with the gnomescroll.com server')
+    opt.add_option('--windows', action='store_true', default=False,
+                   help='Cross-compile to windows from linux')
+    opt.add_option('--asan', action='store_true', default=False,
+                   help='Use asan, the address sanitizer, for debugging')
+    opt.add_option('--release', type='choice', action='store', default='debug',
+                   choices=['debug', 'production', 'production_dev'])
+    opt.add_option('--force-debug', action='store_true', default=False,
+                   help='Add debug symbols regardless of release')
+    opt.add_option('--compiler', type='choice', action='store',
+                   default='clang', choices=['clang', 'gcc'])
+    opt.add_option('--auth', action='store_true', default=False,
+                   help='Login on startup')
+    opt.add_option('--optimize', type='choice', choices=['0', '1', '2', '3'],
+                   default='0', help='GCC optimization level')
+    opt.add_option('--profile', action='store_true', default=False)
+    opt.add_option('--efence', action='store_true', default=False)
+    opt.add_option('--modules', action='store_true', default=False,
+                   help='Experimental module compilation')

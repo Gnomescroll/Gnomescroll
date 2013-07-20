@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./waf windows_production
+./waf configure --release=production --windows
 ./waf
 version=`cat ../src/c_lib/common/version.h | grep GS_VERSION | cut -d " " -f 3`
 if [[ $version == */* ]]; then
