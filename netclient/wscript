@@ -499,6 +499,9 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
         else:
             assert False
 
+    if OS == 'Linux' and not windows and live_auth:
+        conf.env.INCLUDES.append('../lib/lin{0}/include'.format(arch_label))
+
     conf.env.RPATH = ['.', '..']
     if OS == 'Windows' or windows:
         conf.env.INCLUDES.append('../lib/win32/')

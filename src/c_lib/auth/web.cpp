@@ -6,8 +6,13 @@
 namespace Auth
 {
 
-static void
-print_cookies(CURL *curl)
+/* Example cookie handling copied from:
+ *  http://curl.haxx.se/libcurl/c/cookie_interface.html
+ * Example SSL request copied from:
+ *  http://curl.haxx.se/libcurl/c/https.html
+ */
+
+static void print_cookies(CURL *curl)
 {
   CURLcode res;
   struct curl_slist *cookies;
@@ -42,35 +47,17 @@ void download_homepage()
     curl = curl_easy_init();
     if (curl)
     {
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
+        curl_easy_setopt(curl, CURLOPT_SSLKEYTYPE, "PEM");
+        curl_easy_setopt(curl, CURLOPT_CAINFO, MEDIA_PATH "./certs/gnomescroll.pem");
+
         curl_easy_setopt(curl, CURLOPT_URL, GNOMESCROLL_URL);
         curl_easy_setopt(curl, CURLOPT_COOKIEFILE, ""); /* just to start the cookie engine */
-
-        /*
-        * If you want to connect to a site who isn't using a certificate that is
-        * signed by one of the certs in the CA bundle you have, you can skip the
-        * verification of the server's certificate. This makes the connection
-        * A LOT LESS SECURE.
-        *
-        * If you have a CA cert for the server stored someplace else than in the
-        * default bundle, then the CURLOPT_CAPATH option might come handy for
-        * you.
-        */
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
-        curl_easy_setopt(curl, CURLOPT_SSLKEYTYPE, "PEM");
-        curl_easy_setopt(curl, CURLOPT_SSLKEY, MEDIA_PATH "./certs/gnomescroll.pem");
-        curl_easy_setopt(curl, CURLOPT_CAPATH, MEDIA_PATH "./certs/");
 
         #if !PRODUCTION
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         #endif
-
-        /*
-         * If the site you're connecting to uses a different host name that what
-         * they have mentioned in their server certificate's commonName (or
-         * subjectAltName) fields, libcurl will refuse to connect. You can skip
-         * this check, but this will make the connection less secure.
-         */
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1L);
 
         /* Perform the request, res will get the return code */
         res = curl_easy_perform(curl);
