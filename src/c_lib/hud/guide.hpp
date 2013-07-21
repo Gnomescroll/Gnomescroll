@@ -135,6 +135,8 @@ namespace guide
         if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
         return;
 
+        Hud::set_prompt(guide_desc);
+
         switch (hitscan.type)
         {
             case HITSCAN_TARGET_VOXEL:
@@ -185,7 +187,6 @@ namespace guide
             case HITSCAN_TARGET_NONE:
             break;
         }
-
-        Hud::hud->target->draw();
+        if(input_state.agent_inventory) Hud::set_prompt(inventory_desc);
     }
 }//guide
