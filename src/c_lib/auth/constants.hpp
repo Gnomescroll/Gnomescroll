@@ -26,7 +26,7 @@ typedef enum
 
 // Switch to gnomescroll.com when site is live
 #if PRODUCTION || USE_LIVE_AUTH
-# define GNOMESCROLL_URL "https://gnomescroll.com/"
+# define GNOMESCROLL_URL "https://gnomescroll.com"
 # define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"    // WARNING -- might have to remove the beginning '.'
 #else
 # define GNOMESCROLL_URL "http://127.0.0.1:5002"
@@ -53,6 +53,7 @@ const char AUTH_TOKEN_LOCAL_COOKIE_NAME[] = "gstoken";    // name of the cookie 
 const char AUTH_TOKEN_LOCAL_COOKIE_NAME[] = "dbggstoken";    // name of the cookie value saved locally
 #endif
 const char AUTH_TOKEN_COOKIE_NAME[] = "gstoken";    // name of the cookie value set by the auth server
+const char AUTH_TOKEN_NAME[] = "gstoken";    // name of the json field
 const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
 
 const char UNDEFINED_NAME[] = "undefined-name";

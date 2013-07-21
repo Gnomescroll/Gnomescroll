@@ -3,6 +3,7 @@
 #include <common/common.hpp>
 #include <auth/packets.hpp>
 #if DC_CLIENT
+# include <auth/web.hpp>
 # include <auth/client.hpp>
 #endif
 #if DC_SERVER
@@ -24,6 +25,7 @@ void init()
 {
     #if DC_CLIENT
     client_init();
+    init_curl();
     #endif
     #if DC_SERVER
     server_init();
@@ -35,6 +37,7 @@ void teardown()
 {
     #if DC_CLIENT
     client_teardown();
+    teardown_curl();
     #endif
     #if DC_SERVER
     server_teardown();

@@ -57,7 +57,6 @@ void init(int argc, const char* argv[])
 
     // start authorization. waits for a valid-looking game token to be received
     #if GS_AUTH
-    Auth::download_homepage();
     Auth::begin_auth();
     wait_for_login();
     #endif

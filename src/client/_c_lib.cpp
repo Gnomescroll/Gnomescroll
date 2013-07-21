@@ -120,6 +120,7 @@ bool c_lib_inited = false;
 #include <common/dat/attributes.cpp>
 #include <common/dat/modifiers.hpp>
 #include <common/dat/properties.hpp>
+#include <common/json/jsmn.c>
 #include <common/settings_export.hpp>
 #include <common/dirent.h>
 

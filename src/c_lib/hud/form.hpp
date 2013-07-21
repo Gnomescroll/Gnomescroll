@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <hud/input.hpp>
+#include <auth/web.hpp>
 
 namespace Hud
 {
@@ -375,6 +376,8 @@ class LoginForm: public Form
             this->save("credentials");
         else
             this->erase_save("credentials");
+
+        Auth::login(this->username->get_value(), this->password->get_value());
     }
 
     LoginForm() :

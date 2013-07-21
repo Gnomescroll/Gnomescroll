@@ -3,10 +3,15 @@
 namespace Auth
 {
 
-void download_homepage();
+void login(const char* username, const char* password);
+
+void init_curl();
+void teardown_curl();
 
 #if !GS_AUTH
-void download_homepage() {}
+void login(const char* username, const char* password) {}
+void init_curl() {}
+void teardown_curl() {}
 #endif
 
 }   // Auth
