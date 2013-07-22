@@ -372,12 +372,13 @@ class LoginForm: public Form
     {
         for (int i=0; i<this->n_inputs; i++)
             printf("%s: %s\n", this->inputs[i]->get_name(), this->inputs[i]->get_value());
-        if (this->remember->get_value()[0] == 't')
-            this->save("credentials");
-        else
-            this->erase_save("credentials");
-
-        Auth::login(this->username->get_value(), this->password->get_value());
+        if (Auth::login(this->username->get_value(), this->password->get_value()))
+        {
+            if (this->remember->get_value()[0] == 't')
+                this->save("credentials");
+            else
+                this->erase_save("credentials");
+        }
     }
 
     LoginForm() :
@@ -390,6 +391,7 @@ class LoginForm: public Form
         this->password->save = true;
         this->remember = (InputCheckBox*)this->register_checkbox_input("remember");
         this->remember->save = true;
+        this->remember->set_value("true");
         this->submit_button = (Button*)this->register_button_input("submit");
         this->sanity_check();
     }
@@ -415,10 +417,15 @@ class CreateAccountForm: public Form
     {
         for (int i=0; i<this->n_inputs; i++)
             printf("%s: %s\n", this->inputs[i]->get_name(), this->inputs[i]->get_value());
-        if (this->remember->get_value()[0] == 't')
-            this->save("credentials");
-        else
-            this->erase_save("credentials");
+        if (Auth::create_account(this->username->get_value(),
+                                 this->email->get_value(),
+                                 this->password->get_value()))
+        {
+            if (this->remember->get_value()[0] == 't')
+                this->save("credentials");
+            else
+                this->erase_save("credentials");
+        }
     }
 
     CreateAccountForm() :
@@ -432,6 +439,7 @@ class CreateAccountForm: public Form
         this->password->password = true;
         this->remember = (InputCheckBox*)this->register_checkbox_input("remember");
         this->remember->save = true;
+        this->remember->set_value("true");
         this->submit_button = (Button*)this->register_button_input("submit");
         this->sanity_check();
     }

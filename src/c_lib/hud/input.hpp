@@ -476,6 +476,7 @@ class Button: public InputBox
         InputBox(UI_INPUT_BUTTON), activated(false)
     {
         this->background_color.a = 0xFF;
+        this->label.set_text("");
     }
 
     virtual ~Button() {}

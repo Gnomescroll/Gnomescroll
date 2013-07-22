@@ -1,8 +1,8 @@
 #include <hud/hud.hpp>
 #include <t_map/t_properties.hpp>
 
-namespace guide
-{
+//namespace guide
+//{
 
     ////block descriptions
     //static const char* regolith_desc =
@@ -88,105 +88,105 @@ namespace guide
     //"tutorial is avaliable on gnomescroll.com/how-to-play, the wiki is on wiki.gnomescroll.com,\n"
     //"and live help is avaliable on gnomescroll.com/contact.\n";
 
-    //mobs
-    static const char* blub_desc =
-    "This is a blue blub. It is a monster and might attack you. If you kill it, it will explode\n"
-    "and drop some explosives.\n";
+    ////mobs
+    //static const char* blub_desc =
+    //"This is a blue blub. It is a monster and might attack you. If you kill it, it will explode\n"
+    //"and drop some explosives.\n";
 
-    static const char* slime_desc =
-    "This is a green slime. It can jump around and is hostile. Whenever you hear its jumping,\n"
-    "watch out!\n";
+    //static const char* slime_desc =
+    //"This is a green slime. It can jump around and is hostile. Whenever you hear its jumping,\n"
+    //"watch out!\n";
 
-    static const char* lizard_desc =
-    "This is a lizard thief. It is hostile and can shoot you with a lazer beam from its mouth.\n"
+    //static const char* lizard_desc =
+    //"This is a lizard thief. It is hostile and can shoot you with a lazer beam from its mouth.\n";
 
-    CubeType regolith;
-    CubeType rock;
-    CubeType iridium;
-    CubeType iron;
-    CubeType copper;
-    CubeType gallium;
-    CubeType silicon;
-    CubeType methice;
-    CubeType coal;
-    CubeType furnace;
-    CubeType crafting;
+    //CubeType regolith;
+    //CubeType rock;
+    //CubeType iridium;
+    //CubeType iron;
+    //CubeType copper;
+    //CubeType gallium;
+    //CubeType silicon;
+    //CubeType methice;
+    //CubeType coal;
+    //CubeType furnace;
+    //CubeType crafting;
 
-    void init()
-    {
-        regolith = t_map::get_cube_type("regolith");
-        rock = t_map::get_cube_type("rock");
-        iridium = t_map::get_cube_type("iridium_ore");
-        iron = t_map::get_cube_type("iron_ore");
-        copper = t_map::get_cube_type("copper_ore");
-        gallium = t_map::get_cube_type("gallium_ore");
-        silicon = t_map::get_cube_type("silicon_ore");
-        methice = t_map::get_cube_type("methane_ice");
-        coal = t_map::get_cube_type("coal");
-        furnace = t_map::get_cube_type("smelter_basic");
-        crafting = t_map::get_cube_type("crafting_bench_basic");
-    }
+    //void init()
+    //{
+        //regolith = t_map::get_cube_type("regolith");
+        //rock = t_map::get_cube_type("rock");
+        //iridium = t_map::get_cube_type("iridium_ore");
+        //iron = t_map::get_cube_type("iron_ore");
+        //copper = t_map::get_cube_type("copper_ore");
+        //gallium = t_map::get_cube_type("gallium_ore");
+        //silicon = t_map::get_cube_type("silicon_ore");
+        //methice = t_map::get_cube_type("methane_ice");
+        //coal = t_map::get_cube_type("coal");
+        //furnace = t_map::get_cube_type("smelter_basic");
+        //crafting = t_map::get_cube_type("crafting_bench_basic");
+    //}
 
-    void draw_guide()
-    {
-        using ClientState::hitscan;
-        ItemType equipped_type = Toolbelt::get_selected_item_type();
-        float range = Item::get_weapon_range(equipped_type);
-        if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
-        return;
+    //void draw_guide()
+    //{
+        //using ClientState::hitscan;
+        //ItemType equipped_type = Toolbelt::get_selected_item_type();
+        //float range = Item::get_weapon_range(equipped_type);
+        //if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
+        //return;
 
-        Hud::set_prompt(guide_desc);
+        //Hud::set_prompt(guide_desc);
 
-        switch (hitscan.type)
-        {
-            case HITSCAN_TARGET_VOXEL:
-            if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
-            {
-                Agents::Agent* agent = Agents::get_agent(AgentID(hitscan.voxel_target.entity_id));
-                if (agent != NULL)
-                Hud::set_prompt(agent->status.name);
-            }
-            else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "blub")
-            Hud::set_prompt(blub_desc);
-            else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "slime")
-            Hud::set_prompt(slime_desc);
-            else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "lizard_thief")
-            Hud::set_prompt(lizard_desc);
-            break;
+        //switch (hitscan.type)
+        //{
+            //case HITSCAN_TARGET_VOXEL:
+            //if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
+            //{
+                //Agents::Agent* agent = Agents::get_agent(AgentID(hitscan.voxel_target.entity_id));
+                //if (agent != NULL)
+                //Hud::set_prompt(agent->status.name);
+            //}
+            //else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "blub")
+            //Hud::set_prompt(blub_desc);
+            //else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "slime")
+            //Hud::set_prompt(slime_desc);
+            //else if(Entities::get_entity_name(hitscan.voxel_target.entity_type) == "lizard_thief")
+            //Hud::set_prompt(lizard_desc);
+            //break;
 
-            case HITSCAN_TARGET_BLOCK:
-            if(hitscan.cube_type == regolith) Hud::set_prompt(regolith_desc);
-            else if(hitscan.cube_type == rock) Hud::set_prompt(rock_desc);
-            else if(hitscan.cube_type == iridium) Hud::set_prompt(iridium_desc);
-            else if(hitscan.cube_type == iron) Hud::set_prompt(iron_desc);
-            else if(hitscan.cube_type == copper) Hud::set_prompt(copper_desc);
-            else if(hitscan.cube_type == gallium) Hud::set_prompt(gallium_desc);
-            else if(hitscan.cube_type == silicon) Hud::set_prompt(silicon_desc);
-            else if(hitscan.cube_type == methice) Hud::set_prompt(methice_desc);
-            else if(hitscan.cube_type == coal) Hud::set_prompt(coal_desc);
-            else if(hitscan.cube_type == furnace) Hud::set_prompt(furnace_desc);
-            else if(hitscan.cube_type == crafting) Hud::set_prompt(crafting_desc);
-            break;
+            //case HITSCAN_TARGET_BLOCK:
+            //if(hitscan.cube_type == regolith) Hud::set_prompt(regolith_desc);
+            //else if(hitscan.cube_type == rock) Hud::set_prompt(rock_desc);
+            //else if(hitscan.cube_type == iridium) Hud::set_prompt(iridium_desc);
+            //else if(hitscan.cube_type == iron) Hud::set_prompt(iron_desc);
+            //else if(hitscan.cube_type == copper) Hud::set_prompt(copper_desc);
+            //else if(hitscan.cube_type == gallium) Hud::set_prompt(gallium_desc);
+            //else if(hitscan.cube_type == silicon) Hud::set_prompt(silicon_desc);
+            //else if(hitscan.cube_type == methice) Hud::set_prompt(methice_desc);
+            //else if(hitscan.cube_type == coal) Hud::set_prompt(coal_desc);
+            //else if(hitscan.cube_type == furnace) Hud::set_prompt(furnace_desc);
+            //else if(hitscan.cube_type == crafting) Hud::set_prompt(crafting_desc);
+            //break;
 
-            case HITSCAN_TARGET_MECH:
-            {
-                MechType mtype = t_mech::get_mech_type(hitscan.mech_id);
-                if (isValid(mtype))
-                {
-                    if (mtype == t_mech::get_mech_type("terminal_basic"))
-                    {
-                        const char* text = t_mech::get_mech_text(hitscan.mech_id);
-                        Hud::set_prompt(text);
-                    }
-                    else
-                    Hud::set_prompt(t_mech::get_mech_pretty_name(mtype));
-                }
-            }
-            break;
+            //case HITSCAN_TARGET_MECH:
+            //{
+                //MechType mtype = t_mech::get_mech_type(hitscan.mech_id);
+                //if (isValid(mtype))
+                //{
+                    //if (mtype == t_mech::get_mech_type("terminal_basic"))
+                    //{
+                        //const char* text = t_mech::get_mech_text(hitscan.mech_id);
+                        //Hud::set_prompt(text);
+                    //}
+                    //else
+                    //Hud::set_prompt(t_mech::get_mech_pretty_name(mtype));
+                //}
+            //}
+            //break;
 
-            case HITSCAN_TARGET_NONE:
-            break;
-        }
-        if(input_state.agent_inventory) Hud::set_prompt(inventory_desc);
-    }
-}//guide
+            //case HITSCAN_TARGET_NONE:
+            //break;
+        //}
+        //if(input_state.agent_inventory) Hud::set_prompt(inventory_desc);
+    //}
+//}//guide

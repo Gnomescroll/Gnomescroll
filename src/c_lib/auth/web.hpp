@@ -3,13 +3,17 @@
 namespace Auth
 {
 
-void login(const char* username, const char* password);
+bool login(const char* username, const char* password);
+bool create_account(const char* username, const char* email, const char* password);
+bool check_version();
 
 void init_curl();
 void teardown_curl();
 
 #if !GS_AUTH
-void login(const char* username, const char* password) {}
+void check_version() {}
+bool login(const char* username, const char* password) {}
+bool create_account(const char* username, const char* email, const char* password) {}
 void init_curl() {}
 void teardown_curl() {}
 #endif

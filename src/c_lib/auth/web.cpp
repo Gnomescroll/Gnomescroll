@@ -48,7 +48,7 @@ class CurlData
 
     CurlData()
     {
-        this->memory = (char*)malloc(1);
+        this->memory = (char*)calloc(1, sizeof(*this->memory));
         this->size = 0;
     }
 
@@ -213,82 +213,158 @@ void teardown_curl()
     curl_global_cleanup();
 }
 
-void log_curl_error(CURLcode res)
-{
+bool log_curl_error(CURLcode res)
+{   // returns true if error
     IF_ASSERT(res != CURLE_OK)
-      fprintf(stderr, "curl_easy_perform() failed: %s\n",
-              curl_easy_strerror(res));
+    {
+        printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        return true;
+    }
+    return false;
 }
 
-void login(const char* username, const char* password)
+bool _make_auth_post_request(const char* url, const char* post_data)
 {
-    CURL* curl = curl_easy_init();
-    IF_ASSERT(curl == NULL) return;
+    #if !PRODUCTION
+    printf("Making auth post request to: %s\n", url);
+    #endif
 
+    CURL* curl = curl_easy_init();
+    IF_ASSERT(curl == NULL) return false;
+
+    bool success = true;
     class CurlData response;
     struct curl_slist* chunk = NULL;
-    setup_auth_request(curl, &response, chunk,
-                       GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH);
+    setup_auth_request(curl, &response, chunk, url);
 
-    // make the request
+    // get the csrf token
     CURLcode res = curl_easy_perform(curl);
-    log_curl_error(res);
+    if (log_curl_error(res))
+        success = false;
 
-    //print_cookies(curl);
-    //printf("Erasing curl's knowledge of cookies!\n");
-    //curl_easy_setopt(curl, CURLOPT_COOKIELIST, "ALL");
-    //print_cookies(curl);
-
+    #if !PRODUCTION
     response.print();
+    #endif
+
     char* token = extract_csrf_token(response.memory);
     IF_ASSERT(token == NULL)
     {
         printf("Could not parse csrf token from ");
         response.print();
+        success = false;
     }
     else
-    {
-        response.reset();
-        printf("Token: %s\n", token);
-        // now do login
-        const char fmt[] = "username_or_email=%s&password=%s&csrf_token=%s&version=" GS_STR(GS_VERSION);
-        size_t len = strlen(username) + strlen(password) + strlen(token) + sizeof(fmt);
+    {   // send the actual request, with the csrf token
+        const char fmt[] = "csrf_token=%s&%s";
+        size_t len = sizeof(fmt) + strlen(post_data) + strlen(token);
         char* post = (char*)malloc(len);
-        sprintf(post, fmt, username, password, token);
+        size_t wrote = snprintf(post, len, fmt, token, post_data);
+        GS_ASSERT(wrote < len);
+        #if !PRODUCTION
+        printf("CSRF Token: %s\n", token);
         printf("Sending post vars: %s\n", post);
+        #endif
+        response.reset();
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post);
         res = curl_easy_perform(curl);
-        log_curl_error(res);
-        free(post);
+        if (log_curl_error(res))
+            success = false;
         response.print();
+        free(post);
         char* auth_token = extract_auth_token(response.memory);
-        IF_ASSERT(auth_token == NULL)
+        if (auth_token == NULL)
         {
+            #if !PRODUCTION
             printf("Could not parse auth token from ");
             response.print();
+            #endif
+            success = false;
         }
         else
         {
+            #if !PRODUCTION
             printf("Auth token: %s\n", auth_token);
+            #endif
             AuthError error = update_token(auth_token);
             IF_ASSERT(error != AUTH_ERROR_NONE)
             {
                 printf("Auth error code: %d\n", error);
                 Hud::set_awesomium_message("Authentication server failure. Try again soon.");
                 token_failure = true;
+                success = false;
             }
         }
         free(auth_token);
     }
 
     free(token);
+    curl_easy_setopt(curl, CURLOPT_COOKIELIST, "ALL");  // clear cookies
     curl_easy_cleanup(curl);
+
+    return success;
 }
 
-// username_or_email
-// password
-// csrf_token
+bool _make_request(const char* url, CurlData* response)
+{
+    #if !PRODUCTION
+    printf("Making get request to: %s\n", url);
+    #endif
 
-#undef INIT_RESPONSE
+    CURL* curl = curl_easy_init();
+    IF_ASSERT(curl == NULL) return false;
+
+    struct curl_slist* chunk = NULL;
+    setup_auth_request(curl, response, chunk, url);
+    CURLcode res = curl_easy_perform(curl);
+    log_curl_error(res);
+
+    #if !PRODUCTION
+    response->print();
+    #endif
+
+    curl_easy_setopt(curl, CURLOPT_COOKIELIST, "ALL");  // clear cookies
+    curl_easy_cleanup(curl);
+    return (res == CURLE_OK);
+}
+
+bool login(const char* username, const char* password)
+{
+    if (!check_version()) return false;
+    const char fmt[] = "username_or_email=%s&password=%s&version=" GS_STR(GS_VERSION);
+    size_t len = strlen(username) + strlen(password) + sizeof(fmt);
+    char* post = (char*)malloc(len);
+    size_t wrote = sprintf(post, fmt, username, password);
+    GS_ASSERT(wrote < len);
+    bool good = _make_auth_post_request(GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH, post);
+    free(post);
+    return good;
+}
+
+bool create_account(const char* username, const char* email, const char* password)
+{
+    if (!check_version()) return false;
+    const char fmt[] = "username=%s&email_address=%s&passwords_password=%s&passwords_confirm=%s&subscribe=true&version=" GS_STR(GS_VERSION);
+    size_t len = strlen(username) + strlen(password) * 2 + strlen(email) + sizeof(fmt);
+    char* post = (char*)malloc(len);
+    size_t wrote = snprintf(post, len, fmt, username, email, password, password);
+    GS_ASSERT(wrote < len);
+    bool good = _make_auth_post_request(GNOMESCROLL_URL GNOMESCROLL_CREATE_PATH, post);
+    free(post);
+    return good;
+}
+
+bool check_version()
+{
+    CurlData response;
+    _make_request(GNOMESCROLL_URL GNOMESCROLL_VERSION_PATH, &response);
+    IF_ASSERT(strcmp(response.memory, GS_STR(GS_VERSION)) != 0)
+    {
+        printf("WARNING: Version mismatch. Web server version: %s. "
+               "Local version: %d\n", response.memory, GS_VERSION);
+        Hud::set_awesomium_message("Your client is out of date. Get the new version at " GNOMESCROLL_DOMAIN);
+        return false;
+    }
+    return true;
+}
 
 }   // Auth

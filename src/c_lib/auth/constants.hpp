@@ -25,12 +25,15 @@ typedef enum
  */
 
 // Switch to gnomescroll.com when site is live
+
 #if PRODUCTION || USE_LIVE_AUTH
-# define GNOMESCROLL_URL "https://gnomescroll.com"
+# define GNOMESCROLL_DOMAIN "gnomescroll.com"
+# define GNOMESCROLL_URL "https://" GNOMESCROLL_DOMAIN
 # define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"    // WARNING -- might have to remove the beginning '.'
 #else
-# define GNOMESCROLL_URL "http://127.0.0.1:5002"
- #define GNOMESCROLL_COOKIE_DOMAIN "127.0.0.1"
+# define GNOMESCROLL_DOMAIN "127.0.0.1:5002"
+# define GNOMESCROLL_URL "http://" GNOMESCROLL_DOMAIN
+# define GNOMESCROLL_COOKIE_DOMAIN "127.0.0.1"
 #endif
 
 #define GNOMESCROLL_LOGIN_HTML MEDIA_PATH "web/html/login.html"
@@ -39,6 +42,7 @@ typedef enum
 #define GNOMESCROLL_CREATE_PATH "/create"
 #define GNOMESCROLL_LOGIN_PATH  "/login"
 #define GNOMESCROLL_TOKEN_PATH  "/token"
+#define GNOMESCROLL_VERSION_PATH "/version"
 
 #define GNOMESCROLL_CREATE_URL GNOMESCROLL_URL GNOMESCROLL_CREATE_PATH
 #define GNOMESCROLL_LOGIN_URL  GNOMESCROLL_URL GNOMESCROLL_LOGIN_PATH
