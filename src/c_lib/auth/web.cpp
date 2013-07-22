@@ -60,6 +60,37 @@ class CurlData
 
 static jsmn_parser parser;
 
+char* extract_errors(const char* response)
+{
+    const int n_tokens = 64;
+    jsmntok_t token[n_tokens];
+    for (int i=0; i<n_tokens; i++)
+        tokens[i].size = -1;
+    jsmn_init(&parser);
+    jsmnerr_t r = jsmn_parse(&parser, response, tokens, n_tokens);
+    IF_ASSERT(r != JSMN_SUCCESS)
+        return NULL;
+
+    const char name[] = "errors";
+    bool name_found = false;
+    char* errstr = (char*)calloc(1, sizeof(*errstr));
+    for (int i=0; i<n_tokens && tokens[i].size >= 0; i++)
+    {
+        int len = tokens[i].end - tokens[i].start;
+        IF_ASSERT(tokens[i].start < 0) break;
+        IF_ASSERT(len < 0) break;
+        const char* word = &response[tokens[i].start];
+        if (name_found)
+        {
+            IF_ASSERT(tokens[i].type != JSMN_OBJECT)
+                break;
+            char* csrf = (char*)malloc(len + 1);
+            // TODO
+        }
+    }
+    return NULL;
+}
+
 char* extract_csrf_token(const char* response)
 {
     const int n_tokens = 8;
