@@ -399,7 +399,7 @@ bool _make_auth_post_request(const char* url, const char* post_data)
             IF_ASSERT(error != AUTH_ERROR_NONE)
             {
                 printf("Auth error code: %d\n", error);
-                Hud::set_login_message("Authentication server failure. Try again soon.");
+                Hud::set_login_message(SERVER_FAILURE_MESSAGE);
                 token_failure = true;
                 success = false;
             }
@@ -439,7 +439,7 @@ bool _make_request(const char* url, CurlData* response)
     return (res == CURLE_OK);
 }
 
-void _update_hud_message(const char* msg)
+static void _update_hud_message(const char* msg)
 {   // we have to draw() here because we are about to block on the web request
     Hud::set_login_message(msg);
     ClientState::update_camera();
@@ -484,7 +484,11 @@ bool check_version()
     if (_version_good) return true;
     _update_hud_message("Checking version...");
     CurlData response;
-    _make_request(GNOMESCROLL_URL GNOMESCROLL_VERSION_PATH, &response);
+    if (!_make_request(GNOMESCROLL_URL GNOMESCROLL_VERSION_PATH, &response))
+    {
+        _update_hud_message(SERVER_FAILURE_MESSAGE);
+        return false;
+    }
     IF_ASSERT(strcmp(response.memory, GS_STR(GS_VERSION)) != 0)
     {
         printf("WARNING: Version mismatch. Web server version: %s. "

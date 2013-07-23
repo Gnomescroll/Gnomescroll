@@ -241,7 +241,9 @@ void draw()
 
     glEnable(GL_TEXTURE_2D);
 
-    GL_ASSERT(GL_DEPTH_TEST, true);
+    // depth test should be enable when drawing the real world,
+    // but not when drawing in the early hud
+    //GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, false);
     GL_ASSERT(GL_BLEND, true);
 
