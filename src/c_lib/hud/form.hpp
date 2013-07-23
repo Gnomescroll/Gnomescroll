@@ -154,7 +154,7 @@ class Form
             if (this->inputs[i]->focused)
                 this->focused = i;
             if (this->inputs[i]->type == UI_INPUT_BUTTON &&
-                reinterpret_cast<Button*>(this->inputs[i])->activated)
+                reinterpret_cast<Button*>(this->inputs[i])->was_activated())
             {
                 this->submit();
                 break;
@@ -379,6 +379,7 @@ class LoginForm: public Form
             else
                 this->erase_save("credentials");
         }
+        this->cycle();
     }
 
     LoginForm() :
@@ -426,6 +427,7 @@ class CreateAccountForm: public Form
             else
                 this->erase_save("credentials");
         }
+        this->cycle();
     }
 
     CreateAccountForm() :

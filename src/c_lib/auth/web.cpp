@@ -14,6 +14,8 @@ namespace Auth
  *  http://curl.haxx.se/libcurl/c/https.html
  */
 
+static bool _version_good = false;
+
 class CurlData
 {
     public:
@@ -60,109 +62,169 @@ class CurlData
 
 static jsmn_parser parser;
 
+char* _get_json_value(const char* json, const char* value_name,
+                      jsmntype_t value_type, jsmntok_t* tokens, size_t n_tokens)
+{
+    for (size_t i=0; i<n_tokens; i++)
+        tokens[i].size = -1;
+    jsmn_init(&parser);
+    jsmnerr_t r = jsmn_parse(&parser, json, tokens, n_tokens);
+    IF_ASSERT(r != JSMN_SUCCESS)
+        return NULL;
+
+    bool name_found = false;
+    for (size_t i=0; i<n_tokens && tokens[i].size >= 0; i++)
+    {
+        int len = tokens[i].end - tokens[i].start;
+        IF_ASSERT(tokens[i].start < 0) break;
+        IF_ASSERT(len < 0) break;
+        const char* word = &json[tokens[i].start];
+        if (name_found)
+        {
+            IF_ASSERT(tokens[i].type != value_type)
+                break;
+            char* value = (char*)malloc(len + 1);
+            strncpy(value, word, len);
+            value[len] = '\0';
+            return value;
+        }
+        if (tokens[i].type != JSMN_STRING)
+            continue;
+        name_found = (strncmp(word, value_name, len) == 0);
+    }
+    return NULL;
+}
+
+bool response_was_successful(const char* response)
+{   // look for "success": true in the json response
+    const size_t n_tokens = 32;
+    jsmntok_t tokens[n_tokens];
+    char* success = _get_json_value(response, "success", JSMN_PRIMITIVE, tokens, n_tokens);
+    if (success == NULL)    // no "success" found; N/A
+        return true;
+    char c = success[0];
+    free(success);
+    return (c == 't');
+}
+
 char* extract_errors(const char* response)
 {
-    const int n_tokens = 64;
-    jsmntok_t token[n_tokens];
-    for (int i=0; i<n_tokens; i++)
-        tokens[i].size = -1;
-    jsmn_init(&parser);
-    jsmnerr_t r = jsmn_parse(&parser, response, tokens, n_tokens);
-    IF_ASSERT(r != JSMN_SUCCESS)
-        return NULL;
-
-    const char name[] = "errors";
-    bool name_found = false;
-    char* errstr = (char*)calloc(1, sizeof(*errstr));
-    for (int i=0; i<n_tokens && tokens[i].size >= 0; i++)
-    {
-        int len = tokens[i].end - tokens[i].start;
-        IF_ASSERT(tokens[i].start < 0) break;
-        IF_ASSERT(len < 0) break;
-        const char* word = &response[tokens[i].start];
-        if (name_found)
-        {
-            IF_ASSERT(tokens[i].type != JSMN_OBJECT)
-                break;
-            char* csrf = (char*)malloc(len + 1);
-            // TODO
-        }
-    }
-    return NULL;
-}
-
-char* extract_csrf_token(const char* response)
-{
-    const int n_tokens = 8;
+    const size_t n_tokens = 64;
     jsmntok_t tokens[n_tokens];
-    for (int i=0; i<n_tokens; i++)
+    char* errors_obj = _get_json_value(response, "errors", JSMN_OBJECT, tokens, n_tokens);
+    if (errors_obj == NULL)
+        return NULL;
+
+    for (size_t i=0; i<n_tokens; i++)
         tokens[i].size = -1;
     jsmn_init(&parser);
-    jsmnerr_t r = jsmn_parse(&parser, response, tokens, n_tokens);
+    jsmnerr_t r = jsmn_parse(&parser, errors_obj, tokens, n_tokens);
     IF_ASSERT(r != JSMN_SUCCESS)
         return NULL;
 
-    const char name[] = "csrf_token";
-    bool name_found = false;
-    for (int i=0; i<n_tokens && tokens[i].size >= 0; i++)
+    size_t errors_len = 128;
+    size_t errors_index = 0;
+    char* errors = (char*)calloc(errors_len, sizeof(*errors));
+    char* label = (char*)calloc(1, sizeof(*label));
+    bool success = true;
+    bool expecting_label = true;
+    int errors_parent = -1;
+    for (size_t i=0; i<n_tokens && tokens[i].size >= 0; i++)
     {
         int len = tokens[i].end - tokens[i].start;
-        IF_ASSERT(tokens[i].start < 0) break;
-        IF_ASSERT(len < 0) break;
-        const char* word = &response[tokens[i].start];
-        if (name_found)
+        IF_ASSERT(tokens[i].start < 0 || len < 0)
         {
-            IF_ASSERT(tokens[i].type != JSMN_STRING)
-                break;
-            char* csrf = (char*)malloc(len + 1);
-            strncpy(csrf, word, len);
-            csrf[len] = '\0';
-            return csrf;
+            success = false;
+            break;
         }
-        if (tokens[i].type != JSMN_STRING)
-            continue;
-        name_found = (strncmp(word, name, sizeof(name) - 1) == 0);
+        const char* word = &errors_obj[tokens[i].start];
+
+        if (tokens[i].parent != errors_parent)
+            expecting_label = true;
+
+        if (tokens[i].parent == errors_parent && tokens[i].type == JSMN_STRING)
+        {
+            char* error = (char*)malloc(len + 1);
+            strncpy(error, word, len);
+            error[len] = '\0';
+            const char fmt[] = "%s: %s\n";
+            size_t needed = strlen(label) + strlen(error) + sizeof(fmt);
+            size_t space = errors_len - errors_index;
+            if (needed > space)
+            {
+                size_t new_len = errors_len;
+                while (new_len < needed)
+                    new_len *= 2;
+                char* tmp = (char*)realloc(errors, new_len);
+                IF_ASSERT(tmp == NULL)
+                {
+                    free(error);
+                    success = false;
+                    break;
+                }
+                errors = tmp;
+                errors_len = new_len;
+            }
+            size_t wrote = sprintf(&errors[errors_index], fmt, label, error);
+            errors_index += wrote;
+            GS_ASSERT(errors_index < errors_len);
+            free(error);
+        }
+
+        // pull out label
+        if (tokens[i].type == JSMN_STRING && expecting_label)
+        {
+            expecting_label = false;
+            char* tmp = (char*)realloc(label, len + 1);
+            IF_ASSERT(tmp == NULL)
+            {
+                success = false;
+                break;
+            }
+            label = tmp;
+            strncpy(label, word, len);
+            label[len] = '\0';
+        }
+
+        if (tokens[i].type == JSMN_ARRAY)
+            errors_parent = i;
     }
-    return NULL;
+
+    free(label);
+    free(errors_obj);
+    if (!success)
+    {
+        free(errors);
+        return NULL;
+    }
+    return errors;
 }
 
-char* extract_auth_token(const char* response)
+char* extract_csrf_token(const char* response, bool& error)
 {
-    const int n_tokens = 32;
+    error = false;
+    const size_t n_tokens = 8;
     jsmntok_t tokens[n_tokens];
-    for (int i=0; i<n_tokens; i++)
-        tokens[i].size = -1;
-    jsmn_init(&parser);
-    jsmnerr_t r = jsmn_parse(&parser, response, tokens, n_tokens);
-    IF_ASSERT(r != JSMN_SUCCESS)
-        return NULL;
-    const char* name = AUTH_TOKEN_NAME;
-    bool found = false;
-    for (int i=0; i<n_tokens && tokens[i].size >= 0; i++)
+    if (!response_was_successful(response))
     {
-        int len = tokens[i].end - tokens[i].start;
-        IF_ASSERT(tokens[i].start < 0) break;
-        IF_ASSERT(len < 0) break;
-        const char* word = &response[tokens[i].start];
-        if (found)
-        {
-            IF_ASSERT(tokens[i].type != JSMN_STRING)
-                break;
-            char* token = (char*)malloc(len + 1);
-            strncpy(token, word, len);
-            token[len] = '\0';
-            return token;
-        }
-        if (tokens[i].type != JSMN_STRING)
-            continue;
-        found = (strncmp(word, name, sizeof(name) - 1) == 0);
+        error = true;
+        return extract_errors(response);
     }
-    return NULL;
+    return _get_json_value(response, "csrf_token", JSMN_STRING, tokens, n_tokens);
 }
 
-jsmnerr_t jsmn_parse(jsmn_parser *parser, const char *js,
-        jsmntok_t *tokens, unsigned int num_tokens);
-
+char* extract_auth_token(const char* response, bool& error)
+{
+    error = false;
+    const size_t n_tokens = 32;
+    jsmntok_t tokens[n_tokens];
+    if (!response_was_successful(response))
+    {
+        error = true;
+        return extract_errors(response);
+    }
+    return _get_json_value(response, AUTH_TOKEN_NAME, JSMN_STRING, tokens, n_tokens);
+}
 
 static size_t _write_data_callback(void* contents, size_t size, size_t nmemb, void* userp)
 {
@@ -228,11 +290,15 @@ void setup_auth_request(CURL* curl, class CurlData* response,
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)response);
     add_ajax_header(curl, chunk);
     setup_ssl(curl);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 4L);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, ""); /* just to start the cookie engine */
     curl_easy_setopt(curl, CURLOPT_USERAGENT, "gnomescroll/" GS_STR(GS_VERSION));
     curl_easy_setopt(curl, CURLOPT_URL, url);
 }
-
 
 void init_curl()
 {
@@ -277,12 +343,19 @@ bool _make_auth_post_request(const char* url, const char* post_data)
     response.print();
     #endif
 
-    char* token = extract_csrf_token(response.memory);
+    bool had_error = false;
+    char* token = extract_csrf_token(response.memory, had_error);
     IF_ASSERT(token == NULL)
     {
         printf("Could not parse csrf token from ");
         response.print();
         success = false;
+    }
+    else if (had_error)
+    {
+        success = false;
+        printf("Response errors:\n%s\n", auth_token);
+        Hud::set_login_message(token);
     }
     else
     {   // send the actual request, with the csrf token
@@ -302,7 +375,7 @@ bool _make_auth_post_request(const char* url, const char* post_data)
             success = false;
         response.print();
         free(post);
-        char* auth_token = extract_auth_token(response.memory);
+        char* auth_token = extract_auth_token(response.memory, had_error);
         if (auth_token == NULL)
         {
             #if !PRODUCTION
@@ -310,6 +383,12 @@ bool _make_auth_post_request(const char* url, const char* post_data)
             response.print();
             #endif
             success = false;
+        }
+        else if (had_error)
+        {
+            success = false;
+            printf("Response errors:\n%s\n", auth_token);
+            Hud::set_login_message(auth_token);
         }
         else
         {
@@ -320,7 +399,7 @@ bool _make_auth_post_request(const char* url, const char* post_data)
             IF_ASSERT(error != AUTH_ERROR_NONE)
             {
                 printf("Auth error code: %d\n", error);
-                Hud::set_awesomium_message("Authentication server failure. Try again soon.");
+                Hud::set_login_message("Authentication server failure. Try again soon.");
                 token_failure = true;
                 success = false;
             }
@@ -358,9 +437,22 @@ bool _make_request(const char* url, CurlData* response)
     return (res == CURLE_OK);
 }
 
+void _update_hud_message(const char* msg)
+{   // we have to draw() here because we are about to block on the web request
+    Hud::set_login_message(msg);
+    ClientState::update_camera();
+    world_projection();
+    hud_projection();
+    Hud::draw_login_message();
+    Hud::draw();
+    CHECK_GL_ERROR();
+    _swap_buffers();
+}
+
 bool login(const char* username, const char* password)
 {
     if (!check_version()) return false;
+    _update_hud_message("Logging in...");
     const char fmt[] = "username_or_email=%s&password=%s&version=" GS_STR(GS_VERSION);
     size_t len = strlen(username) + strlen(password) + sizeof(fmt);
     char* post = (char*)malloc(len);
@@ -374,6 +466,7 @@ bool login(const char* username, const char* password)
 bool create_account(const char* username, const char* email, const char* password)
 {
     if (!check_version()) return false;
+    _update_hud_message("Creating account...");
     const char fmt[] = "username=%s&email_address=%s&passwords_password=%s&passwords_confirm=%s&subscribe=true&version=" GS_STR(GS_VERSION);
     size_t len = strlen(username) + strlen(password) * 2 + strlen(email) + sizeof(fmt);
     char* post = (char*)malloc(len);
@@ -386,15 +479,18 @@ bool create_account(const char* username, const char* email, const char* passwor
 
 bool check_version()
 {
+    if (_version_good) return true;
+    _update_hud_message("Checking version...");
     CurlData response;
     _make_request(GNOMESCROLL_URL GNOMESCROLL_VERSION_PATH, &response);
     IF_ASSERT(strcmp(response.memory, GS_STR(GS_VERSION)) != 0)
     {
         printf("WARNING: Version mismatch. Web server version: %s. "
                "Local version: %d\n", response.memory, GS_VERSION);
-        Hud::set_awesomium_message("Your client is out of date. Get the new version at " GNOMESCROLL_DOMAIN);
+        Hud::set_login_message("Your client is out of date. Get the new version at " GNOMESCROLL_DOMAIN);
         return false;
     }
+    _version_good = true;
     return true;
 }
 

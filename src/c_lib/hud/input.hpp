@@ -410,8 +410,9 @@ class InputTextBox: public InputBox
 
 class Button: public InputBox
 {
-    public:
+    protected:
         bool activated;
+    public:
 
     virtual void hover(const Vec2i& cursor)
     {

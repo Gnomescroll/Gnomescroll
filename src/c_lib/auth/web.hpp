@@ -11,7 +11,7 @@ void init_curl();
 void teardown_curl();
 
 #if !GS_AUTH
-void check_version() {}
+bool check_version() {}
 bool login(const char* username, const char* password) {}
 bool create_account(const char* username, const char* email, const char* password) {}
 void init_curl() {}

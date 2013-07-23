@@ -114,9 +114,9 @@ void set_color_from_ratio(float ratio, unsigned char alpha)
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);
 
-void set_awesomium_message(const char* msg);
-void clear_awesomium_message(const char* msg);
-void clear_awesomium_message();
-void draw_awesomium_message();
+void set_login_message(const char* msg);
+void clear_login_message(const char* msg);
+void clear_login_message();
+void draw_login_message();
 
 }   // Hud

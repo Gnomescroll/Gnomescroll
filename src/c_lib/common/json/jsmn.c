@@ -1,7 +1,5 @@
 #include <stdlib.h>
 
-#define JSMN_STRICT
-
 #include "jsmn.h"
 
 /**

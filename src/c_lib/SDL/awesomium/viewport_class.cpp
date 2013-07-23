@@ -122,14 +122,14 @@ void js_set_message_callback(awe_webview* webView, const awe_string* _obj_name, 
 
     awe_string* _msg = awe_jsvalue_to_string(vmsg);
     char* msg = get_str_from_awe(_msg);
-    Hud::set_awesomium_message(msg);
+    Hud::set_login_message(msg);
     awe_string_destroy(_msg);
     free(msg);
 }
 
 void js_unset_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
-    Hud::clear_awesomium_message();
+    Hud::clear_login_message();
 }
 
 void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
@@ -144,7 +144,7 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
         printf("Auth error code: %d\n", error);
     IF_ASSERT(error != Auth::AUTH_ERROR_NONE)
     {
-        Hud::set_awesomium_message("Authentication server failure. Try again soon.");
+        Hud::set_login_message("Authentication server failure. Try again soon.");
         Auth::token_failure = true;
     }
     free(token);

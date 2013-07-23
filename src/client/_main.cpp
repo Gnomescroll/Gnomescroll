@@ -93,7 +93,7 @@ void wait_for_login()
         // awesomium
         hud_projection();
         //Awesomium::draw();
-        Hud::draw_awesomium_message();
+        Hud::draw_login_message();
         Hud::draw();
         CHECK_GL_ERROR();
 
@@ -102,7 +102,7 @@ void wait_for_login()
         Awesomium::update();
 
         // sleep 15 milliseconds, polling mouse every 1ms
-        int i=0;
+        int i = 0;
         while (++i < 15)
         {
             poll_mouse();

@@ -168,20 +168,20 @@ void clear_prompt(const char* msg)
         hud->prompt->set_text("");
 }
 
-void set_awesomium_message(const char* msg)
+void set_login_message(const char* msg)
 {
     IF_ASSERT(hud == NULL) return;
     hud->awesomium_message->set_text(msg);
 }
 
-void clear_awesomium_message(const char* msg)
+void clear_login_message(const char* msg)
 {   // clears if msg matches current text
     IF_ASSERT(hud == NULL) return;
     if (strcmp(msg, hud->awesomium_message->text) == 0)
-        clear_awesomium_message();
+        clear_login_message();
 }
 
-void clear_awesomium_message()
+void clear_login_message()
 {
     IF_ASSERT(hud == NULL) return;
     hud->awesomium_message->set_text("");
@@ -321,11 +321,12 @@ void draw_hud_textures()
     }
 }
 
-void draw_awesomium_message()
+void draw_login_message()
 {
     start_font_draw();
-    const int large_text_size = 32;
-    HudFont::set_properties(large_text_size);
+    //const int large_text_size = 32;
+    //HudFont::set_properties(large_text_size);
+    HudFont::reset_default();
     set_texture();
 
     IF_ASSERT(hud == NULL || hud->awesomium_message == NULL) return;
