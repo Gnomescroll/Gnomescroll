@@ -499,6 +499,11 @@ class FormScreen
         forms(NULL), n_forms(0), max_forms(0)
     {
     }
+
+    ~FormScreen()
+    {
+        free(this->forms);
+    }
 };
 
 }   // Hud

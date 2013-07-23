@@ -1888,3 +1888,332 @@
    fun:_ZN4Main4initEiPPKc
    fun:main
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:X11_SetKeyboardState
+   fun:X11_DispatchEvent
+   fun:X11_PumpEvents
+   fun:SDL_PumpEvents
+   fun:_Z10poll_mousev
+   fun:_ZN4Main14wait_for_loginEv
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:gnutls_session_get_data
+   fun:gtls_connect_step3
+   fun:gtls_connect_common
+   fun:Curl_ssl_connect_nonblocking
+   fun:https_connecting
+   fun:multi_runsingle
+   fun:curl_multi_perform
+   fun:curl_easy_perform
+   fun:_ZN4Auth13_make_requestEPKcPNS_8CurlDataE
+   fun:_ZN4Auth13check_versionEv
+   fun:_ZN4Auth14create_accountEPKcS1_S1_
+   fun:_ZN3Hud17CreateAccountForm6submitEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
+   fun:p11_kit_pin_register_callback
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   fun:p11_kit_pin_register_callback
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
+   obj:/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
+   fun:p11_kit_pin_register_callback
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_close_worker
+   fun:_dl_close
+   fun:_dl_catch_error
+   fun:__libc_dlclose
+   fun:free_mem
+   fun:__libc_freeres
+   fun:_vgnU_freeres
+   fun:__run_exit_handlers
+   fun:exit
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   fun:gcry_control
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   fun:gcry_control
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
+   fun:p11_kit_pin_register_callback
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
+   fun:p11_kit_pin_register_callback
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0
+   fun:p11_kit_pin_register_callback
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+   fun:_ZN4Auth9init_curlEv
+   fun:_ZN4Auth4initEv
+   fun:_Z10init_c_libiPPKc
+   fun:_ZN4Main4initEiPPKc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/lib/x86_64-linux-gnu/libgcrypt.so.11.7.0
+   obj:/usr/lib/x86_64-linux-gnu/libgnutls.so.26.22.6
+   fun:gnutls_global_init
+   fun:Curl_gtls_init
+   fun:curl_global_init
+}

@@ -408,6 +408,7 @@ bool _make_auth_post_request(const char* url, const char* post_data)
     }
 
     free(token);
+    curl_slist_free_all(chunk);
     curl_easy_setopt(curl, CURLOPT_COOKIELIST, "ALL");  // clear cookies
     curl_easy_cleanup(curl);
 
@@ -433,6 +434,7 @@ bool _make_request(const char* url, CurlData* response)
     #endif
 
     curl_easy_setopt(curl, CURLOPT_COOKIELIST, "ALL");  // clear cookies
+    curl_slist_free_all(chunk);
     curl_easy_cleanup(curl);
     return (res == CURLE_OK);
 }
