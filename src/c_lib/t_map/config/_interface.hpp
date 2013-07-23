@@ -128,6 +128,11 @@ void set_max_damage(int max_damage)
     p->max_damage = max_damage;
 }
 
+void set_description(const char* txt)
+{
+    p->set_description(txt);
+}
+
 void set_pretty_name(const char* pretty_name)
 {
     GS_ASSERT_ABORT(p != NULL);

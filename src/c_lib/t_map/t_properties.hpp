@@ -15,7 +15,7 @@ namespace t_map
 
 // checks against ERROR_CUBE/NULL_CUBE/EMPTY_CUBE and value range and if used
 ALWAYS_INLINE bool isValidCube(CubeType cube_type);
-ALWAYS_INLINE bool isInUse(CubeType id);
+ALWAYS_INLINE bool isInUse(CubeType type);
 
 
 struct FastCubeProperties
@@ -77,7 +77,6 @@ class CubeProperty: public Property<CubeType>
 
         this->special = false;
 
-
         this->material = CUBE_MATERIAL_NONE;
         this->container_type = NULL_CONTAINER_TYPE;
         this->explosive = false;
@@ -110,14 +109,15 @@ extern class DatNameMap* cube_name_map;
 void init_t_properties();
 void end_t_properties();
 
-class CubeProperty* get_cube_properties(CubeType id);
+class CubeProperty* get_cube_properties(CubeType type);
 
-CubeMaterial get_cube_material(CubeType cube_type);
+CubeMaterial get_cube_material(CubeType type);
 
-const char* get_cube_name(CubeType id);
-const char* get_cube_pretty_name(CubeType id);
+const char* get_cube_name(CubeType type);
+const char* get_cube_pretty_name(CubeType type);
+const char* get_cube_description(CubeType type);
 CubeType get_cube_type(const char* name);
-CubeGroup get_cube_group(CubeType id);
+CubeGroup get_cube_group(CubeType type);
 
 const char* get_cube_name_for_container(ItemContainerType container_type);
 CubeType get_cube_type_for_container(ItemContainerType container_type);
@@ -130,16 +130,16 @@ ItemContainerType get_container_type_for_cube(CubeType cube_type);
 
 // Properties by cube id
 
-ALWAYS_INLINE bool isSolid(CubeType id);
-ALWAYS_INLINE bool isOccludes(CubeType id);
-ALWAYS_INLINE bool isActive(CubeType id);
-ALWAYS_INLINE bool isTransparent(CubeType id);
-ALWAYS_INLINE bool isItemContainer(CubeType id);
-ALWAYS_INLINE bool isSpecial(CubeType id);
-ALWAYS_INLINE bool isRadioactive(CubeType id);
+ALWAYS_INLINE bool isSolid(CubeType type);
+ALWAYS_INLINE bool isOccludes(CubeType type);
+ALWAYS_INLINE bool isActive(CubeType type);
+ALWAYS_INLINE bool isTransparent(CubeType type);
+ALWAYS_INLINE bool isItemContainer(CubeType type);
+ALWAYS_INLINE bool isSpecial(CubeType type);
+ALWAYS_INLINE bool isRadioactive(CubeType type);
 
-ALWAYS_INLINE bool isExplosive(CubeType id);
-ALWAYS_INLINE unsigned char maxDamage(CubeType id);
+ALWAYS_INLINE bool isExplosive(CubeType type);
+ALWAYS_INLINE unsigned char maxDamage(CubeType type);
 ALWAYS_INLINE bool hasItemDrop(CubeType type);
 
 //Properties by coordinates

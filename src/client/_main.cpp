@@ -75,7 +75,6 @@ void wait_for_login()
         apply_camera_physics();
 
         // poll input and update camera so the stars move while we move the mouse
-        //ClientState::update_camera();
         world_projection();
 
         poll_mouse();

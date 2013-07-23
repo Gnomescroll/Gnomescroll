@@ -214,6 +214,13 @@ void make_pretty_name(const char* src, char* dest)
     dest[j] = '\0';
 }
 
+char* make_pretty_name(const char* src)
+{
+    char* dest = (char*)malloc(strlen(src) + 1);
+    make_pretty_name(src, dest);
+    return dest;
+}
+
 float round_half_from_zero(float f)
 {
     return (f > 0.0f) ? floorf(f + 0.5f) : ceilf(f - 0.5f);

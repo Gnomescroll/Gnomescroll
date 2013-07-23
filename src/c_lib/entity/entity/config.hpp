@@ -14,6 +14,7 @@ CreatePacketDelegate* get_entity_create_packet_delegate(EntityType type);
 StatePacketDelegate* get_entity_state_packet_delegate(EntityType type);
 bool entity_is_networked(EntityType type);
 const char* get_entity_name(EntityType type);
+const char* get_entity_description(EntityType type);
 const char* get_entity_pretty_name(EntityType type);
 EntityType get_entity_type(const char* name);
 inline bool is_valid_entity_name(const char* name);

@@ -7,10 +7,12 @@ class Property
 {
     public:
         Type type;
-        char name[DAT_NAME_MAX_LENGTH+1];
-        char pretty_name[PRETTY_NAME_MAX_LENGTH+1];
+        char* name;
+        char* pretty_name;
+        char* description;
         unsigned int hash;
         bool loaded;
+
 
     void set_type(Type type)
     {
@@ -20,9 +22,30 @@ class Property
     void set_name(const char* name)
     {
         GS_ASSERT(is_valid_name(name));
-        strncpy(this->name, name, DAT_NAME_MAX_LENGTH+1);
+        free(this->name);
+        this->name = (char*)calloc(DAT_NAME_MAX_LENGTH + 1, sizeof(*this->name));
+        GS_ASSERT(strlen(name) <= DAT_NAME_MAX_LENGTH);
+        strncpy(this->name, name, DAT_NAME_MAX_LENGTH + 1);
         this->name[DAT_NAME_MAX_LENGTH] = '\0';
         this->hash = strhash(this->name);
+    }
+
+    void set_pretty_name(const char* pretty_name)
+    {
+        free(this->pretty_name);
+        this->pretty_name = (char*)calloc(PRETTY_NAME_MAX_LENGTH + 1, sizeof(*this->pretty_name));
+        GS_ASSERT(strlen(pretty_name) <= PRETTY_NAME_MAX_LENGTH);
+        strncpy(this->pretty_name, pretty_name, PRETTY_NAME_MAX_LENGTH+1);
+        this->pretty_name[PRETTY_NAME_MAX_LENGTH] = '\0';
+    }
+
+    void set_description(const char* txt)
+    {
+        IF_ASSERT(txt == NULL) return;
+        free(this->description);
+        size_t len = strlen(txt);
+        this->description = (char*)malloc(len + 1);
+        strcpy(this->description, txt);
     }
 
     void done_loading()
@@ -34,11 +57,17 @@ class Property
         this->loaded = true;
     }
 
-    Property(Type null_type) :
-        type(null_type), hash(0), loaded(false)
+    ~Property()
     {
-        memset(this->name, 0, sizeof(this->name));
-        memset(this->pretty_name, 0, sizeof(this->pretty_name));
+        free(this->name);
+        free(this->pretty_name);
+        free(this->description);
+    }
+
+    Property(Type null_type) :
+        type(null_type), name(NULL), pretty_name(NULL), description(NULL),
+        hash(0), loaded(false)
+    {
     }
 };
 
@@ -137,9 +166,7 @@ class Properties
     {
         Property* p = this->_get_any(type);
         IF_ASSERT(p == NULL) return;
-        GS_ASSERT(strlen(pretty_name) <= PRETTY_NAME_MAX_LENGTH);
-        strncpy(p->pretty_name, pretty_name, PRETTY_NAME_MAX_LENGTH+1);
-        p->pretty_name[PRETTY_NAME_MAX_LENGTH] = '\0';
+        p->set_pretty_name(pretty_name);
     }
 
     void set_pretty_names()
@@ -148,8 +175,12 @@ class Properties
         {
             Property* a = &this->properties[i];
             if (!a->loaded) continue;
-            if (a->pretty_name[0] == '\0')
-                make_pretty_name(a->name, a->pretty_name);
+            if (a->pretty_name == NULL)
+            {
+                char* pretty = make_pretty_name(a->name);
+                a->set_pretty_name(pretty);
+                free(pretty);
+            }
         }
     }
 

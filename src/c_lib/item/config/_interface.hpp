@@ -66,7 +66,9 @@ bool item_block_def(const char* block_name)
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index(block_name);
     s->cube_height = 1;
 
-    make_pretty_name(block_name, s->pretty_name);
+    char* pretty = make_pretty_name(block_name);
+    s->set_pretty_name(pretty);
+    free(pretty);
 
     return true;
 }

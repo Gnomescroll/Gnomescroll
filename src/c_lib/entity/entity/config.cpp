@@ -235,6 +235,13 @@ const char* get_entity_pretty_name(EntityType type)
     return attr->pretty_name;
 }
 
+const char* get_entity_description(EntityType type)
+{
+    EntityProperty* attr = get_entity_property(type);
+    IF_ASSERT(attr == NULL) return NULL;
+    return attr->description;
+}
+
 EntityType get_entity_type(const char* name)
 {
     EntityProperty* attr = get_entity_property(name);
