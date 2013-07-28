@@ -313,9 +313,9 @@ void tick()
     //ServerState::spawn_items(2);
     //Entities::spawn_monsters(ENTITY_MONSTER_BOMB, 50);
     //Entities::spawn_monsters(ENTITY_MONSTER_SPAWNER, 6);
-    Entities::spawn_slimes(128);
-    Entities::spawn_monsters(ENTITY_MONSTER_LIZARD_THIEF, 128);
-    Entities::spawn_monsters(ENTITY_MONSTER_BLUE_BLUB, 128);
+    Entities::spawn_slimes(32);
+    Entities::spawn_monsters(ENTITY_MONSTER_LIZARD_THIEF, 32);
+    Entities::spawn_monsters(ENTITY_MONSTER_BLUE_BLUB, 32);
 
     if (counter % 5 == 0)
         Components::relax_positions();  // body-body static force
