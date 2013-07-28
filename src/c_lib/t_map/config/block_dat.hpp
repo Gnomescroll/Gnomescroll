@@ -753,7 +753,7 @@ void load_block_dat()
     cube_def(SolidCube, "plant_example_root", CUBE_MATERIAL_STONE);
     iso_texture(    tree_01, 1, 2);
     push_texture();
-    set_secription("This is a plant root.\n");
+    set_description("This is a plant root.\n");
 
     cube_def(SolidCube, "plant_example_trunk", CUBE_MATERIAL_STONE);
     iso_texture(    tree_01, 1, 3);
