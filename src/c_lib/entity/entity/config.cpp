@@ -50,24 +50,34 @@ static void register_settings()
 
     // fabs
     set_entity(ENTITY_AGENT_SPAWNER, "agent_spawner");
+    c->set_description("This is a spawner. It moves around the map\n"
+                       "every now and then, attempts to always keep\n"
+                       "on the surface, and spawns everyone who\n"
+                       "does not have a proper base.\n");
     c->loader = &load_agent_spawner_data;
     c->max = MAX_SPAWNERS;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_BASE, "base");
+    c->set_description("This is a base spawner. It will only spawn\n"
+                       "the person who right-clicks it, and will not\n"
+                       "move around the map.\n");
     c->loader = &load_base_data;
     c->max = 2;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_TURRET, "turret");
+    c->set_description("This is a turret.\n");
     c->loader = &load_turret_data;
     c->max = 512;
     c->create_packet = create_packet_owner;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_ENERGY_CORE, "energy_core");
+    c->set_description("This is an energy core. It will regenerate\n"
+                       "your vital strength when you stand on it.\n");
     c->loader = &load_energy_core_data;
     c->max = 512;
     c->create_packet = create_packet;
@@ -75,36 +85,53 @@ static void register_settings()
 
     // mobs
     set_entity(ENTITY_MONSTER_SPAWNER, "monster_spawner");
+    c->set_description("This is a monster spawner. It is dangerous\n"
+                       "to stand nearby, but destroying it will give\n"
+                       "you valuable items, as well as unleashing\n"
+                       "several monsters.\n");
     c->loader = &load_mob_spawner_data;
     c->max = 64;
     c->create_packet = create_packet;
     c->state_packet = state_packet;
 
     set_entity(ENTITY_MONSTER_BOX, "box");
+    c->set_description("This is a monster box.\n");
     c->loader = &load_mob_robot_box_data;
     c->max = 512;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_BOMB, "bomb");
+    c->set_description("This is a monster bomb. It is hostile\n"
+                       "and explodes when you come near. If you\n"
+                       "see one at the exit from your base, take\n"
+                       "another route unless you want a nice hole\n"
+                       "in the wall. When killed, it drops explosives.\n");
     c->loader = &load_mob_bomb_data;
     c->max = 256;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_SLIME, "slime");
+    c->set_description("This is a monster slime. It can jump and\n"
+                       "deal damage when it hits you, due to the\n"
+                       "heavy acidity of its jelly skin.\n");
     c->loader = &load_mob_slime_data;
     c->max = 512;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_LIZARD_THIEF, "lizard_thief");
+    c->set_description("This is a lizard thief. It is hostile and\n"
+                       "can shoot you.\n");
     c->loader = &load_mob_lizard_thief_data;
     c->max = 128;
     c->create_packet = create_packet_momentum_angles_health;
     c->state_packet = state_packet_momentum_angles;
 
     set_entity(ENTITY_MONSTER_BLUE_BLUB, "blub");
+    c->set_description("This is a blue blub. It explodes upon\n"
+                       "death and drops explosives.\n");
     c->loader = &load_mob_blub_data;
     c->max = 128;
     c->create_packet = create_packet_momentum_angles_health;
