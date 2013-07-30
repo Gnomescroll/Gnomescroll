@@ -277,7 +277,9 @@ void add_ajax_header(CURL* curl, struct curl_slist*& chunk)
 
 void set_verbosity(CURL* curl)
 {
-    #if !PRODUCTION
+    #if PRODUCTION
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
+    #else
     curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     #endif
 }
