@@ -445,7 +445,8 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
 
     if auth:
         if OS == 'Windows' or windows:
-            curl_libpath = os.path.join(libpath, 'dll')
+            _libs = ['dll', 'lib']
+            curl_libpath = map(lambda x: os.path.join(libpath, x), _libs)
             curl_incpath = os.path.join(libpath, 'include')
         else:
             curl_libpath = [libpath]
