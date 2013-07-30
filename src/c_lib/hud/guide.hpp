@@ -1,8 +1,8 @@
 #include <hud/hud.hpp>
 #include <t_map/t_properties.hpp>
 
-//namespace guide
-//{
+namespace guide
+{
 
     ////block descriptions
     //static const char* regolith_desc =
@@ -65,28 +65,28 @@
     //"More recipes can be found online, or you can just ask other players.\n";
 
     ////basic stuff descriptions
-    //static const char* inventory_desc =
-    //"This is your inventory. Inside, you can find the items that you have collected.\n"
-    //"The bottom slots are the items you can hold in your hand. To hold them,\n"
-    //"press the corresponding number key or scroll your mouse. To use them, right- or left-click\n"
-    //"while holding the desired item. You can move items between slots by dragging them with the mouse.\n"
-    //"In middle are the items you have, but cannot hold. You can move them to the lower section.\n"
-    //"In the upper part are the items you can buy using synthesizer chips. Next to each item, its cost is\n"
-    //"displayed. Synthesizer chips can be obtained as a reward by mining blocks, killing mobs etc.\n"
-    ////"They can also be bought online via our store.\n" //ready for premium!
-    //"You can see the current amount of synthesizer chips you have in a slot with them.\n"
-    //"If you die, all the items inside your inventory are dropped except for the ones in the lower bar.\n"
-    ////"If you are a premium user, you also get a safe pouch for some items that you can hide them in\n"
-    ////"so that nobody steals them.\n" //premium ready!
-    //"";
+    static const char* inventory_desc =
+    "This is your inventory. Inside, you can find the items that you have collected.\n"
+    "The bottom slots are the items you can hold in your hand. To hold them,\n"
+    "press the corresponding number key or scroll your mouse. To use them, right- or left-click\n"
+    "while holding the desired item. You can move items between slots by dragging them with the mouse.\n"
+    "In middle are the items you have, but cannot hold. You can move them to the lower section.\n"
+    "In the upper part are the items you can buy using synthesizer chips. Next to each item, its cost is\n"
+    "displayed. Synthesizer chips can be obtained as a reward by mining blocks, killing mobs etc.\n"
+    //"They can also be bought online via our store.\n" //ready for premium!
+    "You can see the current amount of synthesizer chips you have in a slot with them.\n"
+    "If you die, all the items inside your inventory are dropped except for the ones in the lower bar.\n"
+    //"If you are a premium user, you also get a safe pouch for some items that you can hide them in\n"
+    //"so that nobody steals them.\n" //premium ready!
+    "";
 
-    //static const char* guide_desc =
-    //"Welcome to Gnomescroll! In this guide, you will learn the basics of the ever-expanding universe\n"
-    //"of the game. Press the semicolon \";\" to get a description of something you're looking at.\n"
-    //"For a start, try to mine some blocks by pressing and holding your left mouse button. You can\n"
-    //"collect the item that falls out by simply walking on top of it, or next to it. An online\n"
-    //"tutorial is avaliable on gnomescroll.com/how-to-play, the wiki is on wiki.gnomescroll.com,\n"
-    //"and live help is avaliable on gnomescroll.com/contact.\n";
+    static const char* guide_desc =
+    "Welcome to Gnomescroll! In this guide, you will learn the basics of the ever-expanding universe\n"
+    "of the game. Press the semicolon \";\" to get a description of something you're looking at.\n"
+    "For a start, try to mine some blocks by pressing and holding your left mouse button. You can\n"
+    "collect the item that falls out by simply walking on top of it, or next to it. An online\n"
+    "tutorial is avaliable on gnomescroll.com/how-to-play, the wiki is on wiki.gnomescroll.com,\n"
+    "and live help is avaliable on gnomescroll.com/contact.\n";
 
     ////mobs
     //static const char* blub_desc =
@@ -127,15 +127,30 @@
         //crafting = t_map::get_cube_type("crafting_bench_basic");
     //}
 
-    //void draw_guide()
-    //{
-        //using ClientState::hitscan;
-        //ItemType equipped_type = Toolbelt::get_selected_item_type();
-        //float range = Item::get_weapon_range(equipped_type);
-        //if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
-        //return;
+    //if this contains errors(which it probably does), don't be mad-I had no way of finding them because cimport.h was not found, and compilation terminated.
+    void draw_guide()
+    {
+        using ClientState::hitscan;
+        ItemType equipped_type = Toolbelt::get_selected_item_type();
+        float range = Item::get_weapon_range(equipped_type);
+        if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
+        return;
 
-        //Hud::set_prompt(guide_desc);
+        Hud::set_prompt(guide_desc);
+
+        if(input_state.agent_inventory) Hud::set_prompt(inventory_desc);
+        else if(hitscan.type == HITSCAN_TARGET_VOXEL)
+        {
+            if(hitscan.voxel_target.entity_type == ENTITY_AGENT)
+            {
+                Agents::Agent* agent = Agents::get_agent(AgentID(hitscan.voxel_target.entity_id));
+                if(agent != NULL) Hud::set_prompt(agent->status.name);
+            }
+            else Hud::set_prompt(Entity::get_mob_description(hitscan.voxel_target.entity_type));
+
+        }
+        else if(hitscan.type == HITSCAN_TARGET_BLOCK) Hud::set_prompt(t_map::get_cube_description(hitscan.cube_type));
+        else Hud::set_prompt(guide_desc);
 
         //switch (hitscan.type)
         //{
@@ -188,5 +203,5 @@
             //break;
         //}
         //if(input_state.agent_inventory) Hud::set_prompt(inventory_desc);
-    //}
-//}//guide
+    }
+}//guide
