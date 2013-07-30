@@ -682,7 +682,7 @@ def install_bin(env, target, srcdir, outdir, dest_target=None):
                     src_dll = os.path.join(dll_path, dll)
                     dst_dll = os.path.join('./', dll)
                     shutil.copy2(src_dll, dst_dll)
-                copy_awesomium_dlls(ctx)
+                #copy_awesomium_dlls(ctx)
                 print 'Copied dlls to current directory'
         except Exception as e:
             msg = ('Error copying dlls from {0} to current directory. '
