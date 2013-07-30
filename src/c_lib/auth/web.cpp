@@ -355,7 +355,7 @@ bool _make_auth_post_request(const char* url, const char* post_data)
     {
         success = false;
         printf("Response errors:\n%s\n", auth_token);
-        Hud::set_login_message(token);
+        Hud::set_login_message("Program Error: Bad csrf token.");
     }
     else
     {   // send the actual request, with the csrf token
@@ -388,7 +388,7 @@ bool _make_auth_post_request(const char* url, const char* post_data)
         {
             success = false;
             printf("Response errors:\n%s\n", auth_token);
-            Hud::set_login_message(auth_token);
+            Hud::set_login_message("Program Error: Bad auth token.");
         }
         else
         {
@@ -489,13 +489,23 @@ bool check_version()
         _update_hud_message(SERVER_FAILURE_MESSAGE);
         return false;
     }
-    IF_ASSERT(strcmp(response.memory, GS_STR(GS_VERSION)) != 0)
+    bool err = false;
+    int version = parse_int(response.memory, err);
+    if (err)
     {
-        printf("WARNING: Version mismatch. Web server version: %s. "
-               "Local version: %d\n", response.memory, GS_VERSION);
+        printf("WARNING: Auth server reported invalid version: %s\n", response.memory);
+        Hud::set_login_message(SERVER_FAILURE_MESSAGE);
+        return false;
+    }
+    IF_ASSERT(version > GS_VERSION)
+    {
+        printf("WARNING: Client version outdated. Auth server version: %d. "
+               "Local version: %d\n", version, GS_VERSION);
         Hud::set_login_message("Your client is out of date. Get the new version at " GNOMESCROLL_DOMAIN);
         return false;
     }
+    else if (GS_VERSION > version)
+        printf("WARNING: Your version (%d) is newer than the auth server's (%d).\n", GS_VERSION, version);
     _version_good = true;
     return true;
 }
