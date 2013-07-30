@@ -350,7 +350,7 @@ void CraftingUI::draw()
         for (int yslot=0; yslot<output_ydim; yslot++)
         {
             int slot = output_xdim*yslot + xslot;
-            bool available;
+            bool available = false;
             ItemType item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
             if (available) continue;
             if (item_type == NULL_ITEM_TYPE) continue;

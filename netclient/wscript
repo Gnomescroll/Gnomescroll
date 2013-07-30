@@ -46,10 +46,6 @@ def get_version():
 VERSION = str(get_version())
 
 
-def options(opt):
-    opt.load('compiler_c compiler_cxx')
-
-
 def check_clang(conf, use_clang=None):
     OS = platform.system()
     if OS != 'Linux':
@@ -76,7 +72,7 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
     link_flags = []
 
     windows = Options.options.windows
-    production = (Options.options.release.startswith('production'))
+    production = (Options.options.release.lower().startswith('prod'))
     use_clang = None
     if production or windows:
         use_clang = False
@@ -165,7 +161,7 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
             conf.find_program('x86_64-w64-mingw32-gcc', var='CC')
             conf.find_program('x86_64-w64-mingw32-g++', var='CXX')
             conf.find_program('x86_64-w64-mingw32-ar', var='AR')
-        conf.load('compiler_cxx')
+        conf.load('compiler_c compiler_cxx')
         if i386:
             conf.gcc_modifier_win32()
     else:
@@ -279,13 +275,7 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
     else:
         extra_options.append('-Winline')
 
-    #if OS == 'Linux' and i386:
-        #extra_options.append('-L/usr/lib/i386-linux-gnu')
-
     cxxflags += extra_options
-
-    if OS == 'Darwin':
-        cxxflags += ['-s']
 
     cxxflags += [c for c in add_flags if c not in cxxflags]
     cxxflags = [c for c in cxxflags if c not in rm_flags]
@@ -332,9 +322,6 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
         conf.check(lib=['GL'], libpath=mesa_libpath, uselib_store='GL')
         conf.check(lib=['GLU'], libpath=mesa_libpath, uselib_store='GL')
         conf.check(lib=['GLEW'], libpath=mesa_libpath, uselib_store='GL')
-    elif OS == 'Darwin':
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'],
-                   uselib_store='GL')
 
     if OS == 'Windows' or windows:
         sdl_config_path = os.path.join(libpath, 'SDL/bin/sdl-config')
@@ -383,11 +370,6 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
                    fragment='#include <AL/al.h>\n#include <AL/alc.h>' +
                        MAIN_TEST_CODE,
                    mandatory=True)
-    elif OS == 'Darwin':
-        conf.check(lib=[],
-                   framework=['OpenAL'],
-                   uselib_store='openal',
-                   mandatory=True)
     else:
         conf.check(header_name='AL/al.h',
                    lib='openal',
@@ -423,15 +405,6 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
-    elif OS == 'Darwin':
-        conf.check(header_name='lua.h',
-                   lib='luajit-5.1',
-                   use='luajit-5.1',
-                   libpath=lua_lib_path,
-                   includes=lua_inc_path,
-                   uselib_store='LUA',
-                   fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-                   mandatory=True)
 
     if awesomium:
         if OS == 'Windows' or windows:
@@ -441,12 +414,10 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
             awesomium_name = 'Awesomium'
             if awesomium_debug:
                 awesomium_name += '_d'
-        elif OS == 'Linux':
+        else:
             awesomium_lib_path = '../lib/lin32/awesomium/release/'
             awesomium_include_path = '../lib/lin32/awesomium/include/'
             awesomium_name = 'awesomium-1.6.5'
-        else:
-            assert False
 
         conf.check(lib=[awesomium_name],
                    use=awesomium_name,
@@ -472,16 +443,29 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
                    includes=map(os.path.abspath, assimp_inc_path),
                    uselib_store='ASSIMP')
 
-    if OS == 'Linux' and auth:
-        conf.check(lib='curl', libpath=[libpath],
-                   includes=['../../lib/lin{0}/include'.format(arch_label)],
+    if auth:
+        if OS == 'Windows' or windows:
+            curl_libpath = os.path.join(libpath, 'dll')
+            curl_incpath = os.path.join(libpath, 'include')
+        else:
+            curl_libpath = [libpath]
+            curl_incpath = ['../../lib/lin{0}/include'.format(arch_label)]
+
+        conf.check(lib='ssl crypto',
+                   libpath=curl_libpath,
+                   includes=curl_incpath,
+                   uselib_store='SSL')
+        conf.check(lib='curl',
+                   libpath=curl_libpath,
+                   includes=curl_incpath,
                    uselib_store='CURL')
         conf.check(header_name='curl/curlbuild.h',
                    lib='curl',
                    use='curl',
                    uselib_store='CURL',
-                   includes=['../../lib/lin{0}/include'.format(arch_label)],
+                   includes=curl_incpath,
                    fragment='#include <curl/curl.h>' + MAIN_TEST_CODE,
+                   libpath=curl_libpath,
                    mandatory=True)
 
     conf.env.INCLUDES += ['../src/c_lib', '../src', '../src/net_lib']
@@ -585,16 +569,11 @@ def build(bld):
     png_libs = ['png']
     time_lib = ['rt']
 
-    auth_libs = []
-    if bld.env.auth:
-        auth_libs = ['curl']
-
     includes = []
     libs = []
-    if OS == 'Windows':
+    if OS == 'Windows' or bld.env.windows:
         libpath = os.path.abspath('../lib/win32')
-        includes = [os.path.join(libpath, path)
-                    for path in os.listdir(libpath)]
+        includes = [os.path.join(libpath, 'include')]
         libs = ['lib', 'dll', 'awesomium/lib/{0}'.format(bld.env.awe_stem),
                 'awesomium/bin/{0}'.format(bld.env.awe_stem)]
         libs = map(lambda x: os.path.join(libpath, x), libs)
@@ -608,13 +587,15 @@ def build(bld):
         use.append('AWESOMIUM')
     if bld.env.assimp:
         use.append('ASSIMP')
+    if bld.env.auth:
+        use.append('CURL')
 
     target = 'run'
     bld(
         features='cxx cxxprogram',
         source=['../src/client/_client.cpp'],
         use=use,
-        lib=sound_libraries + png_libs + debug_libs + auth_libs,
+        lib=sound_libraries + png_libs + debug_libs,
         includes=includes,
         libpath=libs,
         framework=sound_framework,
@@ -737,3 +718,4 @@ def options(opt):
     opt.add_option('--efence', action='store_true', default=False)
     opt.add_option('--modules', action='store_true', default=False,
                    help='Experimental module compilation')
+    opt.load('compiler_c compiler_cxx')

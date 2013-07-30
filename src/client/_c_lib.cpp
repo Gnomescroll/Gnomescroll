@@ -25,7 +25,9 @@
 #endif
 
 #if PRODUCTION
-# define GS_AWESOMIUM 1
+# ifndef GS_AWESOMIUM
+#  define GS_AWESOMIUM 1
+# endif
 #endif
 
 #ifndef ENABLE_WARNING_SOUND
