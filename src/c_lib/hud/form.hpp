@@ -370,8 +370,10 @@ class LoginForm: public Form
 
     virtual void submit()
     {
+        #if !PRODUCTION
         for (int i=0; i<this->n_inputs; i++)
             printf("%s: %s\n", this->inputs[i]->get_name(), this->inputs[i]->get_value());
+        #endif
         if (Auth::login(this->username->get_value(), this->password->get_value()))
         {
             if (this->remember->get_value()[0] == 't')
@@ -416,8 +418,10 @@ class CreateAccountForm: public Form
 
     virtual void submit()
     {
+        #if !PRODUCTION
         for (int i=0; i<this->n_inputs; i++)
             printf("%s: %s\n", this->inputs[i]->get_name(), this->inputs[i]->get_value());
+        #endif
         if (Auth::create_account(this->username->get_value(),
                                  this->email->get_value(),
                                  this->password->get_value()))

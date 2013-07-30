@@ -226,3 +226,5 @@ gnomescroll_windows32_*
 gnomescroll_linux32_*
 gnomescroll_windows64_*
 gnomescroll_linux64_*
+
+win32/deprecated

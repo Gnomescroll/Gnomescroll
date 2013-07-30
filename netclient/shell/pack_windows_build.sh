@@ -25,7 +25,7 @@ mkdir "$f"/screenshot
 #rm -rf "$f"/lib/win32/awesomium/bin/debug
 
 cp ../lib/win32/dll/* "$f"/
-cp -R ../lib/win32/awesomium/bin/release/* "$f"/
+#cp -R ../lib/win32/awesomium/bin/release/* "$f"/
 
 if [ -d "$f".zip ]; then
     rm "$f".zip
