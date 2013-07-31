@@ -12,6 +12,7 @@
 #include <t_map/_interface.hpp>
 #include <hud/form.hpp>
 #include <hud/_interface.hpp>
+#include <hud/guide.hpp>
 
 /* Configuration */
 namespace Hud
@@ -548,6 +549,7 @@ void draw_hud_text()
 
     if (!has_error())
     {
+        guide::update_guide();
         if (hud_draw_settings.agent_status)
         {
             Agents::Agent* a = ClientState::player_agent.you();

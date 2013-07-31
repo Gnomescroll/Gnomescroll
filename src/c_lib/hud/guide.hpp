@@ -128,13 +128,11 @@ namespace guide
     //}
 
     //if this contains errors(which it probably does), don't be mad-I had no way of finding them because cimport.h was not found, and compilation terminated.
-    void draw_guide()
+    void update_guide()
     {
         using ClientState::hitscan;
-        ItemType equipped_type = Toolbelt::get_selected_item_type();
-        float range = Item::get_weapon_range(equipped_type);
-        if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
-        return;
+        Uint8* keystate = SDL_GetKeyState(NULL);
+        if(!keystate[SDLK_SEMICOLON]) return;
 
         Hud::set_prompt(guide_desc);
 
