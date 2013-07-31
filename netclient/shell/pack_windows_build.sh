@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
 
-./waf configure --release=production --windows
-./waf
+echo `pwd`
+
+VERSION_PATH=../src/c_lib/common/version.h
+if [ ! -e ${VERSION_PATH} ]; then
+    echo "version.h not found at: " ${VERSION_PATH}
+    exit 1
+fi
+
 version=`cat ../src/c_lib/common/version.h | grep GS_VERSION | cut -d " " -f 3`
-if [[ $version == */* ]]; then
+if [[ "$version" == */* ]]; then
     echo "Invalid version:" $version
     exit 1
 fi
+if [ -z "$version" ]; then
+    echo "Invalid version:" $version
+    exit 1
+fi
+
+./waf configure --release=production --windows
+./waf
+
 f="gnomescroll_windows_"$version
 rm -rf "$f"
 mkdir "$f"
