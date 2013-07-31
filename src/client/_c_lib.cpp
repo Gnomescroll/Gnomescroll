@@ -21,12 +21,12 @@
 //#endif
 
 #ifndef GS_ASSIMP
-# define GS_ASSIMP 1
+# define GS_ASSIMP 0
 #endif
 
 #if PRODUCTION
 # ifndef GS_AWESOMIUM
-#  define GS_AWESOMIUM 1
+#  define GS_AWESOMIUM 0
 # endif
 #endif
 

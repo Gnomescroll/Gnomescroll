@@ -406,42 +406,42 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
 
-    if awesomium:
-        if OS == 'Windows' or windows:
-            awesomium_lib_path = '../lib/win32/awesomium/lib/{0}/'
-            awesomium_lib_path = awesomium_lib_path.format(awe_stem)
-            awesomium_include_path = '../lib/win32/awesomium/include/'
-            awesomium_name = 'Awesomium'
-            if awesomium_debug:
-                awesomium_name += '_d'
-        else:
-            awesomium_lib_path = '../lib/lin32/awesomium/release/'
-            awesomium_include_path = '../lib/lin32/awesomium/include/'
-            awesomium_name = 'awesomium-1.6.5'
+    #if awesomium:
+        #if OS == 'Windows' or windows:
+            #awesomium_lib_path = '../lib/win32/awesomium/lib/{0}/'
+            #awesomium_lib_path = awesomium_lib_path.format(awe_stem)
+            #awesomium_include_path = '../lib/win32/awesomium/include/'
+            #awesomium_name = 'Awesomium'
+            #if awesomium_debug:
+                #awesomium_name += '_d'
+        #else:
+            #awesomium_lib_path = '../lib/lin32/awesomium/release/'
+            #awesomium_include_path = '../lib/lin32/awesomium/include/'
+            #awesomium_name = 'awesomium-1.6.5'
 
-        conf.check(lib=[awesomium_name],
-                   use=awesomium_name,
-                   includes=map(os.path.abspath, [awesomium_include_path]),
-                   libpath=map(os.path.abspath, [awesomium_lib_path]),
-                   uselib_store='AWESOMIUM')
+        #conf.check(lib=[awesomium_name],
+                   #use=awesomium_name,
+                   #includes=map(os.path.abspath, [awesomium_include_path]),
+                   #libpath=map(os.path.abspath, [awesomium_lib_path]),
+                   #uselib_store='AWESOMIUM')
 
-    if assimp:
-        if OS == 'Windows' or windows:
-            assimp_lib = 'Assimp32'
-            assimp_lib_path = ['../lib/win32/lib/', '../lib/win32/dll/']
-            assimp_inc_path = ['../lib/win32/assimp/']
-        elif OS == 'Linux':
-            assimp_lib = 'assimp'
-            assimp_lib_path = [libpath]
-            assimp_inc_path = ['../lib/lin/include/assimp/']
-        else:
-            assert False
+    #if assimp:
+        #if OS == 'Windows' or windows:
+            #assimp_lib = 'Assimp32'
+            #assimp_lib_path = ['../lib/win32/lib/', '../lib/win32/dll/']
+            #assimp_inc_path = ['../lib/win32/assimp/']
+        #elif OS == 'Linux':
+            #assimp_lib = 'assimp'
+            #assimp_lib_path = [libpath]
+            #assimp_inc_path = ['../lib/lin/include/assimp/']
+        #else:
+            #assert False
 
-        conf.check(lib=assimp_lib,
-                   use='assimp',
-                   libpath=map(os.path.abspath, assimp_lib_path),
-                   includes=map(os.path.abspath, assimp_inc_path),
-                   uselib_store='ASSIMP')
+        #conf.check(lib=assimp_lib,
+                   #use='assimp',
+                   #libpath=map(os.path.abspath, assimp_lib_path),
+                   #includes=map(os.path.abspath, assimp_inc_path),
+                   #uselib_store='ASSIMP')
 
     if auth:
         if OS == 'Windows' or windows:
