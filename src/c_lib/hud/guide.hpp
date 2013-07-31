@@ -146,7 +146,7 @@ namespace guide
                 Agents::Agent* agent = Agents::get_agent(AgentID(hitscan.voxel_target.entity_id));
                 if(agent != NULL) Hud::set_prompt(agent->status.name);
             }
-            else Hud::set_prompt(Entity::get_mob_description(hitscan.voxel_target.entity_type));
+            //else Hud::set_prompt(Entities::get_mob_description(hitscan.voxel_target.entity_type));
 
         }
         else if(hitscan.type == HITSCAN_TARGET_BLOCK) Hud::set_prompt(t_map::get_cube_description(hitscan.cube_type));
