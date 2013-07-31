@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 VERSION_PATH=../src/c_lib/common/version.h
-if [ ! -d ${VERSION_PATH} ]; then
+if [ ! -e ${VERSION_PATH} ]; then
     echo "version.h not found at: " ${VERSION_PATH}
     exit 1
 fi

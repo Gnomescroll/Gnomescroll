@@ -12,7 +12,7 @@ if [ $arch != "32" ] && [ $arch != "64" ]; then
 fi
 
 VERSION_PATH=../src/c_lib/common/version.h
-if [ ! -d ${VERSION_PATH} ]; then
+if [ ! -e ${VERSION_PATH} ]; then
     echo "version.h not found at: " ${VERSION_PATH}
     exit 1
 fi
