@@ -11,13 +11,25 @@ if [ $arch != "32" ] && [ $arch != "64" ]; then
     exit 1
 fi
 
-./waf configure --release=production --arch=$arch
-./waf
+VERSION_PATH=../src/c_lib/common/version.h
+if [ ! -d ${VERSION_PATH} ]; then
+    echo "version.h not found at: " ${VERSION_PATH}
+    exit 1
+fi
+
 version=`cat ../src/c_lib/common/version.h | grep GS_VERSION | cut -d " " -f 3`
-if [[ $version == */* ]]; then
+if [[ "$version" == */* ]]; then
     echo "Invalid version:" $version
     exit 1
 fi
+if [ -z "$version" ]; then
+    echo "Invalid version:" $version
+    exit 1
+fi
+
+./waf configure --release=production --arch=$arch
+./waf
+
 f="gnomescroll_linux"$arch"_"$version
 
 if [ -d "$f" ]; then
@@ -36,7 +48,7 @@ mkdir "$f"/screenshot
 mkdir -p "$f"/lib/lin$arch/
 cp -d ../lib/lin$arch/*.so "$f"/lib/lin$arch/
 cp -d ../lib/lin$arch/*.so.* "$f"/lib/lin$arch/
-cp -R -d ../lib/lin$arch/awesomium "$f"/lib/lin$arch/
+#cp -R -d ../lib/lin$arch/awesomium "$f"/lib/lin$arch/
 
 # Remove any existing package
 rm "$f".tar.gz
