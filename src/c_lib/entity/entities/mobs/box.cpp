@@ -18,7 +18,7 @@ void load_mob_robot_box_data()
 
     entity_data->begin_attaching_to(type);
 
-    ADD_COMPONENT(PositionMomentum);
+    (void)ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
     dims->set_height(3.0f);
@@ -30,7 +30,7 @@ void load_mob_robot_box_data()
     vox->init_draw = true;
 
     #if DC_CLIENT
-    ADD_COMPONENT(HitPoints);
+    (void)ADD_COMPONENT(HitPoints);
     #endif
     #if DC_SERVER   // health will be set by packet initializer
     auto health = ADD_COMPONENT(HitPoints);
@@ -59,7 +59,7 @@ void load_mob_robot_box_data()
     motion->max_z_diff = 3;
 
     #if DC_SERVER
-    ADD_COMPONENT(SpawnChild);
+    (void)ADD_COMPONENT(SpawnChild);
 
     auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;

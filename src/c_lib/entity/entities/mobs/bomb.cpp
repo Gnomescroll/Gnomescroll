@@ -19,7 +19,7 @@ void load_mob_bomb_data()
 
     entity_data->begin_attaching_to(type);
 
-    ADD_COMPONENT(PositionMomentum);
+    (void)ADD_COMPONENT(PositionMomentum);
 
     auto dims = ADD_COMPONENT(Dimension);
     dims->set_height(1.0f);
@@ -30,7 +30,7 @@ void load_mob_bomb_data()
     vox->init_draw = true;
 
     #if DC_CLIENT
-    ADD_COMPONENT(HitPoints);
+    (void)ADD_COMPONENT(HitPoints);
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     auto health = ADD_COMPONENT(HitPoints);

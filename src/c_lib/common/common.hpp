@@ -60,10 +60,13 @@ time_t utc_now();
 
 char* strip_whitespace(const char* str)
 {
+    IF_ASSERT(str == NULL) return NULL;
+    if (str[0] == '\0')
+        return (char*)calloc(1, sizeof(char));
     int i=0;
     while (isspace(str[i])) i++;
     int start = i;
-    i = strlen(str)-1;
+    i = int(strlen(str)) - 1;
     while (isspace(str[i])) i--;
     int end = i;
     int len = end-start+1;

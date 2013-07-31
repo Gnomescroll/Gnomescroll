@@ -2,11 +2,11 @@
 
 #include <sound/sound.hpp>
 
-const char* _gs_internal_itoa(int val)
+const char* _gs_internal_itoa(size_t val)
 {
     const size_t bufsiz = 32;
     static char buf[bufsiz] = {'\0'};
-    snprintf(buf, bufsiz, "%d", val);
+    snprintf(buf, bufsiz, "%d", int(val));
     buf[bufsiz-1] = '\0';
     return buf;
 }

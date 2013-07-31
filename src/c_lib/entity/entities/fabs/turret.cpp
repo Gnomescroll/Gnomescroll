@@ -19,8 +19,8 @@ void load_turret_data()
 
     entity_data->begin_attaching_to(type);
 
-    ADD_COMPONENT(Position);
-    ADD_COMPONENT(Owner);
+    (void)ADD_COMPONENT(Position);
+    (void)ADD_COMPONENT(Owner);
 
     auto dims = ADD_COMPONENT(Dimension);
     dims->set_height(1.9f);

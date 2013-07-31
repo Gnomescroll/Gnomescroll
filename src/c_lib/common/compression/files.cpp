@@ -32,7 +32,7 @@ int compress_buffer_to_file(const char* filename, const char* inbuf, const size_
 
     // Initialize the low-level compressor.
     tdefl_compressor deflator;
-    tdefl_status status = tdefl_init(&deflator, NULL, NULL, comp_flags);
+    tdefl_status status = tdefl_init(&deflator, NULL, NULL, int(comp_flags));
     if (status != TDEFL_STATUS_OKAY)
     {
         printf("tdefl_init() failed!\n");

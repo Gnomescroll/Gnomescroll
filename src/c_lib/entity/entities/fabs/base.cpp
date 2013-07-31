@@ -16,7 +16,7 @@ void load_base_data()
 
     entity_data->begin_attaching_to(type);
 
-    ADD_COMPONENT(Position);
+    (void)ADD_COMPONENT(Position);
 
     auto dims = ADD_COMPONENT(Dimension);
     dims->set_height(1.0f);

@@ -18,7 +18,7 @@ void load_mob_lizard_thief_data()
 
     entity_data->begin_attaching_to(type);
 
-    ADD_COMPONENT(PositionMomentum);
+    (void)ADD_COMPONENT(PositionMomentum);
 
     auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.set_type("lizard_thief");
