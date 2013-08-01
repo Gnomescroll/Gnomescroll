@@ -119,4 +119,6 @@ void clear_login_message(const char* msg);
 void clear_login_message();
 void draw_login_message();
 
+void draw_guide();
+
 }   // Hud

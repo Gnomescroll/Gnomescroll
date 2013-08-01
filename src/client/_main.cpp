@@ -169,6 +169,9 @@ void draw_hud()
 
         poll_mouse();
         Hud::draw_error_status();
+
+        poll_mouse();
+        Hud::draw_guide();
     }
 
     glDisable(GL_BLEND);
