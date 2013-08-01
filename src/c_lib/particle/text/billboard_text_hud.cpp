@@ -52,7 +52,7 @@ void BillboardTextHud::draw()
     if (current_camera == NULL) return;
     if (!this->charcount()) return;
 
-    Vec3 position = this->get_position();
+    Vec3 position = TextParticle::get_position();
     if (vec3_equal(current_camera_position, position)) return;
     position = quadrant_translate_position(current_camera_position, position);
     GLdouble sx,sy,sz;

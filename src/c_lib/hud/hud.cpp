@@ -470,21 +470,6 @@ void draw_hud_text()
         if (hud_draw_settings.help)
             hud->help->draw();
 
-        if (hud_draw_settings.prompt)
-        {   // blinks blue/white
-            static unsigned int press_help_tick = 0;
-            const int press_help_anim_len = 60;
-            const Color white = Color(255,255,255);
-            float t = float(press_help_tick % (2*press_help_anim_len)) / float(press_help_anim_len);
-            t -= 1.0f;
-            if (t < 0.0f)
-                hud->prompt->set_color(interpolate_color(COLOR_BLUE, white, 1.0f+t));
-            else
-                hud->prompt->set_color(interpolate_color(white, COLOR_BLUE, t));
-            hud->prompt->draw();
-            press_help_tick++;
-        }
-
         //draw_targeted_text();
     }
     else
@@ -640,6 +625,42 @@ void draw_hud_text()
         }   // agent_status
     }
 
+    end_font_draw();
+}
+
+void draw_guide()
+{
+    if (!hud_draw_settings.prompt || hud->prompt->empty())
+        return;
+
+    // draw a background
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    Vec2 p = hud->prompt->get_position();
+    Vec2 d = hud->prompt->get_dimensions();
+    p.y -= d.y;
+    const float margin = 4.0f;
+    d = vec2_add(d, vec2_init(margin));
+    p = vec2_scalar_sub(p, margin);
+    draw_rect(Color(0, 0, 0, 192), p, d);
+
+    // draw the text
+    HudFont::reset_default();
+    HudFont::set_texture();
+    start_font_draw();
+    // blinks blue/white
+    static unsigned int press_help_tick = 0;
+    const int press_help_anim_len = 240;
+    const Color start_color = interpolate_color(COLOR_BLUE, COLOR_WHITE, 0.5f);
+    const Color end_color = interpolate_color(COLOR_BLUE, COLOR_WHITE, 0.85f);
+    float t = float(press_help_tick % (2*press_help_anim_len)) / float(press_help_anim_len);
+    t -= 1.0f;
+    if (t < 0.0f)
+        hud->prompt->set_color(interpolate_color(start_color, end_color, 1.0f+t));
+    else
+        hud->prompt->set_color(interpolate_color(end_color, start_color, t));
+    hud->prompt->draw();
+    press_help_tick++;
     end_font_draw();
 }
 

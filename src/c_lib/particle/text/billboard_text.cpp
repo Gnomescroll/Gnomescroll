@@ -68,7 +68,7 @@ void BillboardText::draw()
     if (current_camera == NULL) return;
     if (text == NULL || text[0] == '\0') return;
 
-    Vec3 position = this->get_position();
+    Vec3 position = TextParticle::get_position();
     Vec3 p = current_camera->get_position();
     position = quadrant_translate_position(p,position);
     if (!point_fulstrum_test(position.x, position.y, position.z))

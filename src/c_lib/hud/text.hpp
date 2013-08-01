@@ -58,7 +58,12 @@ class Text
         return this->formatted;
     }
 
-    size_t length()
+    bool empty() const
+    {
+        return (this->text == NULL || this->text[0] == '\0');
+    }
+
+    size_t length() const
     {
         if (this->text == NULL)
             return 0;
@@ -73,13 +78,15 @@ class Text
 
     void set_color(Color color);
 
+    Vec2 get_dimensions() const;
+    Vec2 get_position() const;
     void set_position(float x, float y);
     void set_position(const Vec2& position);
     void set_scale(float scale);
     void set_depth(float depth);
     void draw_centered();
-    int get_width();
-    int get_height();
+    int get_width() const;
+    int get_height() const;
     int charcount();
 
     void draw();

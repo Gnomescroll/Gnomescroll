@@ -58,6 +58,14 @@ struct Vec2 vec2_scalar_mult(const Vec2& a, float k)
     return v;
 }
 
+struct Vec2 vec2_scalar_sub(const Vec2& a, float b)
+{
+    Vec2 v = a;
+    v.x -= b;
+    v.y -= b;
+    return v;
+}
+
 bool point_in_rect(const Vec2& point, const Vec2& position, const Vec2& dimension)
 {
     return (point.x > position.x && point.x < position.x + dimension.x &&

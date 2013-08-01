@@ -359,7 +359,7 @@ void Text::draw()
     this->reset_alignment();
 }
 
-int Text::get_width()
+int Text::get_width() const
 {
     if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL) return 0;
     char* buffer = (char*)calloc(this->text_len+1, sizeof(char));
@@ -393,7 +393,7 @@ int Text::get_width()
     return longest;
 }
 
-int Text::get_height()
+int Text::get_height() const
 {
     if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL) return 0;
 
@@ -418,6 +418,16 @@ int Text::get_height()
     int h = 0;
     HudFont::font->get_string_pixel_dimension("X", &len, &h);
     return n * h;
+}
+
+Vec2 Text::get_position() const
+{
+    return vec2_init(this->x, this->y);
+}
+
+Vec2 Text::get_dimensions() const
+{
+    return vec2_init(this->get_width(), this->get_height());
 }
 
 Text::Text(int id) :

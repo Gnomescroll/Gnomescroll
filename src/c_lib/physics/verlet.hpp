@@ -24,7 +24,7 @@ class VerletComponent
 
     /* Base api */
 
-    struct Vec3 get_position()
+    struct Vec3 get_position() const
     {
         return this->position;
     }
@@ -44,7 +44,7 @@ class VerletComponent
         return this->set_position(p.x, p.y, p.z);
     }
 
-    struct Vec3 get_momentum()
+    struct Vec3 get_momentum() const
     {
         return vec3_scalar_mult(this->velocity, this->mass);
     }
