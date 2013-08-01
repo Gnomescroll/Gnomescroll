@@ -160,6 +160,7 @@ void set_prompt(const char* msg)
 {   // Set prompt text for flashy message
     IF_ASSERT(hud == NULL) return;
     hud->prompt->set_text(msg);
+    hud->prompt->set_position((_xresf - hud->prompt->get_width()) / 2.0f, hud->prompt->get_height() + HudContainer::toolbelt->height());
 }
 
 void clear_prompt(const char* msg)
@@ -167,6 +168,7 @@ void clear_prompt(const char* msg)
     IF_ASSERT(hud == NULL) return;
     if (strcmp(msg, hud->prompt->text) == 0)
         hud->prompt->set_text("");
+    hud->prompt->set_position((_xresf - hud->prompt->get_width()) / 2.0f, hud->prompt->get_height() + HudContainer::toolbelt->height());
 }
 
 void set_login_message(const char* msg)
@@ -756,7 +758,7 @@ void HUD::init()
     else
         prompt->set_text("");
     prompt->set_color(Color(255,255,255,255));
-    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::toolbelt->height() );
+    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::toolbelt->height());
     prompt->shadowed = true;
 
     target = text_list->create();

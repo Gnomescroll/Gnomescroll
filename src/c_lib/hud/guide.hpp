@@ -132,9 +132,11 @@ namespace guide
     {
         using ClientState::hitscan;
         Uint8* keystate = SDL_GetKeyState(NULL);
-        if(!keystate[SDLK_SEMICOLON]) return;
-
-        Hud::set_prompt(guide_desc);
+        if(!keystate[SDLK_SEMICOLON])
+        {
+            Hud::set_prompt("");
+            return;
+        }
 
         if(input_state.agent_inventory) Hud::set_prompt(inventory_desc);
         else if(hitscan.type == HITSCAN_TARGET_VOXEL)
