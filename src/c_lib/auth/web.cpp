@@ -356,8 +356,9 @@ bool _make_auth_post_request(const char* url, const char* post_data)
     else if (had_error)
     {
         success = false;
+        // auth_token is actuall an error string at this point
         printf("Response errors:\n%s\n", auth_token);
-        Hud::set_login_message("Program Error: Bad csrf token.");
+        Hud::set_login_message(auth_token);
     }
     else
     {   // send the actual request, with the csrf token
@@ -389,8 +390,9 @@ bool _make_auth_post_request(const char* url, const char* post_data)
         else if (had_error)
         {
             success = false;
+            // auth_token is actuall an error string at this point
             printf("Response errors:\n%s\n", auth_token);
-            Hud::set_login_message("Program Error: Bad auth token.");
+            Hud::set_login_message(auth_token);
         }
         else
         {
