@@ -40,6 +40,7 @@ static const char help_text[] =
 "    T, Enter        Chat\n"
 "    `               Show chat log\n"
 "    H               Toggle help\n"
+"    ;               Open guide\n"
 "    Tab             See who is playing\n"
 "    Home(print screen)            Take Screenshot\n"
 "  Chat Commands:\n"
@@ -160,7 +161,7 @@ void set_prompt(const char* msg)
 {   // Set prompt text for flashy message
     IF_ASSERT(hud == NULL) return;
     hud->prompt->set_text(msg);
-    hud->prompt->set_position((_xresf - hud->prompt->get_width()) / 2.0f, hud->prompt->get_height() + HudContainer::toolbelt->height());
+    hud->prompt->set_position((_xresf - hud->prompt->get_width()) / 2.0f, hud->prompt->get_height() + HudContainer::toolbelt->height() + 30);
 }
 
 void clear_prompt(const char* msg)
@@ -168,7 +169,7 @@ void clear_prompt(const char* msg)
     IF_ASSERT(hud == NULL) return;
     if (strcmp(msg, hud->prompt->text) == 0)
         hud->prompt->set_text("");
-    hud->prompt->set_position((_xresf - hud->prompt->get_width()) / 2.0f, hud->prompt->get_height() + HudContainer::toolbelt->height());
+    hud->prompt->set_position((_xresf - hud->prompt->get_width()) / 2.0f, hud->prompt->get_height() + HudContainer::toolbelt->height() + 30);
 }
 
 void set_login_message(const char* msg)
