@@ -376,7 +376,9 @@ bool _make_auth_post_request(const char* url, const char* post_data)
         res = curl_easy_perform(curl);
         if (log_curl_error(res))
             success = false;
+        #if !PRODUCTION
         response.print();
+        #endif
         free(post);
         char* auth_token = extract_auth_token(response.memory, had_error);
         if (auth_token == NULL)

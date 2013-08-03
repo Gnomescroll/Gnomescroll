@@ -19,7 +19,7 @@ if [ -z "$version" ]; then
 fi
 
 ./waf configure --release=production --windows
-./waf
+./waf --nocache
 
 f="gnomescroll_windows_"$version
 rm -rf "$f"

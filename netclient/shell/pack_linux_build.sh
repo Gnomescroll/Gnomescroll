@@ -28,7 +28,7 @@ if [ -z "$version" ]; then
 fi
 
 ./waf configure --release=production --arch=$arch
-./waf
+./waf --nocache
 
 f="gnomescroll_linux"$arch"_"$version
 
