@@ -29,6 +29,7 @@ bool raytrace_terrain(const Vec3& start, const Vec3& direction, float length, cl
 /* Borrowed from: http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html */
 bool raytrace_terrain(const Vec3& start, const Vec3& end, class RaytraceData* data)
 {
+    data->interval = 1.0f;
     if (vec3_equal(start, end))
     {
         if (collision_check(vec3i_init(start)))

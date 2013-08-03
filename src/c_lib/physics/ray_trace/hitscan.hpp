@@ -20,39 +20,6 @@ namespace Hitscan
 
 class WorldHitscanResult
 {
-    private:
-
-    void _set_collision_point()
-    {
-        if (this->type == HITSCAN_TARGET_NONE)
-        {
-            const Vec3 away = vec3_scalar_mult(this->direction, this->range);
-            this->collision_point = vec3_add(this->start_position, away);
-        }
-        else if (this->type == HITSCAN_TARGET_BLOCK)
-        {
-            const Vec3 away = vec3_scalar_mult(this->direction, this->block_distance);
-            this->collision_point = vec3_add(this->start_position, away);
-        }
-        else if (this->type == HITSCAN_TARGET_MECH)
-        {
-            const Vec3 away = vec3_scalar_mult(this->direction, this->mech_distance);
-            this->collision_point = vec3_add(this->start_position, away);
-        }
-        else if (this->type == HITSCAN_TARGET_SPRITE_MOB)
-        {
-            this->collision_point = this->sprite_mob_collision_point;
-        }
-        else if (this->type == HITSCAN_TARGET_VOXEL)
-        {
-            this->collision_point = this->voxel_collision_point;
-        }
-        else
-        {
-            GS_ASSERT(false);
-        }
-    }
-
     public:
 
         static const int FAR_AWAY = INT_MAX;
@@ -156,12 +123,16 @@ class WorldHitscanResult
                 closest_d = d[i];
                 closest = i;
             }
-        if (closest == -1)
-            return;
-        GS_ASSERT(hits[closest]);
-        this->distance = closest_d;
+        if (closest != -1)
+        {
+            GS_ASSERT(hits[closest]);
+            this->distance = closest_d;
+        }
         switch (closest)
         {
+            case -1:
+                this->type = HITSCAN_TARGET_NONE;
+                break;
             case 0:
                 this->type = HITSCAN_TARGET_BLOCK;
                 break;
@@ -193,6 +164,39 @@ class WorldHitscanResult
         sprite_mob_entity_id(NULL_ENTITY), sprite_mob_entity_type(NULL_ENTITY_TYPE),
         sprite_mob_distance(FAR_AWAY), sprite_mob_collision_point(vec3_init(0))
     {}
+
+    private:
+
+    void _set_collision_point()
+    {
+        if (this->type == HITSCAN_TARGET_NONE)
+        {
+            const Vec3 away = vec3_scalar_mult(this->direction, this->range);
+            this->collision_point = vec3_add(this->start_position, away);
+        }
+        else if (this->type == HITSCAN_TARGET_BLOCK)
+        {
+            const Vec3 away = vec3_scalar_mult(this->direction, this->block_distance);
+            this->collision_point = vec3_add(this->start_position, away);
+        }
+        else if (this->type == HITSCAN_TARGET_MECH)
+        {
+            const Vec3 away = vec3_scalar_mult(this->direction, this->mech_distance);
+            this->collision_point = vec3_add(this->start_position, away);
+        }
+        else if (this->type == HITSCAN_TARGET_SPRITE_MOB)
+        {
+            this->collision_point = this->sprite_mob_collision_point;
+        }
+        else if (this->type == HITSCAN_TARGET_VOXEL)
+        {
+            this->collision_point = this->voxel_collision_point;
+        }
+        else
+        {
+            GS_ASSERT(false);
+        }
+    }
 };
 
 // for agents hitscanning strictly agents:

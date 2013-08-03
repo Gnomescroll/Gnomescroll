@@ -158,11 +158,10 @@ void create_hitscan_effect(struct Vec3 pos, struct Vec3 fwd)
     he->set_state(pos, fwd);
 }
 
-void create_railtrail_effect(struct Vec3 start, struct Vec3 end)
+void create_railtrail_effect(const Vec3& start, const Vec3& end)
 {
     RailTrailEffect* rre = railtrail_effect_list->create();
     if (rre == NULL) return;
-
     rre->set_state(start, end);
 }
 

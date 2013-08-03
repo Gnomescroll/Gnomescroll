@@ -36,8 +36,8 @@ void PlayerAgentAction::update_mining_laser()
 
     const Vec3 position = agent_camera->get_position();
     const Vec3 forward = agent_camera->forward_vector();
-    struct Vec3 focal_point = vec3_add(position, vec3_scalar_mult(forward, 50.0f));
-    struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
+    const Vec3 focal_point = vec3_add(position, vec3_scalar_mult(forward, 50.0f));
+    const Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
 
     you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
     you->event.mining_laser_emitter.length_position = position;

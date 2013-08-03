@@ -1,5 +1,6 @@
 #pragma once
 
+#include <state/state.hpp>
 #include <animations/mining_laser.hpp>
 #include <camera/fulstrum_test.hpp>
 #include <item/common/constants.hpp>
@@ -58,10 +59,10 @@ class MiningLaserEmitter
         struct Vec3 length_direction;
 
     bool in_frustum()
-    {
-        // center point in middle of beam, use sphere test
-        struct Vec3 center = vec3_add(this->position, vec3_scalar_mult(this->direction, this->length * 0.5f));
-        return sphere_fulstrum_test(center.x, center.y, center.z, this->length * 0.5f);
+    {   // center point in middle of beam, use sphere test
+        struct Vec3 dir = vec3_scalar_mult(this->direction, this->length * 0.5f);
+        struct Vec3 center = vec3_add(this->position, dir);
+        return sphere_fulstrum_test(center, this->length * 0.5f);
     }
 
     void prep_draw()
@@ -98,7 +99,7 @@ class MiningLaserEmitter
         if (this->start < 0) this->start = 0;
     }
 
-    void set_state(struct Vec3 p, struct Vec3 f)
+    void set_state(const Vec3& p, const Vec3& f)
     {
         if (vec3_equal(this->position, p) && vec3_equal(this->direction, f)) return;
         this->position = p;
@@ -128,15 +129,15 @@ class MiningLaserEmitter
     {
         for (int i=0; i<this->count; i++)
         {
-            float pct = ((float)i)/((float)this->count);
+            float pct = i/float(this->count);
             this->particles[i].ttl = this->ttl_max * pct;
         }
     }
 
     void set_count()
     {
-        float scale = ((float)Options::animation_level)/3.0f;
-        int ct = scale*((float)MINING_LASER_EMITTER_PARTICLE_COUNT);
+        float scale = float(Options::animation_level)/3.0f;
+        int ct = scale * MINING_LASER_EMITTER_PARTICLE_COUNT;
         if (ct == this->count) return;
         this->count = ct;
         this->realign_particles();
@@ -145,6 +146,7 @@ class MiningLaserEmitter
     void set_base_length(float base_length)
     {
         this->ttl_max = (this->base_length/this->speed)*30;
+        IF_ASSERT(base_length <= 0) return;
         if (this->base_length == base_length) return;
         this->base_length = base_length;
         this->realign_particles();
@@ -153,14 +155,17 @@ class MiningLaserEmitter
     void update_length()
     {
         static class RaytraceData data;
-        struct Vec3 dest = vec3_add(this->length_position, vec3_scalar_mult(this->length_direction, this->base_length));
+        struct Vec3 dir = vec3_scalar_mult(this->length_direction,
+                                           this->base_length);
+        struct Vec3 dest = vec3_add(this->length_position, dir);
         raytrace_terrain(this->length_position, dest, &data);
         this->length = data.interval*this->base_length;
     }
 
     int get_render_count()
     {
-        int ct = (int)((this->length/this->base_length) * ((float)this->count));
+        IF_ASSERT(this->base_length == 0) return 1;
+        int ct = (this->length / this->base_length) * this->count;
         return ct;
     }
 
@@ -179,11 +184,12 @@ class MiningLaserEmitter
     void set_laser_type(ItemType type);
 
     MiningLaserEmitter() :
-        on(false), position(vec3_init(0,0,0)), direction(vec3_init(1,0,0)),
-        count(MINING_LASER_EMITTER_PARTICLE_COUNT), speed(MINING_LASER_PARTICLE_SPEED),
-        base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
+        on(false), position(vec3_init(0)), direction(vec3_init(1,0,0)),
+        count(MINING_LASER_EMITTER_PARTICLE_COUNT),
+        speed(MINING_LASER_PARTICLE_SPEED), base_length(4.0f), length(4.0f),
+        ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
         texture_row(NULL_ANIMATION_TYPE), laser_type(NULL_ITEM_TYPE),
-        length_position(vec3_init(0,0,0)), length_direction(vec3_init(1,0,0))
+        length_position(vec3_init(0)), length_direction(vec3_init(1,0,0))
     {
         this->set_count();
         this->set_base_length(4.0f);

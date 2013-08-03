@@ -21,7 +21,7 @@ class RailTrailEffect
     //inline void draw(const Vec3& camera);
     void tick();
 
-    void set_state(Vec3& start, Vec3& end)
+    void set_state(const Vec3& start, const Vec3& end)
     {
         GS_ASSERT(is_boxed_position(start));
         this->start = start;

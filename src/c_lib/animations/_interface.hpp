@@ -20,7 +20,7 @@ void draw_railtrail_effect();
 void draw_mining_laser_effect();
 
 void create_hitscan_effect(struct Vec3 start, struct Vec3 velocity);
-void create_railtrail_effect(struct Vec3 start, struct Vec3 end);
+void create_railtrail_effect(const Vec3& start, const Vec3& end);
 void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation, const float speed);
 
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length);
