@@ -31,11 +31,13 @@
 #endif
 
 #ifndef ENABLE_WARNING_SOUND
-# define ENABLE_WARNING_SOUND 1
+# define ENABLE_WARNING_SOUND 0
 #endif
 
 #if PRODUCTION
-# define ENABLE_WARNING_SOUND 0
+# ifndef ENABLE_WARNING_SOUND
+#  define ENABLE_WARNING_SOUND 0
+# endif
 #endif
 
 #ifdef GS_SERIALIZER
