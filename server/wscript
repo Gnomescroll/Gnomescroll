@@ -473,7 +473,7 @@ class production_ctx(ConfigurationContext):
 
 
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-DNDEBUG', '-Winline'], optlevel=3,
+    configure(ctx, add_flags=add + ['-DNDEBUG'], optlevel=3,
               rm_flags=rm, production=True, use_clang=False)
 
 
@@ -483,7 +483,7 @@ class production_dbg_ctx(ConfigurationContext):
 
 
 def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-DNDEBUG', '-Winline'], optlevel=3,
+    configure(ctx, add_flags=add + ['-DNDEBUG'], optlevel=3,
               rm_flags=rm, production=True, use_clang=False)
 
 
@@ -493,7 +493,7 @@ class prodtest_ctx(ConfigurationContext):
 
 
 def prodtest(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-Winline'], rm_flags=rm,
+    configure(ctx, add_flags=add, rm_flags=rm,
               production=True, use_clang=False)
 
 

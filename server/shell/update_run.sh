@@ -4,6 +4,6 @@
 hg pull; hg update
 
 # compile & copy
-./waf production; ./waf; cp run gnomescroll_server
-
+./waf production
+./waf
 ./shell/begin_server.sh
