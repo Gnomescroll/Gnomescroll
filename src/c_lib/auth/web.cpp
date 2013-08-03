@@ -407,6 +407,10 @@ bool _make_auth_post_request(const char* url, const char* post_data)
                 token_failure = true;
                 success = false;
             }
+            else
+            {
+                Hud::clear_login_message();
+            }
         }
         free(auth_token);
     }
