@@ -34,9 +34,7 @@ void place_native_plants(int max)
         ct++;
     }
 
-    #if !PRODUCTION
     printf("%s, created %d plants\n", __FUNCTION__, ct);
-    #endif
 }
 
 }   // t_gen

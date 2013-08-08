@@ -340,24 +340,22 @@ bool save_entities()
     EntityType agent_spawner_type = Entities::get_entity_type("agent_spawner");
     IF_ASSERT(agent_spawner_type == NULL_ENTITY_TYPE) return false;
 
-    char* used_agent_spawners = NULL;
     int agent_spawners_max = 0;
     int agent_spawners_count = 0;
     Entities::Entity* agent_spawners = Entities::get_all(agent_spawner_type,
                                                          agent_spawners_max,
                                                          agent_spawners_count);
-    IF_ASSERT(agent_spawners == NULL || used_agent_spawners == NULL) return false;
+    IF_ASSERT(agent_spawners == NULL) return false;
 
     EntityType energy_core_type = Entities::get_entity_type("energy_core");
     IF_ASSERT(energy_core_type == NULL_ENTITY_TYPE) return false;
 
-    char* used_energy_cores = NULL;
     int energy_cores_max = 0;
     int energy_cores_count = 0;
     Entities::Entity* energy_cores = Entities::get_all(energy_core_type,
                                                        energy_cores_max,
                                                        energy_cores_count);
-    IF_ASSERT(energy_cores == NULL || used_energy_cores == NULL) return false;
+    IF_ASSERT(energy_cores == NULL) return false;
 
     FILE* f = fopen(entity_path_tmp, "w");
     IF_ASSERT(f == NULL) return false;
