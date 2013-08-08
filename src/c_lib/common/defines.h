@@ -8,6 +8,12 @@ typedef unsigned int GLuint;
 # endif
 #endif
 
+#ifdef _MSC_VER // Visual Studio
+# define FUNCTION_NAME __FUNCTION__
+#else
+# define FUNCTION_NAME __PRETTY_FUNCTION__
+#endif
+
 #ifdef DC_CLIENT
 # define STATE ClientState
 #else

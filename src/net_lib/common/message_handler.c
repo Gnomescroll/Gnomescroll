@@ -9,6 +9,9 @@ static size_t* h_server_packet_size;
 static pt2handler_client* client_handler_array;
 static pt2handler_server* server_handler_array;
 
+static char** client_handler_names;
+static char** server_handler_names;
+
 //should disconnect client
 void default_handler_function(char* buff, int n, size_t* read_bytes)
 {
@@ -17,7 +20,7 @@ void default_handler_function(char* buff, int n, size_t* read_bytes)
     *read_bytes = 0;
 }
 
-void register_server_message_handler(int message_id, size_t size, pt2handler_server fptr)
+void register_server_message_handler(int message_id, size_t size, pt2handler_server fptr, const char* name)
 {
     if (message_id > 0xFF || message_id < 0)
     {
@@ -35,9 +38,12 @@ void register_server_message_handler(int message_id, size_t size, pt2handler_ser
     h_server_packet_size[message_id] = size;
     //printf("CtoS: id,size %d,%d\n", message_id, size);
     server_handler_array[message_id] = fptr;
+
+    server_handler_names[message_id] = (char*)malloc(strlen(name) + 1);
+    strcpy(server_handler_names[message_id], name);
 }
 
-void register_client_message_handler(int message_id, size_t size, pt2handler_client fptr)
+void register_client_message_handler(int message_id, size_t size, pt2handler_client fptr, const char* name)
 {
     if (message_id > 0xFF || message_id < 0)
     {
@@ -54,11 +60,16 @@ void register_client_message_handler(int message_id, size_t size, pt2handler_cli
     h_client_packet_size[message_id] = size;
     //printf("StoC: id,size %d,%d\n", message_id, size);
     client_handler_array[message_id] = fptr;
+
+    client_handler_names[message_id] = (char*)malloc(strlen(name) + 1);
+    strcpy(client_handler_names[message_id], name);
 }
 
 void init_message_handler()
 {
     #if !NET_STATIC_ARRAYS
+    client_handler_names = (char**) calloc(256, sizeof(char*));
+    server_handler_names = (char**) calloc(256, sizeof(char*));
     h_client_packet_size = (size_t*) calloc(256, sizeof(size_t));
     h_server_packet_size = (size_t*) calloc(256, sizeof(size_t));
     client_handler_array = (pt2handler_client*)calloc(256, sizeof(pt2handler_server));
@@ -67,6 +78,8 @@ void init_message_handler()
 
     for (int i=0;i<256;i++)
     {
+        server_handler_names[i] = NULL;
+        client_handler_names[i] = NULL;
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
         h_server_packet_size[i] = 0;
@@ -77,6 +90,15 @@ void init_message_handler()
 void teardown_message_handler()
 {
     #if !NET_STATIC_ARRAYS
+    for (int i=0; i<256; i++)
+    {
+        if (client_handler_names != NULL)
+            free(client_handler_names[i]);
+        if (server_handler_names != NULL)
+            free(server_handler_names[i]);
+    }
+    free(client_handler_names);
+    free(server_handler_names);
     free(h_client_packet_size);
     free(h_server_packet_size);
     free(client_handler_array);
@@ -92,26 +114,14 @@ int process_packet_messages(char* buff, size_t* n, size_t max_n, ClientID client
 int process_packet_messages(char* buff, size_t* n, size_t max_n)
 #endif
 {
-
-    //printf("*n= %i, max_n= %i\n", *n, max_n);
-
     size_t size = 0;
     uint8_t message_id = 0xFF;
 
     size_t read_bytes = 0;
 
-    //static int _in = 0;
-
     do
     {
-        //UNPACK_uint8_t(&message_id, buff, n);
         unpack_message_id(&message_id, buff, n);
-        //GS_ASSERT(message_id >= 0 && message_id < 255); // always true due to data type value range
-
-        //if (IS_CLIENT) printf("pop message: n= %i, message_id= %i\n", _n, message_id);
-
-        //printf("0 n= %i, max_n= %i\n", *n, max_n);
-
         #if DC_SERVER
         size = h_server_packet_size[message_id];
         #endif
@@ -119,8 +129,6 @@ int process_packet_messages(char* buff, size_t* n, size_t max_n)
         #if DC_CLIENT
         size = h_client_packet_size[message_id];
         #endif
-
-        //printf("%d Receiving packet %d,%d\n", _in++, message_id, size);
 
         if ((*n)+size-1 > max_n)
         { // > or >= ?
@@ -223,4 +231,14 @@ int process_large_messages(char* buff, size_t* n, size_t max_n)
 {
     printf("WARNING: process_large_messages, received message on large message channel\n");
     return 0;
+}
+
+const char* get_server_packet_name(uint8_t message_id)
+{
+    return server_handler_names[message_id];
+}
+
+const char* get_client_packet_name(uint8_t message_id)
+{
+    return client_handler_names[message_id];
 }

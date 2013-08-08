@@ -17,5 +17,8 @@ int process_client_map_messages(char* buff, size_t* n, size_t max_n);
 int process_large_messages(char* buff, size_t* n, size_t max_n);
 #endif
 
-void register_server_message_handler(int message_id, size_t size, pt2handler_server fptr);
-void register_client_message_handler(int message_id, size_t size, pt2handler_client fptr);
+void register_server_message_handler(int message_id, size_t size, pt2handler_server fptr, const char* name);
+void register_client_message_handler(int message_id, size_t size, pt2handler_client fptr, const char* name);
+
+const char* get_server_packet_name(uint8_t message_id);
+const char* get_client_packet_name(uint8_t message_id);

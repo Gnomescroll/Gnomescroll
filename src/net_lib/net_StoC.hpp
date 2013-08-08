@@ -5,6 +5,7 @@
 #endif
 
 #include <net_lib/global.hpp>
+#include <net_lib/common/monitor.hpp>
 #include <net_lib/common/packet_id_counter.hpp>
 #include <net_lib/common/message_handler.h>
 #include <net_lib/common/type_pack.hpp>
@@ -39,11 +40,15 @@ class FixedSizeNetPacketToClient
         static uint8_t message_id;
         static size_t size;
         static int _in;
-        //ClientID client_id; //not used yet
 
     FixedSizeNetPacketToClient() :
         nm(NULL)
     {
+    }
+
+    const char* get_packet_name()
+    {
+        return FUNCTION_NAME;
     }
 
     virtual ~FixedSizeNetPacketToClient() {}
@@ -54,6 +59,7 @@ class FixedSizeNetPacketToClient
         //GS_ASSERT(Derived::message_id != 255);
         pack_message_id(Derived::message_id, buff, buff_n);
         packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
     }
 
     ALWAYS_INLINE
@@ -62,6 +68,7 @@ class FixedSizeNetPacketToClient
         size_t _buff_n = *buff_n;
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
     }
 
     /*
@@ -190,7 +197,7 @@ class FixedSizeNetPacketToClient
         Derived::message_id = next_client_packet_id(); //set size
         //GS_ASSERT(Derived::message_id != 255);
         x.size = x._size();
-        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
     }
 };
 
@@ -220,7 +227,6 @@ class FixedSizeReliableNetPacketToClient
         nm(NULL)
     {
     }
-
     virtual ~FixedSizeReliableNetPacketToClient() {}
 
     ALWAYS_INLINE void serialize(char* buff, size_t* buff_n)
@@ -228,6 +234,7 @@ class FixedSizeReliableNetPacketToClient
         //GS_ASSERT(Derived::message_id != 255);
         pack_message_id(Derived::message_id, buff, buff_n);
         packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
     }
 
     ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, size_t* size)
@@ -235,6 +242,7 @@ class FixedSizeReliableNetPacketToClient
         size_t _buff_n = *buff_n;
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
     }
 
     void sendToClient(ClientID client_id)
@@ -356,12 +364,17 @@ class FixedSizeReliableNetPacketToClient
         x.handle();
     }
 
+    const char* get_packet_name()
+    {
+        return __PRETTY_FUNCTION__;
+    }
+
     static void register_client_packet()
     {
         Derived x = Derived();
         Derived::message_id = next_client_packet_id(); //set size
         Derived::size = x._size();
-        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
     }
 };
 

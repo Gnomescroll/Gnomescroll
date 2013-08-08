@@ -34,12 +34,15 @@ class MapMessagePacketToServer
     {
         pack_message_id(Derived::message_id, buff, buff_n);
         packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
     }
+
     ALWAYS_INLINE  void unserialize(char* buff, size_t* buff_n, size_t* size)
     {
         size_t _buff_n = *buff_n;
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
     }
 
     void send()
@@ -82,12 +85,17 @@ class MapMessagePacketToServer
         #endif
     }
 
+    const char* get_packet_name()
+    {
+        return FUNCTION_NAME;
+    }
+
     static void register_server_packet()
     {
         Derived x = Derived();
         Derived::message_id = next_server_packet_id(); //set size
         Derived::size = x._size();
-        register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
     }
 };
 
@@ -116,6 +124,7 @@ class MapMessagePacketToClient
     {
         pack_message_id(Derived::message_id, buff, buff_n);
         packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
     }
 
     ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, size_t* size)
@@ -123,6 +132,7 @@ class MapMessagePacketToClient
         size_t _buff_n = *buff_n;
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
     }
     /*
         Deprecate This
@@ -185,12 +195,17 @@ class MapMessagePacketToClient
         x.handle();
     }
 
+    const char* get_packet_name()
+    {
+        return FUNCTION_NAME;
+    }
+
     static void register_client_packet()
     {
         Derived x = Derived();
         Derived::message_id = next_client_packet_id(); //set size
         Derived::size = x._size();
-        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
     }
 };
 
@@ -226,6 +241,7 @@ class MapMessageArrayPacketToClient
         pack_message_id(Derived::message_id, buff, buff_n);
         pack_u32(&byte_size, buff, buff_n, true);
         packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
     }
 
     ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, size_t* size)
@@ -234,6 +250,7 @@ class MapMessageArrayPacketToClient
         pack_u32(&byte_size, buff, buff_n, false);
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
     }
 
     void sendToClient(ClientID client_id, char* buff, int len)
@@ -304,12 +321,17 @@ class MapMessageArrayPacketToClient
         *bytes_read += byte_size;
     }
 
+    const char* get_packet_name()
+    {
+        return FUNCTION_NAME;
+    }
+
     static void register_client_packet()
     {
         Derived x = Derived();
         Derived::message_id = next_client_packet_id(); //set size
         Derived::size = x._size();
-        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
     }
 };
 

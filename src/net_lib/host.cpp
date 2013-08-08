@@ -64,6 +64,7 @@ void teardown_network()
     #if DC_CLIENT
     NetClient::shutdown_net_client();
     #endif
+    monitor.print();
     teardown_message_handler();
 }
 

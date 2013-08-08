@@ -61,72 +61,78 @@ class FixedSizeNetPacketToServer
         ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
-        FixedSizeNetPacketToServer() {}
-        virtual ~FixedSizeNetPacketToServer() {}
+    FixedSizeNetPacketToServer() {}
+    virtual ~FixedSizeNetPacketToServer() {}
 
-        //flatten this
-        ALWAYS_INLINE
-        void serialize(char* buff, size_t* buff_n)
-        {
-            pack_message_id(Derived::message_id, buff, buff_n);
-            packet(buff, buff_n, true);
-        }
+    ALWAYS_INLINE
+    void serialize(char* buff, size_t* buff_n)
+    {
+        pack_message_id(Derived::message_id, buff, buff_n);
+        packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
+    }
 
-        ALWAYS_INLINE
-        void unserialize(char* buff, size_t* buff_n, size_t* size)
-        {
-            size_t _buff_n = *buff_n;
-            packet(buff, buff_n, false);
-            *size = *buff_n - _buff_n;
-        }
+    ALWAYS_INLINE
+    void unserialize(char* buff, size_t* buff_n, size_t* size)
+    {
+        size_t _buff_n = *buff_n;
+        packet(buff, buff_n, false);
+        *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
+    }
 
-        void send()
-        {
-            #if DC_CLIENT
-            NetMessage* nm = NetMessage::acquire(Derived::size);
-            size_t buff_n = 0;
-            serialize(nm->buff, &buff_n);
-            NetClient::Server.push_unreliable_message(nm);
-            #else
-            GS_ASSERT(false);
-            #endif
-        }
+    void send()
+    {
+        #if DC_CLIENT
+        NetMessage* nm = NetMessage::acquire(Derived::size);
+        size_t buff_n = 0;
+        serialize(nm->buff, &buff_n);
+        NetClient::Server.push_unreliable_message(nm);
+        #else
+        GS_ASSERT(false);
+        #endif
+    }
 
-        //will overflow if more than 128 bytes
-        size_t _size()
-        {
-            char buff[128] = {0};
-            size_t buff_n = 0;
-            size_t size = 0;
-            unserialize(buff, &buff_n, &size);
-            size++; // add a byte for the message id
-            GS_ASSERT(size > 0 && size < 128);
-            //printf("ToServer: %2d,%2d\n", message_id, size);
-            return size;
-        }
+    //will overflow if more than 128 bytes
+    size_t _size()
+    {
+        char buff[128] = {0};
+        size_t buff_n = 0;
+        size_t size = 0;
+        unserialize(buff, &buff_n, &size);
+        size++; // add a byte for the message id
+        GS_ASSERT(size > 0 && size < 128);
+        //printf("ToServer: %2d,%2d\n", message_id, size);
+        return size;
+    }
 
-        static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
-        {
-            #if DC_SERVER
-            Derived x;  //allocated on stack
-            if (NetServer::clients[client_id] == NULL ||   // auth check
-                (x.auth_required && !NetServer::clients[client_id]->authorized))
-                return;
-            x.client_id = client_id;   //client id of client who sent the packet
-            x.unserialize(buff, &buff_n, bytes_read);
-            x.handle();
-            #else
-            GS_ASSERT(false);
-            #endif
-        }
+    static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
+    {
+        #if DC_SERVER
+        Derived x;  //allocated on stack
+        if (NetServer::clients[client_id] == NULL ||   // auth check
+            (x.auth_required && !NetServer::clients[client_id]->authorized))
+            return;
+        x.client_id = client_id;   //client id of client who sent the packet
+        x.unserialize(buff, &buff_n, bytes_read);
+        x.handle();
+        #else
+        GS_ASSERT(false);
+        #endif
+    }
 
-        static void register_server_packet()
-        {
-            Derived x = Derived();
-            Derived::message_id = next_server_packet_id(); //set size
-            Derived::size = x._size();
-            register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
-        }
+    const char* get_packet_name()
+    {
+        return FUNCTION_NAME;
+    }
+
+    static void register_server_packet()
+    {
+        Derived x = Derived();
+        Derived::message_id = next_server_packet_id(); //set size
+        Derived::size = x._size();
+        register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
+    }
 };
 
 //template <typename T> int Base<T>::staticVar(0);
@@ -147,76 +153,82 @@ class FixedSizeReliableNetPacketToServer
         ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
-        FixedSizeReliableNetPacketToServer() {}
-        virtual ~FixedSizeReliableNetPacketToServer() {}
+    FixedSizeReliableNetPacketToServer() {}
+    virtual ~FixedSizeReliableNetPacketToServer() {}
 
-        ALWAYS_INLINE
-        void serialize(char* buff, size_t* buff_n)
-        {
-            //GS_ASSERT(Derived::message_id != 255);
-            pack_message_id(Derived::message_id, buff, buff_n);
-            packet(buff, buff_n, true);
-        }
+    ALWAYS_INLINE
+    void serialize(char* buff, size_t* buff_n)
+    {
+        //GS_ASSERT(Derived::message_id != 255);
+        pack_message_id(Derived::message_id, buff, buff_n);
+        packet(buff, buff_n, true);
+        monitor.sent(this->message_id, this->size);
+    }
 
-        ALWAYS_INLINE
-        void unserialize(char* buff, size_t* buff_n, size_t* size)
-        {
-            size_t _buff_n = *buff_n;
-            packet(buff, buff_n, false);
-            *size = *buff_n - _buff_n;
-        }
+    ALWAYS_INLINE
+    void unserialize(char* buff, size_t* buff_n, size_t* size)
+    {
+        size_t _buff_n = *buff_n;
+        packet(buff, buff_n, false);
+        *size = *buff_n - _buff_n;
+        monitor.received(this->message_id, this->size);
+    }
 
-        void send()
-        {
-            #if DC_CLIENT
-            NetMessage* nm = NetMessage::acquire(Derived::size);
-            GS_ASSERT(nm != NULL);
-            if (nm == NULL) return;
-            size_t buff_n = 0;
-            serialize(nm->buff, &buff_n);
-            NetClient::Server.push_reliable_message(nm);
-            #else
-            GS_ASSERT(false);
-            #endif
-        }
+    void send()
+    {
+        #if DC_CLIENT
+        NetMessage* nm = NetMessage::acquire(Derived::size);
+        GS_ASSERT(nm != NULL);
+        if (nm == NULL) return;
+        size_t buff_n = 0;
+        serialize(nm->buff, &buff_n);
+        NetClient::Server.push_reliable_message(nm);
+        #else
+        GS_ASSERT(false);
+        #endif
+    }
 
-        //will overflow if more than 128 bytes
-        size_t _size()
-        {
-            char buff[128] = {0};
-            size_t buff_n = 0;
-            size_t size = 0;
-            unserialize(buff, &buff_n, &size);
-            size++; // add a byte for the message id
-            GS_ASSERT(size > 0 && size < 128);
-            //printf("ReliableToServer: %2d,%2d\n", message_id, size);
-            return size;
-        }
+    //will overflow if more than 128 bytes
+    size_t _size()
+    {
+        char buff[128] = {0};
+        size_t buff_n = 0;
+        size_t size = 0;
+        unserialize(buff, &buff_n, &size);
+        size++; // add a byte for the message id
+        GS_ASSERT(size > 0 && size < 128);
+        //printf("ReliableToServer: %2d,%2d\n", message_id, size);
+        return size;
+    }
 
-        static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
-        {
-            #if DC_SERVER
-            Derived x;  //allocated on stack
-            if (NetServer::clients[client_id] == NULL ||   // auth check
-                (x.auth_required && !NetServer::clients[client_id]->authorized))
-                return;
-            x.client_id = client_id;   //client id of client who sent the packet
-            x.unserialize(buff, &buff_n, bytes_read);
-            x.handle();
-            #else
-            GS_ASSERT(false);
-            #endif
-        }
+    static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
+    {
+        #if DC_SERVER
+        Derived x;  //allocated on stack
+        if (NetServer::clients[client_id] == NULL ||   // auth check
+            (x.auth_required && !NetServer::clients[client_id]->authorized))
+            return;
+        x.client_id = client_id;   //client id of client who sent the packet
+        x.unserialize(buff, &buff_n, bytes_read);
+        x.handle();
+        #else
+        GS_ASSERT(false);
+        #endif
+    }
 
-        static void register_server_packet()
-        {
-            Derived x = Derived();
-            Derived::message_id = next_server_packet_id(); //set size
-            //GS_ASSERT(Derived::message_id != 255);
-            Derived::size = x._size();
-            register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
-        }
+    const char* get_packet_name()
+    {
+        return FUNCTION_NAME;
+    }
 
+    static void register_server_packet()
+    {
+        Derived x = Derived();
+        Derived::message_id = next_server_packet_id(); //set size
+        //GS_ASSERT(Derived::message_id != 255);
+        Derived::size = x._size();
+        register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler, x.get_packet_name());   //server/client handler
+    }
 };
 
 //template <typename T> int Base<T>::staticVar(0);
