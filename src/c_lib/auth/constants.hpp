@@ -28,7 +28,7 @@ typedef enum
 
 #if PRODUCTION || USE_LIVE_AUTH
 # define GNOMESCROLL_DOMAIN "gnomescroll.com"
-# define GNOMESCROLL_URL "https://" GNOMESCROLL_DOMAIN
+# define GNOMESCROLL_URL "http://" GNOMESCROLL_DOMAIN
 # define GNOMESCROLL_COOKIE_DOMAIN ".gnomescroll.com"    // WARNING -- might have to remove the beginning '.'
 #else
 # define GNOMESCROLL_DOMAIN "127.0.0.1:5002"

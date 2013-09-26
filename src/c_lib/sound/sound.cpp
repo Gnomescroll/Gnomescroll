@@ -120,7 +120,7 @@ inline SoundID play_3d_sound(const char* event_name, const Vec3& p, const Vec3& 
 }
 
 SoundID play_3d_sound(const char* event_name, Vec3 p, Vec3 v,
-                  float gain_multiplier, float pitch_multiplier)
+                      float gain_multiplier, float pitch_multiplier)
 {
     if (!Options::sound)
         return NULL_SOUND_ID;
