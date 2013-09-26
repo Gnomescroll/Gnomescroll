@@ -48,7 +48,8 @@ fi
 zip -r "$f".zip "$f"
 
 # copy the package to the server
-scp "$f".zip root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".zip
+ssh root@direct.gnomescroll.com 'mkdir /var/www/gnomescroll_downloads/'${version}'/'
+scp "$f".zip root@direct.gnomescroll.com:/var/www/gnomescroll_downloads/"$version"/"$f".zip
 
 # Copy to dropbox so we can get a copy to test in the vm
 mv "$f".zip ~/Dropbox/Public

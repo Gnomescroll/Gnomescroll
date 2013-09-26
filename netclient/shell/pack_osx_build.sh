@@ -26,6 +26,7 @@ ENDSSH
 
 scp maslow@macmini:~/Desktop/Gnomescroll.zip ./Gnomescroll.zip
 
-scp ./Gnomescroll.zip root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/Gnomescroll.zip
+ssh root@direct.gnomescroll.com 'mkdir /var/www/gnomescroll_downloads/'${version}'/'
+scp ./Gnomescroll.zip root@direct.gnomescroll.com:/var/www/gnomescroll_downloads/"$version"/Gnomescroll.zip
 
 rm Gnomescroll.zip

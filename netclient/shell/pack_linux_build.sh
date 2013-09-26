@@ -62,6 +62,7 @@ rm -rf ~/gs_build/"$f"
 mv "$f" ~/gs_build/
 
 # copy the package to the server
-scp "$f".tar.gz root@m643.com:/usr/freespace/gnomescroll_downloads/"$version"/"$f".tar.gz
+ssh root@direct.gnomescroll.com 'mkdir /var/www/gnomescroll_downloads/'${version}'/'
+scp "$f".tar.gz root@direct.gnomescroll.com:/var/www/gnomescroll_downloads/"$version"/"$f".tar.gz
 
 rm "$f".tar.gz
