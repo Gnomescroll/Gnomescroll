@@ -81,10 +81,10 @@ def run():
             break
         if os.path.exists("./core"):
             print "Core dumped; saving"
-            os.rename("./core", "/root/gsdata/coredumps/%s" % (corename,))
+            os.rename("./core", "/home/gnomescroll/gsdata/coredumps/%s" % (corename,))
         if os.path.exists("./%s" % (logname,)):
             print "Saving %s" % (logname,)
-            os.rename("./%s" % (logname,), "/root/gsdata/coredumps/%s" % (logname,))
+            os.rename("./%s" % (logname,), "/home/gnomescroll/gsdata/coredumps/%s" % (logname,))
 
     subprocess.Popen('ulimit -c 0', shell=True)
 

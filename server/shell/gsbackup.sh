@@ -2,7 +2,7 @@
 
 # find latest world
 
-datapath=/root/dc_mmo/server/world/
+datapath=/home/gnomescroll/dc_mmo/server/world/
 latest=`ls $datapath | sort -r | head -1`
 
 if [ -z "$latest" ]; then
@@ -12,4 +12,4 @@ fi
 # create backup
 
 date=`date +%m-%d-%Y-%H-%M`
-tar cvzf /root/gsdata/backups/${latest}_${date}.tar.gz ${datapath}/${latest} --exclude="*.bak" --exclude="*.tmp"
+tar cvzf /home/gnomescroll/gsdata/backups/${latest}_${date}.tar.gz ${datapath}/${latest} --exclude="*.bak" --exclude="*.tmp"

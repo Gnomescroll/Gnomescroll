@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run backup script
-/root/dc_mmo/server/shell/gsbackup.sh
+/home/gnomescroll/dc_mmo/server/shell/gsbackup.sh
 
 function send_save_map
 {
