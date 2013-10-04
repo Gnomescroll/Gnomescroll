@@ -18,7 +18,7 @@ namespace Auth
 
 #define SECRET_KEY_PATH_TMP_EXT ".new"
 
-const unsigned int SECRET_KEY_SIZE = 64;
+const size_t SECRET_KEY_SIZE = 64;
 const unsigned int SECRET_KEY_REFRESH_RATE = 60;    // once per second
 
 void server_init();
