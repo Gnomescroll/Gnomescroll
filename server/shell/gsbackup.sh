@@ -2,7 +2,7 @@
 
 # find latest world
 
-datapath=/usr/freespace/dc_mmo/server/world/
+datapath=/root/dc_mmo/server/world/
 latest=`ls $datapath | sort -r | head -1`
 
 if [ -z "$latest" ]; then
@@ -11,6 +11,5 @@ fi
 
 # create backup
 
-mkdir -p /usr/freespace/gsbackups/
 date=`date +%m-%d-%Y-%H-%M`
-tar cvzf /usr/freespace/gsbackups/${latest}_${date}.tar.gz ${datapath}/${latest} --exclude="*.bak" --exclude="*.tmp"
+tar cvzf /root/gsdata/backups/${latest}_${date}.tar.gz ${datapath}/${latest} --exclude="*.bak" --exclude="*.tmp"

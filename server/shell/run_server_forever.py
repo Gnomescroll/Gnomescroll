@@ -22,14 +22,14 @@ def register_signals():
         global current_process
         global current_process_id
         if current_process is not None:
-            print "Forwarding signal %d to process %d" % (sig, current_process_id,) 
+            print "Forwarding signal %d to process %d" % (sig, current_process_id,)
             current_process.send_signal(sig)
             print "Waiting for server process to exit..."
             current_process.wait()
             print "Server process exited"
         if sig != signal.SIGUSR1 and sig != signal.SIGUSR2:
             sys.exit(0)
-    
+
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGUSR1, signal_handler)
@@ -43,9 +43,9 @@ def run():
 
     global current_process
     global current_process_id
-        
+
     register_signals()
-    
+
     version = get_version()
 
     print "Server version is", version
@@ -72,7 +72,7 @@ def run():
         current_process = subprocess.Popen(shlex.split(cmd))
         current_process_id = current_process.pid
         current_process.wait()
-        
+
         print "Server died"
 
         ct += 1
@@ -81,10 +81,10 @@ def run():
             break
         if os.path.exists("./core"):
             print "Core dumped; saving"
-            os.rename("./core", "/usr/freespace/coredumps/%s" % (corename,))
+            os.rename("./core", "/root/gsdata/coredumps/%s" % (corename,))
         if os.path.exists("./%s" % (logname,)):
             print "Saving %s" % (logname,)
-            os.rename("./%s" % (logname,), "/usr/freespace/coredumps/%s" % (logname,))
+            os.rename("./%s" % (logname,), "/root/gsdata/coredumps/%s" % (logname,))
 
     subprocess.Popen('ulimit -c 0', shell=True)
 
