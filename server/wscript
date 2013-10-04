@@ -9,8 +9,7 @@ import platform
 import shutil
 import subprocess
 import shlex
-from waflib import Errors
-from waflib import Tools
+from waflib import Errors, Tools, Options
 
 Tools.c_preproc.go_absolute = True
 
@@ -63,14 +62,31 @@ def check_clang(conf, use_clang=None):
     return use_clang
 
 
-def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
-              production=False, use_clang=None, windows=False, i386=None):
-    optflag = '-O' + str(optlevel)
+def configure(conf):
+    opts = Options.options
+    windows = opts.windows
+    production = (opts.release.lower().startswith('prod'))
+    use_clang = None
+    if windows:
+        use_clang = False
+    elif opts.compiler == 'clang':
+        use_clang = True
+    optlevel = int(opts.optimize)
+    optflag = '-O{0}'.format(optlevel)
+    auth = opts.auth
+    if production:
+        optlevel = 3
+        auth = True
+
     OS = platform.system()
     conf.env.os = OS
 
     arch = platform.architecture()[0]
-    if i386 is None:
+    if windows:
+        i386 = True
+    elif opts.arch:
+        i386 = (opts.arch in ['i386', '32'])
+    else:
         i386 = (arch == '32bit')
     x86_64 = not i386
 
@@ -158,9 +174,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     cxxflags += extra_options
 
-    cxxflags += [c for c in add_flags if c not in cxxflags]
-    cxxflags = [c for c in cxxflags if c not in rm_flags]
-
     conf.env.append_value('CFLAGS', cxxflags)
     conf.env.append_value('CXXFLAGS', cxxflags)
     conf.env.append_value('CPPFLAGS', cxxflags)
@@ -186,6 +199,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.append_value(
             'CXXFLAGS', '-Xlinker -image_base -Xlinker 100000000')
 
+    link_flags = []
     if i386:
         link_flags.append('-m32')
 
@@ -283,11 +297,15 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib32')
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib64')
 
-    conf.env.windows = windows
     conf.env.LINKFLAGS = filter(bool, conf.env.LINKFLAGS)
+    conf.env.production = production
+    conf.env.build_modules = Options.options.modules
+    conf.env.auth = auth
     conf.env.i386 = i386
     conf.env.x86_64 = x86_64
+    conf.env.windows = windows
     assert i386 != x86_64
+
 
 def build(bld):
     if bld.env.build_modules:
@@ -367,183 +385,29 @@ from waflib.Build import BuildContext
 
 BuildContext.build_modules = build_modules
 
-'''
-Subclass related *Context
-e.g. ConfigurationContext, BuildContext
-cmd,fun = 'name_of_function'
-'''
-from waflib.Configure import ConfigurationContext
 
-
-class build_modules_ctx(ConfigurationContext):
-    cmd = 'modules'
-    fun = 'modules'
-
-
-class optimized_ctx(ConfigurationContext):
-    cmd = 'optimized'
-    fun = 'optimized'
-
-
-class debug_ctx(ConfigurationContext):
-    cmd = 'debug'
-    fun = 'debug'
-
-
-class map_gen_ctx(ConfigurationContext):
-    cmd = 'map_gen'
-    fun = 'map_gen'
-
-
-class linux_production_ctx(ConfigurationContext):
-    cmd = 'linux'
-    fun = 'linux'
-
-
-class linux64_production_ctx(ConfigurationContext):
-    cmd = 'linux64'
-    fun = 'linux64'
-
-
-class multicore_ctx(ConfigurationContext):
-    cmd = 'multicore'
-    fun = 'multicore'
-
-
-class extra_ctx(ConfigurationContext):
-    cmd = 'extra'
-    fun = 'extra'
-
-
-class profile_ctx(ConfigurationContext):
-    cmd = 'profile'
-    fun = 'profile'
-
-
-def modules(ctx):
-    configure(ctx)
-    ctx.env.build_modules = True
-
-
-def profile(ctx):
-    configure(ctx, optlevel=3)
-    ctx.env.CFLAGS.append('-pg')
-    ctx.env.CXXFLAGS.append('-pg')
-    ctx.env.append_value('LINKFLAGS', '-pg')
-
-
-def extra(ctx):
-    configure(ctx, add_flags=['-Wextra'])
-
-
-def linux(ctx):
-    production(ctx, add=['-shared-libgcc'])
-
-
-def linux64(ctx):
-    production(ctx, add=['-m64', '-shared-libgcc'])
-
-
-def optimized(ctx):
-    configure(ctx, optlevel=3)
-
-
-def multicore(ctx):
-    configure(ctx)
-    optimized(ctx)
-    ctx.env.CFLAGS.append('-j 6')
-    ctx.env.CXXFLAGS.append('-j 6')
-
-
-def debug(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-fstack-protector-all')
-    ctx.env.CXXFLAGS.append('-fstack-protector-all')
-
-
-def map_gen(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-DDUNGEON=1')
-    ctx.env.CXXFLAGS.append('-DDUNGEON=1')
-
-
-class production_ctx(ConfigurationContext):
-    cmd = 'production'
-    fun = 'production'
-
-
-def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-DNDEBUG'], optlevel=3,
-              rm_flags=rm, production=True, use_clang=False)
-
-
-class production_dbg_ctx(ConfigurationContext):
-    cmd = 'production_dbg'
-    fun = 'production_dbg'
-
-
-def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add + ['-DNDEBUG'], optlevel=3,
-              rm_flags=rm, production=True, use_clang=False)
-
-
-class prodtest_ctx(ConfigurationContext):
-    cmd = 'prodtest'
-    fun = 'prodtest'
-
-
-def prodtest(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add, rm_flags=rm,
-              production=True, use_clang=False)
-
-
-class clang_ctx(ConfigurationContext):
-    cmd = 'clang'
-    fun = 'clang'
-
-
-def clang(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add, rm_flags=rm, use_clang=True)
-
-
-class gcc_ctx(ConfigurationContext):
-    cmd = 'gcc'
-    fun = 'gcc'
-
-
-def gcc(ctx):
-    configure(ctx, use_clang=False)
-
-
-class windows_ctx(ConfigurationContext):
-    cmd = 'windows'
-    fun = 'windows'
-
-
-def windows(ctx):
-    configure(ctx, use_clang=False, windows=True, i386=True)
-
-
-class i386_ctx(ConfigurationContext):
-    cmd = '32'
-    fun = 'i386'
-
-
-def i386(ctx):
-    configure(ctx, i386=True)
-
-
-class address_sanitizer_ctx(ConfigurationContext):
-    cmd = 'asan'
-    fun = 'asan'
-
-
-def asan(ctx, add=[], rm=[]):
-    asan_path = os.environ.get('ASAN_PATH')
-    if not asan_path:
-        raise ValueError('ASAN_PATH not defined in your environment')
-    flags = ['-fsanitize=address', '-fno-omit-frame-pointer', '-fno-common']
-    link_flags = ['-fsanitize=address']
-    os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
-    configure(ctx, add_flags=add + flags, rm_flags=rm, link_flags=link_flags,
-              optlevel=3)
+def options(opt):
+    opt.add_option('--arch', type='choice', action='store', default='',
+                   choices=['', 'i386', 'x86_64', '32', '64'],
+                   help='Target arch to build for')
+    opt.add_option('--auth', action='store_true', default=False,
+                   help='Enable authentication')
+    opt.add_option('--windows', action='store_true', default=False,
+                   help='Cross-compile to windows from linux')
+    opt.add_option('--asan', action='store_true', default=False,
+                   help='Use asan, the address sanitizer, for debugging')
+    opt.add_option('--release', type='choice', action='store', default='debug',
+                   choices=['debug', 'production', 'production_dev'])
+    opt.add_option('--force-debug', action='store_true', default=False,
+                   help='Add debug symbols regardless of release')
+    opt.add_option('--compiler', type='choice', action='store',
+                   default='clang', choices=['clang', 'gcc'])
+    opt.add_option('--auth', action='store_true', default=False,
+                   help='Login on startup')
+    opt.add_option('--optimize', type='choice', choices=['0', '1', '2', '3'],
+                   default='0', help='GCC optimization level')
+    opt.add_option('--profile', action='store_true', default=False)
+    opt.add_option('--efence', action='store_true', default=False)
+    opt.add_option('--modules', action='store_true', default=False,
+                   help='Experimental module compilation')
+    opt.load('compiler_c compiler_cxx')
