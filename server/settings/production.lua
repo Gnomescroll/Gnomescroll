@@ -2,7 +2,7 @@
 options.server_name = "server_one"
 
 -- server --
-options.ip_address = "174.37.26.119"
+options.ip_address = "192.184.85.3"
 options.port = 0
 
 -- map --
