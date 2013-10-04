@@ -30,6 +30,7 @@ void load_secret_key()
     char* _secret_key_str = strip_whitespace(buf);
     GS_ASSERT(strlen(_secret_key_str) == SECRET_KEY_SIZE * 2);
     unsigned char* _secret_key = hexstr_to_char(_secret_key_str);
+    IF_ASSERT(_secret_key == NULL) return;
     free(buf);
 
     GS_ASSERT(_secret_key_str != NULL);

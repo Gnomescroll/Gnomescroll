@@ -78,12 +78,12 @@ char* strip_whitespace(const char* str)
 
 unsigned char* hexstr_to_char(const char* hexstr)
 {
-    unsigned int len = (unsigned int)strlen(hexstr);
-    GS_ASSERT(len%2 == 0);
-    unsigned int final_len = len / 2;
+    size_t len = strlen(hexstr);
+    IF_ASSERT(len % 2 != 0)
+        return NULL;
+    size_t final_len = len / 2;
     unsigned char* chrs = (unsigned char*)malloc((final_len+1) * sizeof(unsigned char));
-    size_t i=0,j=0;
-    for (; i<len; i+=2, j++)
+    for (size_t i=0, j=0; j<final_len; i+=2, j++)
         chrs[j] = (hexstr[i] % 32 + 9) % 25 * 16 + (hexstr[i+1] % 32 + 9) % 25;
     chrs[final_len] = '\0';
     return chrs;
