@@ -72,12 +72,12 @@ def configure(conf):
     elif opts.compiler == 'clang':
         use_clang = True
     optlevel = int(opts.optimize)
-    optflag = '-O{0}'.format(optlevel)
     auth = opts.auth
     if production:
         optlevel = 3
         auth = True
 
+    optflag = '-O{0}'.format(optlevel)
     OS = platform.system()
     conf.env.os = OS
 
