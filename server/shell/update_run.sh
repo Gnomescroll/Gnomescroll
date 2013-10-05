@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # update repo
-hg pull; hg update
+hg pull -u
 
 # compile & copy
-./waf production
+./waf configure --release=production --optimize=3 --auth
 ./waf
 ./shell/begin_server.sh
