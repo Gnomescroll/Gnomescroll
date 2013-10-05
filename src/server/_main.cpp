@@ -332,7 +332,8 @@ void tick()
 
     Auth::update(); // do it here because i need constant timer
 
-    Agents::agent_list->tick_hunger();
+    // TODO -- fix the plant food not appearing. disabling hunger for the time being
+    //Agents::agent_list->tick_hunger();
     Agents::agent_list->tick_attributes(); //rad etc
 
     Agents::apply_agent_modifiers();
