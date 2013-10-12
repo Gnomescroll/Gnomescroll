@@ -146,7 +146,7 @@ struct MechList
 
     #if DC_SERVER
     void send_mech_list_to_client(ClientID client_id);
-    void server_add_mech(struct Mech &m);
+    bool server_add_mech(struct Mech &m);
     bool server_remove_mech(int id);
     #endif
 };

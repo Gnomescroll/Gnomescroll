@@ -22,8 +22,13 @@ void default_map_gen()
     t_gen::populate_ore();
     t_gen::populate_crystals();
     //t_gen::generate_ruins();
-    t_gen::add_terrain_features();  // gorges (only in PRODUCTION), trees, shrooms
+    t_gen::init_terrain_features();
+    t_gen::add_gorges();
+    t_gen::add_shrooms();
+    t_gen::add_trees();
     t_gen::place_native_plants(2048);
+    t_gen::add_flora();
+    t_gen::teardown_terrain_features();
 
     map_gen::rough_floor(map_dim.x,map_dim.y,0,3, t_map::get_cube_type("bedrock"));
 }
@@ -130,7 +135,9 @@ void init_world()
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
         t_gen::set_region(0,0,1, map_dim.x, map_dim.y, map_dim.z - 10 /*height*/, t_map::get_cube_type("regolith"));
         t_gen::excavate();
-        t_gen::add_terrain_features();  // this needs like about 27+ heighth to the ground or *CRASH*
+        t_gen::init_terrain_features();  // this needs like about 27+ heighth to the ground or *CRASH*
+        t_gen::add_trees();
+        t_gen::add_flora();
         t_gen::generate_ruins();
         //t_gen::make_art_gallery(height);
     }
@@ -332,8 +339,7 @@ void tick()
 
     Auth::update(); // do it here because i need constant timer
 
-    // TODO -- fix the plant food not appearing. disabling hunger for the time being
-    //Agents::agent_list->tick_hunger();
+    Agents::agent_list->tick_hunger();
     Agents::agent_list->tick_attributes(); //rad etc
 
     Agents::apply_agent_modifiers();

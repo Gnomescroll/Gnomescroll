@@ -46,12 +46,12 @@ void MechList::send_mech_list_to_client(ClientID client_id)
 
 }
 
-void MechList::server_add_mech(struct Mech &m)
+bool MechList::server_add_mech(struct Mech &m)
 {
     IF_ASSERT(mln >= MECH_HARD_MAX)
     {
         printf("MechList::server_add_mech error: t_mech limit reached \n");
-        return;
+        return false;
     }
 
     this->add_mech(m);
@@ -67,6 +67,8 @@ void MechList::server_add_mech(struct Mech &m)
         memcpy(p.msg, m.text, MECH_TEXT_SIZE_MAX);
         p.broadcast();
     }
+
+    return true;
 }
 
 bool MechList::server_remove_mech(int id)

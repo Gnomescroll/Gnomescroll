@@ -345,6 +345,9 @@ void print_mech_create_failure_code(MechCreateFailureCode code)
         case MCF_NO_WALL:
             printf("There is no wall for the mech to attach to");
             break;
+        case MCF_FULL:
+            printf("Mech list is full");
+            break;
         case MCF_OTHER:
             printf("Unspecified");
         case MCF_OK:
@@ -403,7 +406,8 @@ MechCreateFailureCode create_mech(const Vec3i& position, MechType type, int side
     if (isValid(light_crystal) && type == light_crystal)
         t_map::broadcast_set_block(position, "mech_light_empty");
 
-    mech_list->server_add_mech(m);
+    if (!mech_list->server_add_mech(m))
+        return MCF_FULL;
     return MCF_OK;
 }
 

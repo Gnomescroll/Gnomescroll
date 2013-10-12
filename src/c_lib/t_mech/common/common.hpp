@@ -58,6 +58,7 @@ typedef enum
     MCF_OCCUPIED,
     MCF_UNHANDLED,
     MCF_NO_WALL,
+    MCF_FULL,
     MCF_OTHER,      // use for any error too specific to warrant a new label
 }   MechCreateFailureCode;
 

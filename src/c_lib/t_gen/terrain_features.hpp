@@ -448,7 +448,7 @@ void add_gorge(int length, int* peaks, float* noise)
     }
 }
 
-void add_gorges(int num_gorges, int length)
+void _add_gorges(int num_gorges, int length)
 {
     int t = _GET_MS_TIME();
     printf("\tgorges......");
@@ -545,9 +545,9 @@ void add_flora()
     //printf("FLORA lowest.z: %d  highest.z: %d \n", lowest.z, highest.z);
 }
 
-void add_terrain_features()
+void init_terrain_features()
 {
-    printf("add_terrain_features: \n");
+    printf("init_terrain_features: \n");
 
     GS_ASSERT(sin_lookup_table == NULL);
     GS_ASSERT(cos_lookup_table == NULL);
@@ -585,15 +585,11 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_caps, NUM_SHROOMCAPS)) return;
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
-    add_gorges(GORGE_COUNT, GORGE_LENGTH);
-
     //add_volcanoes(); //currently bugged
+}
 
-    add_shrooms();
-
-    add_trees();
-    add_flora();
-
+void teardown_terrain_features()
+{
     delete[] sin_lookup_table;
     delete[] cos_lookup_table;
     delete[] leaves;
@@ -601,5 +597,11 @@ void add_terrain_features()
     delete[] shroom_caps;
     delete[] shroom_stems;
 }
+
+void add_gorges()
+{
+    _add_gorges(GORGE_COUNT, GORGE_LENGTH);
+}
+
 
 }   // t_gen

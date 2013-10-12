@@ -21,17 +21,20 @@ void place_native_plants(int max)
                                                 plant_4, plant_5 };
     static const CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!isValid(regolith)) return;
+    for (size_t i=0; i<n_plants; i++)
+        GS_ASSERT(isValid(plants[i]));
 
     int ct = 0;
-    for (int tries=0; ct < max && tries < max*2; tries++)
+    for (int tries=0; ct < max && tries < max*4; tries++)
     {
         Vec3i position = t_map::random_surface_block();
         CubeType top = t_map::get(position);
         if (top != regolith) continue;
+        position.z += 1;
         MechType plant = plants[randrange(0, n_plants-1)];
         MechCreateFailureCode ret = t_mech::create_mech(position, plant);
-        if (ret != MCF_OK && ret != MCF_OCCUPIED) break;
-        ct++;
+        if (ret == MCF_FULL) break;
+        if (ret == MCF_OK) ct++;
     }
 
     printf("%s, created %d plants\n", __FUNCTION__, ct);
