@@ -39,6 +39,7 @@ void turn_fire_off(AgentID agent_id)
     IF_ASSERT(!isValid(agent_id)) return;
 
     if (!agent_fire_on[agent_id]) return;
+    agent_fire_on[agent_id] = false;
 
     ItemType item_type = get_agent_selected_item_type(agent_id);
     if (ClientState::player_agent.agent_id == agent_id)
@@ -51,8 +52,6 @@ void turn_fire_off(AgentID agent_id)
 
     GS_ASSERT(get_item_click_and_hold_behaviour(item_type) != CLICK_HOLD_NEVER);
     Animations::stop_equipped_item_animation();
-
-    agent_fire_on[agent_id] = false;
 }
 
 // returns true if an event was or should be triggered

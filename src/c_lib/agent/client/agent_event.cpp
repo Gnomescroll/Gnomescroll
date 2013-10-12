@@ -262,6 +262,14 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type)
         if (agent != NULL)
             agent->event.spray_blood(f, AGENT_PART_TORSO);
     }
+    // TODO -- this comes from fired_weapon_at_* which comes from hitscan_*_CtoS packets
+    // which come from PlayerAgentAction::fire_weapon, which also tells the server to
+    // damage blocks.  We will want to handle this better for multiple items
+    // instead of this stub hack to prevent undesired playing of this event
+    Agent* a = this->a;
+    ItemType item = Toolbelt::get_agent_selected_item_type(a->id);
+    if (strcmp(Item::get_item_name(item), "laser_rifle") != 0)
+        return;
     this->play_laser_rifle_fire_event(this->a->arm_center(), f);
 }
 
@@ -276,6 +284,14 @@ void AgentEvent::fired_weapon_at_block(const Vec3& position, CubeType cube, int 
     Vec3 f = vec3_sub(impact, c);
     f = vec3_normalize(f);
 
+    // TODO -- this comes from fired_weapon_at_* which comes from hitscan_*_CtoS packets
+    // which come from PlayerAgentAction::fire_weapon, which also tells the server to
+    // damage blocks.  We will want to handle this better for multiple items
+    // instead of this stub hack to prevent undesired playing of this event
+    Agent* a = this->a;
+    ItemType item = Toolbelt::get_agent_selected_item_type(a->id);
+    if (strcmp(Item::get_item_name(item), "laser_rifle") != 0)
+        return;
     this->play_laser_rifle_fire_event(c, f);
     Animations::block_damage(impact, f, cube, side);
     Animations::particle_explode(impact);
@@ -283,7 +299,15 @@ void AgentEvent::fired_weapon_at_block(const Vec3& position, CubeType cube, int 
 
 void AgentEvent::fired_weapon_at_nothing()
 {
-    this->play_laser_rifle_fire_event(this->a->arm_center(), this->a->forward_vector());
+    // TODO -- this comes from fired_weapon_at_* which comes from hitscan_*_CtoS packets
+    // which come from PlayerAgentAction::fire_weapon, which also tells the server to
+    // damage blocks.  We will want to handle this better for multiple items
+    // instead of this stub hack to prevent undesired playing of this event
+    Agent* a = this->a;
+    ItemType item = Toolbelt::get_agent_selected_item_type(a->id);
+    if (strcmp(Item::get_item_name(item), "laser_rifle") != 0)
+        return;
+    this->play_laser_rifle_fire_event(a->arm_center(), a->forward_vector());
 }
 
 void AgentEvent::play_laser_rifle_fire_event(const struct Vec3& c, const struct Vec3& forward)

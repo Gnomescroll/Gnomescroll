@@ -22,7 +22,7 @@ inline void toolbelt_set_active_item_StoC::handle()
 inline void toolbelt_item_begin_alpha_action_StoC::handle()
 {
     if (agent_id == ClientState::player_agent.agent_id) return;    // ignore ourself
-    turn_fire_on((AgentID)this->agent_id);
+    turn_fire_on(AgentID(this->agent_id));
 
     // TODO --
         // This is needed for indicating other agents' went on

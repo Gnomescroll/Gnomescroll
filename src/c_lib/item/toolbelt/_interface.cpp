@@ -49,15 +49,12 @@ void remove_agent(AgentID agent_id)
 
     turn_fire_off(agent_id);
 
-    GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type != NULL)
         agent_selected_type[agent_id] = NULL_ITEM_TYPE;
 
     #if DC_SERVER
-    GS_ASSERT(agent_selected_item != NULL)
     if (agent_selected_item != NULL)
         agent_selected_item[agent_id] = NULL_ITEM;
-    GS_ASSERT(agent_selected_slot != NULL)
     if (agent_selected_slot != NULL)
         agent_selected_slot[agent_id] = 0;
     #endif
@@ -221,7 +218,7 @@ void tick()
         #endif
 
         // agent should exist, if fire is on
-        GS_ASSERT(Agents::agent_list->objects[i].id != Agents::agent_list->null_id);
+        GS_ASSERT(Agents::agent_list->get(AgentID(i)) != NULL);
 
         ItemType item_type = agent_selected_type[i];
         if (item_type == NULL_ITEM_TYPE)
