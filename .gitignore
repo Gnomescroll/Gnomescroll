@@ -36,6 +36,7 @@ gnomescroll_linux32_*
 *.exe
 
 netclient/data/*
+server/data/*
 
 stdout.txt
 stderr.txt
