@@ -12,7 +12,7 @@ and move or link it to `lib/` in the root of the Gnomescroll repo.
 
 On Linux or Windows+Mingw:
 
-```cd netclient; ./waf configure; ./waf;```
+```cd netclient; ./waf configure; ./waf; ./run```
 
 MSVC and XCode project files are in `src/`
 
