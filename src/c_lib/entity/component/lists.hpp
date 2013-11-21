@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 // X-Macro to be used by main.hpp
 
 // list of (TYPE, INTERFACE) names

@@ -1,0 +1,12 @@
+==Debugging==
+
+There are two important tools for debugging, gdb and valgrind.
+Valgrind is not available on windows.
+
+==gdb==
+
+=Installation=
+
+For linux, use the package manager.
+For OSX, use brew.  However, recently valgrind has had a problem with running on osx.
+If you have trouble, ask rdn/steve about it, there is a patch.

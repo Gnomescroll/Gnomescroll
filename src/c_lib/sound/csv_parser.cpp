@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "csv_parser.hpp"
 
 #include <sound/soundfiles.hpp>
@@ -83,7 +85,7 @@ void parse_sound_triggers(const char* csv_filename)
     char rolloff_factor[MAX_FLOAT_BUFFER_INDEX+1];
     char loop[MAX_BOOL_BUFFER_INDEX+1];
     char max_playable_distance[MAX_FLOAT_BUFFER_INDEX+1];
-    
+
     int pitch_index = 0;
     int gain_index = 0;
     int max_distance_index = 0;
@@ -93,7 +95,7 @@ void parse_sound_triggers(const char* csv_filename)
     int rolloff_factor_index = 0;
     int loop_index = 0;
     int max_playable_distance_index = 0;
-    
+
     float pitch_value;
     float gain_value;
     float max_distance_value;
@@ -122,12 +124,12 @@ void parse_sound_triggers(const char* csv_filename)
             column++;
             continue;
         }
-            
+
         if (n > 0)  // first line of csv  is metadata, skip
         {
             switch (column)
             {
-                case EVENT_NAME: 
+                case EVENT_NAME:
                     if (event_name_index >= MAX_EVENT_NAME_LEN)
                     {
                         printf("Error parsing sounds conf: event name %s exceeding max length (%d)\n", event_name, MAX_EVENT_NAME_LEN);
@@ -152,13 +154,13 @@ void parse_sound_triggers(const char* csv_filename)
                         break;
                     filename[filename_index++] = c;
                     break;
-                    
+
                 case PITCH:
                     if (pitch_index >= MAX_FLOAT_BUFFER_INDEX || !(isdigit(c) || c == '.' || c == '-'))
                         break;
                     pitch[pitch_index++] = c;
                     break;
-                    
+
                 case GAIN:
                     if (gain_index >= MAX_FLOAT_BUFFER_INDEX || !(isdigit(c) || c == '.' || c == '-'))
                         break;
@@ -206,15 +208,15 @@ void parse_sound_triggers(const char* csv_filename)
                         break;
                     max_playable_distance[max_playable_distance_index++] = c;
                     break;
-                
-                // unused by code 
+
+                // unused by code
                 case IN_USE:
                 case INTEGRATED:
                 case NOTES:
                     break;
             }
         }
-            
+
         if (c == '\n')
         {   // end of row; insert data
             n++;

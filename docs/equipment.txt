@@ -1,0 +1,41 @@
+
+=============== HOW TO ADD EQUIPMENT ======================
+
+1. Create an item with group IG_EQUIPMENT and a valid EquipmentType
+2. Compile & run
+
+
+==================== EXAMPLE ==============================
+
+item_def(IG_EQUIPMENT, "iron_helmet");
+s->equipment_type = EQUIPMENT_TYPE_HEAD;
+
+
+=============== WHAT IS EQUIPMENT? ========================
+
+Equipment is an item that can be "worn" by the player.
+The equipment will change the player's model and give them benefits of some kind.
+
+Equipment is not to be confused with items in your toolbelt.
+
+Available equipment types are in item/common/enum.hpp
+
+
+===================== RULES ==============================
+
+IG_EQUIPMENT items should have a max_stack_size of 1 (the default -- you don't need to change anything)
+and max_charges of NULL_CHARGES (also the default)
+
+IG_EQUIPMENT items must have a valid equipment_type defined
+
+
+============= EQUIPMENT_TYPE_ACCESSORY ===================
+    These are generic accessories that would be rings & amulets in other games (WoW)
+    But they are not limited to simple bonuses.
+    They could be anything "equippable"/worn to the player that does not fit
+    in the existing body part categories
+    (head/body/feet/hands at the time of this writing)
+
+    Examples:
+        An infrared visor
+        A shoulder-mounted light

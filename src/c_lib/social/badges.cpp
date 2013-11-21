@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "badges.hpp"
 
 #include <SDL/texture_sheet_loader.hpp>

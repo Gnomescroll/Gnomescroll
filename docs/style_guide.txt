@@ -1,0 +1,205 @@
+Language: C/C++ (a small subset of C++)
+
+These rules are not followed strictly if you inspect the code base. This is because
+either these rules were not in place for old code, or someone chose to ignore them.
+Any violation of these rules does not justify future violations.
+
+==================
+Indentation:
+4 spaces
+
+==================
+Naming conventions:
+
+The only naming style you should use are:
+UpperCamelCase
+    class, struct, enum and typedef'd names
+    namespaces
+
+lowerCamelCase
+    typedef'd function pointers only. e.g
+    typedef int (*someFunction) (int, int);
+    
+lowercase_underscores
+    variable and function names
+
+CAPS_AND_UNDERSCORES
+    enum values (not the name of the enum)
+    constants
+    macros
+
+==================
+
+Braces:
+all braces will always appear on a line by themselves.
+this means the opening brace will appear on the next line
+comments are allowed on the same line
+
+e.g.
+
+void foo(int a)
+{   // comments allowed here
+}
+
+if (x)
+{
+}
+else
+{
+}
+
+while (x)
+{
+}
+
+for (int i=0; i<x; i++)
+{
+}
+
+do
+{
+} while (x);    // this is the only exception
+
+
+Braces are not required, but recommended for single line statements in an if statement.
+Very subtle bugs appear when omitting these, and if you are not meticulous a bug will happen.
+
+==================
+Namespaces:
+
+namespace TheNamespace
+{
+}   // TheNamespace
+
+Make sure to add the comment on the closing brace; losing a brace destroys the compiler and it takes about 15 minutes to find the problem.
+
+Everything should be namespaced except important module globals, for convenience.
+Anything not in a namespace should have a distinct name.
+
+====================
+classes:
+
+No virtual inheritance. ie. class X: virtual Y {}; 
+
+class MyClass: public MyOtherClass
+{
+    public:
+        int x;
+
+    void multiply(int y)
+    {
+        return this->x * y; // use 'this' to specify members
+    }
+
+    explicit MyClass(int a) : x(a) {}   // use explicit for constructors with one arguments
+    MyClass() : x(1) {} // use initializer lists when possible
+};
+
+Encapsulation and access controls are not important (private/protected/friend) for most properties.
+If changing a class member requires other changes to occur, then encapsulate it with a setter/getter.
+
+====================
+Exceptions:
+
+Exceptions are disable. The code won't compile if you do add one. Use C style error handling (ret codes)
+
+===================
+Testing:
+
+There are some macros for asserting truth values in your code. These aid in debugging because they notify us about
+the exact location where invalid values appeared.
+
+GS_ASSERT(condition);
+GS_ASSERT_ABORT(condition); // will assert and exit the program. do not use unless critical to an initialization routine. never use in code that may be called outside of the initialization.
+GL_ASSERT(GL_STATE, boolean);   // this is for checking OpenGL state. e.g. GL_ASSERT(GL_BLEND, true); It will query opengl for you 
+
+NEVER put a function call that has side-effects (changes program state) inside an assert; the asserts are blanked out in production and bugs will appear because the function call will disappear
+
+===================
+
+Module / Directory structure:
+
+Each folder in the c_lib directory should have at least 2 files:
+_include.hpp
+_interface.hpp
+
+_include.hpp will look like
+#include <c_lib/module/file.cpp>
+#include <c_lib/module/file2.cpp>
+#include <c_lib/module/_interface.cpp>  // or .hpp if no .cpp
+
+the _include.hpp file will only be included by the _c_lib.cpp file in server/ and/or client/
+
+The _interface.hpp file export the public API methods
+
+====================
+
+Files:
+
+Header files have the extension .hpp
+Implementation files have the extension .cpp
+
+All #include's will use the <> syntax, except for an implementation file including its own header file
+
+All header files will have #pragma once as the first line
+
+Any files not intended to be included in either client or server should have the following snippet:
+
+#if DC_CLIENT
+dont_include_file_in_client
+#endif
+
+#if DC_SERVER
+dont_include_file_in_server
+#endif
+
+This lets the compiler give us a good warning if it gets included.
+
+======================
+
+Operators:
+
+use spaces between operators in most cases. e.g
+
+Good:
+if (x > y) {}
+int x = y;
+
+Bad:
+if (x>y) {}
+int x=y;
+
+
+exceptions are:
+
+for (int i=0; i<x; i++) {}
+
+=======================
+
+Loops:
+
+Prefer for loops over while loops in all cases.  while loops should only be used when the terminating condition is not known ahead of time.
+while loops are appropriate for waiting for user input, network or time dependent events.
+
+======================
+
+Tests:
+
+We do not have formal tests for most things. If you are writing a common routine that is easily tested it is advisable to do so.
+For example, a string manipulation function should be tested for various inputs.
+
+We use assertions to let us know if there is a problem with the code.  As problems are often introduced after the initial code has been written, it is important
+to use asserts to check your code is using sane values.  This is doubly important for values that will be indexing into an array, as you will cause mysterious
+memory corruption problems that can be difficult to locate.
+
+The assertion macros are:
+
+GS_ASSERT(condition); // if condition is false, then print the function and line number, and a stack trace if available
+IF_ASSERT(condition) return whatever; // if condition is true, assert, and "return whatever";
+GS_ASSERT_LIMIT(condition, limit); // the assert will only print up to "limit" times. GS_ASSERT(condition) defaults to a limit of 20 or so.
+
+There are also macros for checking common integer labels that are used as indices. These are located in <common/macros.hpp>
+E.g.,
+ASSERT_VALID_ITEM_ID(item_id);
+IF_INVALID_ITEM_ID(item_id) return whatever;
+ASSERT_VALID_ITEM_TYPE(item_type);

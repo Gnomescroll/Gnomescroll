@@ -416,7 +416,7 @@ _wreaddir(
 
     } else {
 
-        /* 
+        /*
          * Cannot copy file name from find_data to ent.  Construct a
          * dummy _wdirent structure to pass error to caller.
          */
@@ -493,12 +493,12 @@ _wrewinddir(
     }
 }
 
-/* 
+/*
  * Open directory stream using plain old C-string.
  */
 static DIR*
 opendir(
-    const char *dirname) 
+    const char *dirname)
 {
     struct DIR *dirp;
     errno_t error = 0;
@@ -515,7 +515,7 @@ opendir(
         wchar_t wname[PATH_MAX + 1];
         size_t n;
 
-        /* 
+        /*
          * Convert directory name to wide-character string.
          *
          * Be ware of the return schemantics of MultiByteToWideChar() --
@@ -555,7 +555,7 @@ opendir(
             }
 
         } else {
-            /* 
+            /*
              * Cannot convert file name to wide-character string.  This
              * occurs if the string contains invalid multi-byte sequences or
              * the output buffer is too small to contain the resulting
@@ -592,7 +592,7 @@ opendir(
  */
 static struct dirent*
 readdir(
-    DIR *dirp) 
+    DIR *dirp)
 {
     struct dirent *p;
     struct _wdirent *wp;
@@ -602,7 +602,7 @@ readdir(
     if (wp) {
         size_t n;
 
-        /* 
+        /*
          * Convert file name to multi-byte string.
          *
          * Be ware of the return schemantics of WideCharToMultiByte() --
@@ -642,7 +642,7 @@ readdir(
 
         } else {
 
-            /* 
+            /*
              * Cannot convert file name to multi-byte string so construct
              * an errornous directory entry and return that.  Note that
              * we cannot return NULL as that would stop the processing
@@ -659,7 +659,7 @@ readdir(
         }
 
     } else {
-    
+
         /* End of directory stream */
         p = NULL;
 
@@ -673,7 +673,7 @@ readdir(
  */
 static int
 closedir(
-    DIR *dirp) 
+    DIR *dirp)
 {
     int ok;
     if (dirp) {
@@ -698,7 +698,7 @@ closedir(
  */
 static void
 rewinddir(
-    DIR* dirp) 
+    DIR* dirp)
 {
     /* Rewind wide-character string directory stream */
     _wrewinddir (dirp->wdirp);

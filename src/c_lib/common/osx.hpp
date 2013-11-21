@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #pragma once
 
 #ifndef __APPLE__
@@ -25,7 +27,7 @@ void set_working_directory_to_Resources()
     CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
     char path[PATH_MAX];
     bool success = CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX);
-	GS_ASSERT(success);
+    GS_ASSERT(success);
     CFRelease(resourcesURL);
 
     chdir(path);

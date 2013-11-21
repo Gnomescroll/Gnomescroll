@@ -1,3 +1,6 @@
+-- Gnomescroll, Copyright 2013 Symbolic Analytics
+-- Licensed under GPLv3
+
 package.path = "settings/?.lua;?.lua"
 
 require("lua_library");
@@ -16,7 +19,7 @@ function set_options(options_file)
     --require(options_file)
     options = {}
     dofile("./settings/" .. options_file .. ".lua");
-    for key,value in pairs(options) do 
+    for key,value in pairs(options) do
         if(options_table[key] ~= nil) then
 
             local id = options_table[key].id
@@ -33,7 +36,7 @@ function set_options(options_file)
                 ffi.copy(str, options[key]);
                 ffi.C.LUA_set_string_option(id, str);
             else
-                print("Set Options Error: type error"); 
+                print("Set Options Error: type error");
             end
         else
             print("Set Options Error: option " .. key .. " does not exist ");

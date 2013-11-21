@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "png_save.hpp"
 
 typedef void (*pngDataWrite)(char*, float*, int, int, bool);

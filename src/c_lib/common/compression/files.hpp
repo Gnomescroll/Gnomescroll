@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #pragma once
 
 int compress_buffer_to_file(const char* filename, const char* inbuf, const size_t buffer_size);

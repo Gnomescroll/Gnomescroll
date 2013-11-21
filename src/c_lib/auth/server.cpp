@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "server.hpp"
 
 #if DC_CLIENT
@@ -11,7 +13,7 @@
 typedef unsigned char uint8_t;
 #endif
 
-#include <auth/hmac-sha256.h>
+#include <auth/lib/hmac.h>
 #include <auth/packets.hpp>
 
 namespace Auth
@@ -59,39 +61,9 @@ void load_secret_key()
 
 uint8_t* compute_hash(const unsigned char* secret_key, const char* msg, const size_t msg_len)
 {
-    hmac_sha256 hmac;
-    sha256 sha;
-    unsigned char key[64];
-
-    // init sha256
-    sha256_initialize(&sha);
-
-    // hash the key if necessary (SECRET_KEY_SIZE > 64)
-    size_t i=0;
-    for (; i<SECRET_KEY_SIZE; i++)
-    {
-        if (i > 0 && i % 64 == 0)
-            sha256_update(&sha, key, 64);
-        key[i % 64] = secret_key[i];
-    }
-
-    // initialize hmac with the key, or the key hash if needed
-    if (i <= 64)
-        hmac_sha256_initialize(&hmac, key, i);
-    else
-    {   // using hash
-        sha256_finalize(&sha, key, i%64);
-        hmac_sha256_initialize(&hmac, sha.hash, 64);
-    }
-
-    // compute digest for test msg
-    hmac_sha256_update(&hmac, (uint8_t*)msg, msg_len);
-
-    // finalize hmac
-    hmac_sha256_finalize(&hmac, NULL, 0);
-
-    uint8_t* digest = (uint8_t*)malloc(32 * sizeof(uint8_t));
-    memcpy(digest, hmac.digest, 32);
+    uint8_t* digest = (uint8_t*)calloc(32, sizeof(*digest));
+    int ret = hmac_sha256(secret_key, 64, msg, msg_len, digest);
+    IF_ASSERT(ret != 0) return NULL;
     return digest;
 }
 
@@ -155,6 +127,11 @@ static bool verify_token(const char* _token, UserID* user_id, time_t* expiration
     payload[payload_len] = '\0';
 
     uint8_t* _hash = compute_hash(secret_key, payload, payload_len);
+    IF_ASSERT(_hash == NULL)
+    {
+        free(payload);
+        return false;
+    }
     char* hash = (char*)malloc((AUTH_TOKEN_HASH_LENGTH+1)*sizeof(char));
     sprint_digest(hash, _hash);
     free(_hash);

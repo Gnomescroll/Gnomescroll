@@ -1,0 +1,22 @@
+How to set latency over localhost:
+
+http://www.linuxfoundation.org/collaborate/workgroups/networking/netem
+
+#!/bin/bash
+tc qdisc add dev lo root netem delay 0ms
+tc qdisc change dev lo root netem delay ${1}ms
+
+save it as set_latency (or whatever)
+
+use it like:
+
+sudo set_latency 100
+
+to get 100ms latency on localhost
+note: this will appear as 200 when running the client&server, because the 100ms is in each direction
+
+to restore to normal, just
+sudo set_latency 0
+
+
+There are more commands available for shaping the delays with distributions, or introduction packet loss/corruption/reordering

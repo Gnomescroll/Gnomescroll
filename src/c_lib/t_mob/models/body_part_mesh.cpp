@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "body_part_mesh.hpp"
 
 #include <t_mob/models/common.hpp>

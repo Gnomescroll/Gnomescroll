@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+   Licensed under GPLv3 */
 #include "packet_buffer.hpp"
 
 #define PACKET_BUFFER_MALLOC_DEBUG 0

@@ -1,0 +1,163 @@
+An attribute can be an int, float or string.
+
+Strings have a maximum length of 63; this is stored in STRING_ATTRIBUTE_MAX_LENGTH.
+
+Attributes are referenced by a string name.
+
+There are two groups of attributes, agent and world.
+
+World attributes are things like time_of_day and global_temperature.
+The definitions for these are in c_lib/state/attributes.cpp
+
+Player attributes are things like max_health and base_damage.
+The definitions for these are in c_lib/agent/attributes.cpp
+
+Attributes int and float attributes can have an upper and/or lower limit.
+
+=============== GETTING AN ATTRIBUTE VALUE ====================
+
+To get a world attribute,
+    World::get_attribute_int("name");
+    World::get_attribute_float("name");
+    World::get_attribute_string("name");
+
+To get an agent attribute,
+    Agents::get_attribute_int(agent_id, "name");
+    Agents::get_attribute_float(agent_id, "name");
+    Agents::get_attribute_string(agent_id, "name");
+
+One problem is that you have to know the value type of the attribute first.
+So, you will have look up the attribute definition to find the type to know the
+correct function.
+
+Make sure to check for NULL after doing get_string in case the request was invalid.
+
+============== SETTINGS AN ATTRIBUTE VALUE ===================
+
+To set a world attribute,
+    World::set_attribute("name", value);
+
+To set an agent attribute,
+    Agents::set_attribute(agent_id, "name", value);
+
+If "value" is not int, float or char*, it won't compile.
+
+set_attribute returns true if the value changed, otherwise false.
+
+=============== HOW TO ADD AN ATTRIBUTE  ======================
+
+Open up the attributes.cpp file in agent/ or state/, to edit agent or world attributes (respectively)
+There will be a _register_attributes function near the top of the file.
+
+To define a new attribute, do
+    attribute_def("my_attribute", 100);     // int attribute
+    attribute_def("my_attribute", 100.0f);  // float attribute (the .0f is required, or it will think it is an int)
+    attribute_def("my_attribute", "word");  // string attribute
+
+You may specialize this attribute further. To put a boundary limit on the attribute, do
+    set_limits(0, 100);         // int attribute
+    set_limits(0.0f, 100.0f);   // float attribute
+
+If you only want a limit in one direction, you can do
+    set_lower_limit(0);     // int attribute
+    set_lower_limit(0.0f);  // float attribute
+
+or
+    set_lower_limit(100);     // int attribute
+    set_lower_limit(100.0f);  // float attribute
+
+For world attributes, you may want to broadcast them to the game clients.
+There are 3 ways an attribute will be networked:
+    SYNC_TYPE_PRIVATE,  // doesn't send anything
+    SYNC_TYPE_ALL,      // sends to all clients
+    SYNC_TYPE_PLAYER,   // sends to single client
+
+To set the sync type, do
+    set_sync_type(SYNC_TYPE_XXX);
+
+If you are syncing to a single player, you must also tell it who to sync to:
+    set_sync_to(agent_id);
+
+The agent attributes are automatically synced correctly,
+    base_stats are SYNC_TYPE_ALL
+    individual player stats are SYNC_TYPE_PLAYER with correct sync_to
+
+So networking really only matter to World attributes, and these should only
+use SYNC_TYPE_PRIVATE and SYNC_TYPE_ALL.
+
+
+::ADVANCED::
+
+You may set callbacks on the attribute, to be triggered when before get()
+returns a value, and/or before set() sets a new value.
+
+Get callbacks are of the form (TYPE is int, float or const char*):
+    TYPE get_callback(TYPE current_value);
+
+If a get_callback is defined, the return value of the callback will be returned
+to the caller of get(), instead of the stored value.
+
+Set callbacks are of the form:
+    TYPE set_callback(TYPE current_value, TYPE new_value);
+
+If a set_callback is defined, the current attribute value and the new value to
+set to will be passed to the callback.  The return value of the callback
+will be used as the actual value to set the attribute to.
+Limits are applied to the new_value both before and after the set_callback.
+
+The callback API is subject to change as its use cases become apparent.
+
+==================== MODIFIERS ==============================
+
+Modifiers will alter a player attribute.
+Modifiers can be one of two types:
+    +/- amount      // will add amount
+    +/- percent     // will add %*stat
+
+Defining modifers for items is demonstrated in "EXAMPLES" below.
+
+At this point, modifiers only matter to IG_EQUIPMENT and IG_CONSUMABLE.
+
+Modifiers for equipment are applied as long as they are equipped.
+Item modifiers can have their effect applied instantly, for a duration of time,
+or on a regular interval for a duration of time.
+
+When an item is consumed, any instant modifiers are applied immediately.
+Duration and periodic modifiers are added to the agent's temporary modifiers.
+Periodic modifiers are checked regularly and will add the amount defined in the modifier
+to the corresponding attribute.
+Duration modifiers will have their effect applied until it expires.
+
+Instant and periodic are applied to the current stat value, when triggered.
+
+Equipment and duration modifiers are applied to the base stat value.
+The final percent modifier applied to the base stat is the sum of all percent modifiers for that stat.
+Percents are applied before adding the amount
+
+==================== EXAMPLES ===============================
+
+// attributes
+
+// base health of 100, no less than 0 and no higher than 100
+attribute_def("health", 100);
+set_limits(0, 100):
+
+// base critical hit rate of 2%
+attribute_def("crit_rate", 2.0f);
+
+// modifiers
+
+// a potion that adds 5 health every 10 seconds for 5 minutes
+item_def(IG_CONSUMABLE, "regen_potion");
+set_modifier_amount("health", 5);
+set_modifier_periodic(ONE_MINUTE * 5, ONE_SECOND * 10);
+
+// an apple that add 15 health when eaten
+item_def(IG_CONSUMABLE, "apple");
+set_modifier_amount("health", 5);
+set_modifier_instant();
+
+// armor that gives +20% max_health
+item_def(IG_EQUIPMENT, "flesh_suit");
+s->equipment_type = EQUIPMENT_TYPE_BODY;
+set_modifier_percent("max_health", 20.0f);

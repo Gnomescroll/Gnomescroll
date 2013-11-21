@@ -1,0 +1,81 @@
+===================
+Testing:
+
+There are some macros for asserting truth values in your code. These aid in debugging because they notify us about
+the exact location where invalid values appeared.
+
+GS_ASSERT(condition);
+GS_ASSERT_ABORT(condition); // will assert and exit the program. do not use unless critical to an initialization routine. never use in code that may be called outside of the initialization.
+GL_ASSERT(GL_STATE, boolean);   // this is for checking OpenGL state. e.g. GL_ASSERT(GL_BLEND, true); It will query opengl for you 
+
+NEVER put a function call that has side-effects (changes program state) inside an assert; the asserts are blanked out in production and bugs will appear because the function call will disappear
+
+More specialized asserts are defined in <common/macros.hpp>
+
+=====================
+Special macros:
+
+in addition to the assertion macros we have:
+
+DC_CLIENT=1 in client
+DC_SERVER=1 in server
+PRODUCTION=1 in production build for both server and client
+
+// You probably won't need these:
+GS_AWESOMIUM=1 in client when awesomium enabled
+GS_ASSIMP=1 in client when assimp enabled
+GS_SERiALIZER=1 in server when the full serializer is enabled
+
+Share as much code between the server and client as you can, but
+structure things to avoid littering the code with these macros.
+
+=====================
+
+Physics:
+
+XY is the horizontal plane; z is up and down.
+
+All motion in XY need to be 'translated' to keep the value wrapped inside the map box.
+This looks like:
+
+int x = 1;
+x -= 2; // -1
+x = translate_point(x); // x = 510 (for a 512x512 map)
+
+It also applies to floats.
+
+=====================
+
+Map modifications:
+
+The most important map methods are:
+t_map::get(int,int,int)
+t_map::set(int,int,int)
+
+There is also
+t_map::set_fast(int,int,int)
+This is the preferred method for map generator t_map::sets. However, it must only be called in init-phase map gen.
+If you map modification routine is intended to be called while the game is running, use t_map::set or there will be problems.
+t_map::set_fast bypasses certain checks that are necessary in production
+
+Make sure to translate_point all your xy values if there is the possible they can go outside of the map boundaries.
+You should also check against z<=0 and z >= t_map::map_dim.z
+The reason it is z<=0 is because the floor should be immutable and is reserved for the bedrock. 
+
+====================
+
+Querying configuration data.
+
+static CubeID cube_id = t_map::get_cube_id("cube_name");
+
+All "string" queries should be declared static. This will cache the result. Our string lookup is naive and slow.
+The value will not change after the first call so it is safe to do this.
+
+You should also verify the value after you query, in case a cube name was changed and you have an error cube.
+This looks like:
+
+static CubeID cube_id = t_map::get_cube_id("cube_name");
+ASSERT_VALID_CUBE_ID(cube_id);
+IF_INVALID_CUBE_ID(cube_id) return;
+
+This pattern is roughly the same for item types.

@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #pragma once
 
 #define PRINT_TRACE_STACK_SIZE 32

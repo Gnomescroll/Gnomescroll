@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "names.hpp"
 
 namespace ItemContainer
@@ -9,7 +11,7 @@ namespace ItemContainer
 
 namespace name
 {
-    
+
 ItemContainerType hand = NULL_CONTAINER_TYPE;
 ItemContainerType inventory = NULL_CONTAINER_TYPE;
 ItemContainerType toolbelt = NULL_CONTAINER_TYPE;
@@ -27,7 +29,7 @@ ItemContainerType crusher = NULL_CONTAINER_TYPE;
 void unpack()
 {
     bool all_valid = true;
-    
+
     UNPACK_NAME(hand);
     UNPACK_NAME(inventory);
     UNPACK_NAME(toolbelt);
@@ -35,7 +37,7 @@ void unpack()
     UNPACK_NAME(energy_tanks);
     UNPACK_NAME(premium_cache);
     UNPACK_NAME(equipment);
-    
+
     UNPACK_NAME(storage_block_small);
     UNPACK_NAME(crafting_bench_basic);
     UNPACK_NAME(cryofreezer_small);

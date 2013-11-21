@@ -51,12 +51,12 @@ typedef struct {
    log(MAX_THRESH)).  Since total_elements has type unsigned, we get as
    upper bound for log (total_elements):
    bits per byte (CHAR_BIT) * sizeof(unsigned).  */
-#define _QSORT_STACK_SIZE	(8 * sizeof(unsigned))
-#define _QSORT_PUSH(top, low, high)	\
-	(((top->_lo = (low)), (top->_hi = (high)), ++top))
-#define	_QSORT_POP(low, high, top)	\
-	((--top, (low = top->_lo), (high = top->_hi)))
-#define	_QSORT_STACK_NOT_EMPTY	(_stack < _top)
+#define _QSORT_STACK_SIZE   (8 * sizeof(unsigned))
+#define _QSORT_PUSH(top, low, high) \
+    (((top->_lo = (low)), (top->_hi = (high)), ++top))
+#define _QSORT_POP(low, high, top)  \
+    ((--top, (low = top->_lo), (high = top->_hi)))
+#define _QSORT_STACK_NOT_EMPTY  (_stack < _top)
 
 
 /* Order size using quicksort.  This implementation incorporates

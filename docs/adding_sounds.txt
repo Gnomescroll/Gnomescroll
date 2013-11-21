@@ -1,0 +1,60 @@
+Open design_spreadsheet.ods
+Switch to tab 2, labelled "Sounds"
+
+This spreadsheet has the following columns:
+Event -- name of event
+Soundfile -- filename of sound to play for event, in ./media/sound/wav/. If the file does not exist or contains invalid filename characters, there will be problems (most likely crash)
+function name -- name of the function in code -- dont edit
+Desired sound effect description -- notes on what the event should/might sound like
+IN USE - documents whether it is being used in code -- dont edit, its redundant now and was a note for the code
+Integrated -- specifies whether the function handler is being called for the event, in the code. if it isnt integrated, no sound will play
+Notes -- misc
+
+
+The only columns you should edit are:
+Soundfile
+desired sound effect descriptions
+Notes
+
+You can also add more entries if you think of a new event that should have sound
+
+
+TO TEST SOUNDFILE CHANGES:
+you've edited a soundfile cell to use a new sound
+find the "export" or "save as" function in your software ("save as" in gnumeric)
+export/saveas sounds.csv
+put sounds.csv in ./netclient/media/sound/
+Start client
+
+
+IF PROBLEMS OCCUR:
+The client will print the sound triggers it is assigned, function name -> soundfile.
+If these are not as you expect (they should match the csv file, and no empty names),
+the problem may be with the csv file, and you might be able to fix it.
+
+Make sure the all the requested soundfiles exist in the ./netclient/media/sound/wav/ folder
+
+Otherwise, save the csv for me, (rename it sounds.csv.failure1 or whatever, and commit to repo, or just send it to me)
+and I will test it. We shouldnt run into bugs more than twice, if any
+
+
+======================
+Notes:
+Make sure there are no newlines (\n) in spreadsheet cells. this fucks up the csv and thus fucks up the parser
+
+
+max distance is AL_MAX_DISTANCE which is the distance at which attenuation stops being applied if using the inverse distance clamped model (which we are)
+suppose AL_MAX_DISTANCE is 10; all points >10 units away will play a 3d sound at the same volume, the volume that it is at 10.
+This is NOT the max distance at which the sound will play (which we want more often in my experience)
+The column "max playable distance" is a hard cutoff; any sounds outside this range will not play
+Currently (aug18,2012) there is no support for a player moving close enough to hear a playing sound, but was not close enough when the sound started
+This doesnt really matter unless you have some looping environment 3d sound (which we dont at the time of this writing)
+
+================
+EDITING SOUND
+
+https://www.desmos.com/calculator/xzqjyqhvzb
+use this graph tool get get parameters for 3d sounds
+in the sheet, D is reference distance, O is rolloff factor, E is AL_MAX_DISTANCE
+read the openal programmers guide for more information
+the attenuation model is INVERSE_DISTANCE_CLAMPED

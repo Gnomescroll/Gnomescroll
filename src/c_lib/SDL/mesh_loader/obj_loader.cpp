@@ -18,7 +18,7 @@ ObjModel* ObjLoadModel(char* memory, size_t size)
 
     p = memory;
     e = memory + size;
-    
+
     while (p != e)
     {
               if (memcmp(p, "vn", 2) == 0) ret->nNormal++;
@@ -35,9 +35,9 @@ ObjModel* ObjLoadModel(char* memory, size_t size)
     ret->TriangleArray = (ObjTriangle*) malloc(sizeof(ObjTriangle) * ret->nTriangle);
 
     p = memory;
-    
+
    int nV = 0, nN = 0, nT = 0, nF = 0;
-    
+
     while (p != e)
     {
         if (memcmp(p, "vn", 2) == 0)
@@ -62,7 +62,7 @@ ObjModel* ObjLoadModel(char* memory, size_t size)
         }
         else if (memcmp(p, "f", 1) == 0) /* or *p == 'f' */
         {
-            sscanf(p, "f %d/%d/%d %d/%d/%d %d/%d/%d", 
+            sscanf(p, "f %d/%d/%d %d/%d/%d %d/%d/%d",
                 &ret->TriangleArray[nF].Vertex[0],
                 &ret->TriangleArray[nF].TexCoord[0],
                 &ret->TriangleArray[nF].Normal[0],
@@ -74,7 +74,7 @@ ObjModel* ObjLoadModel(char* memory, size_t size)
                 &ret->TriangleArray[nF].Normal[2]);
 
             /*
-            sscanf(p, "f %d/%d %d/%d %d/%d", 
+            sscanf(p, "f %d/%d %d/%d %d/%d",
                 &ret->TriangleArray[nF].Vertex[0],
                 &ret->TriangleArray[nF].TexCoord[0],
 
@@ -84,13 +84,13 @@ ObjModel* ObjLoadModel(char* memory, size_t size)
                 &ret->TriangleArray[nF].Vertex[2],
                 &ret->TriangleArray[nF].TexCoord[2]
             );
-            */ 
+            */
             nF++;
         }
 
         while (*p++ != (char) 0x0A);
     }
-     
+
     return ret;
 }
 
@@ -113,7 +113,7 @@ size_t ObjLoadFile(char* szFileName, char** memory)
     }
 
     *memory = buffer;
-        
+
     fclose(file);
 
     return bytes;

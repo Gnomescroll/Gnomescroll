@@ -36,7 +36,7 @@ function to_string( tbl )
     end
 end
 
---- library --- 
+--- library ---
 function table.val_to_str ( v )
   if "string" == type( v ) then
     v = string.gsub( v, "\n", "\\n" )

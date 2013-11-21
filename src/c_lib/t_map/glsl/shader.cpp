@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "shader.hpp"
 
 #include <t_map/glsl/settings.hpp>
@@ -5,7 +7,7 @@
 
 #include <SDL/texture_sheet_loader.hpp>
 
-#include <SDL/haldCLUT/hald_clut.hpp>
+#include <SDL/hald_clut.hpp>
 
 /*
 In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed.

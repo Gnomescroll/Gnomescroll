@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "equipped_sprite_adjuster.hpp"
 
 #ifdef __clang__
@@ -9,18 +11,18 @@
 
 /*
  * Controls
- * 
+ *
  * q - toggle adjustment mode between
- *     the focal distance point, or the sprite origin 
- * 
+ *     the focal distance point, or the sprite origin
+ *
  * Left/Right arrow - move point in xy plane
  * Up/down arrow - move point in z
  * ,. - move point's depth from camera plane
- * 
+ *
  * r - reset point
  * p - print point
- * 
- * +/- - change delta step size 
+ *
+ * +/- - change delta step size
  * [] - adjust sprite scale
  */
 
@@ -55,7 +57,7 @@ void key_down_handler(SDL_Event* event)
 {
     GS_ASSERT(event != NULL);
     if (event == NULL) return;
-    
+
     switch (event->key.keysym.sym)
     {
         // toggle focal/origin adjustment
@@ -67,7 +69,7 @@ void key_down_handler(SDL_Event* event)
             if (move_origin) point_name = (char*)"origin point";
             printf("Using %s\n", point_name);
             break;
-            
+
         // reset point, by undoing cumulative deltas applied by the editor
         case SDLK_r:
             move_focal_depth(focal_depth_total);
@@ -78,11 +80,11 @@ void key_down_handler(SDL_Event* event)
             move_origin_vertical(origin_vertical_total);
             printf("Reset %s\n", point_name);
             break;
-            
+
         case SDLK_p:
             print_sprite_alignment_config();
             break;
-            
+
         // position adjustments
         case SDLK_UP:
             if (move_focal)
@@ -96,7 +98,7 @@ void key_down_handler(SDL_Event* event)
                 origin_vertical_total += delta;
             }
             break;
-            
+
         case SDLK_DOWN:
             if (move_focal)
             {
@@ -109,7 +111,7 @@ void key_down_handler(SDL_Event* event)
                 focal_vertical_total += -delta;
             }
             break;
-                        
+
         case SDLK_RIGHT:
             if (move_focal)
             {
@@ -122,7 +124,7 @@ void key_down_handler(SDL_Event* event)
                 origin_horizontal_total += delta;
             }
             break;
-        
+
         case SDLK_LEFT:
             if (move_focal)
             {
@@ -161,7 +163,7 @@ void key_down_handler(SDL_Event* event)
                 origin_depth_total += -delta;
             }
             break;
-            
+
         // delta adjustment
         case SDLK_EQUALS: // +
             delta += 0.1f;
@@ -172,7 +174,7 @@ void key_down_handler(SDL_Event* event)
                 delta -= 0.1f;
             printf("delta: %f\n", delta);
             break;
-            
+
         // item sprite
         case SDLK_LEFTBRACKET:
             dilate_equipped_sprite(-sprite_size_delta);
@@ -181,7 +183,7 @@ void key_down_handler(SDL_Event* event)
         case SDLK_RIGHTBRACKET:
             dilate_equipped_sprite(sprite_size_delta);
             break;
-                        
+
         default:
             break;
     }

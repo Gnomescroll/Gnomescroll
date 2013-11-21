@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #include "state_machine_actions.hpp"
 
 #include <entity/components/physics.hpp>

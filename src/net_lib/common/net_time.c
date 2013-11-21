@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+   Licensed under GPLv3 */
 #include "net_time.h"
 
 int LAST_NETPEER_TIME = -1;

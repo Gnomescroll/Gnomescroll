@@ -1,3 +1,5 @@
+/* Gnomescroll, Copyright (c) 2013 Symbolic Analytics
+ * Licensed under GPLv3 */
 #pragma once
 
 /* $Id: qsort.h,v 1.5 2008-01-28 18:16:49 mjt Exp $
