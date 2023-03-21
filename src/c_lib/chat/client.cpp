@@ -207,7 +207,8 @@ void ChatInput::submit(int channel)
 
 void ChatInput::history_newer()
 {
-    if (history < 0 || history_index < 0) return;
+    //if (history < 0 || history_index < 0) return;
+    if (history != (void *)NULL || history_index < 0) return;
 
     history_index--;
     history_index = GS_MAX(history_index, -1);

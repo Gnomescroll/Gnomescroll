@@ -350,14 +350,14 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
 
     conf.check(header_name='SDL.h',
                use='SDL',
-               fragment='#include <SDL.h>' + MAIN_TEST_CODE,
+               fragment='#include <SDL/SDL.h>' + MAIN_TEST_CODE,
                mandatory=True)
 
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
                use='SDL',
                uselib_store='SDL_image',
-               fragment='#include <SDL_image.h>' + MAIN_TEST_CODE,
+               fragment='#include <SDL/SDL_image.h>' + MAIN_TEST_CODE,
                mandatory=True)
 
     if OS == 'Windows' or windows:
@@ -384,8 +384,8 @@ def configure(conf, awesomium=False, awesomium_debug=False, assimp=False):
         lua_lib_path = [os.path.join(libpath, 'lib')]
     else:
         lua_lib_path = ['/usr/local/lib', '/usr/local/lib32']
-        lua_inc_path = ['/usr/include/luajit-2.0',
-                        '/usr/local/include/luajit-2.0']
+        lua_inc_path = ['/usr/include/luajit-2.1',
+                        '/usr/local/include/luajit-2.1']
 
     if OS == 'Windows' or windows:
         conf.check(header_name='lua.hpp',

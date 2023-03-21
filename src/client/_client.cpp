@@ -2,9 +2,8 @@
    Licensed under GPLv3 */
 #include "_c_lib.cpp"
 #include "_main.cpp"
-#include <common/lua/lua.hpp>
-
-#include <SDL.h>
+#include <lua.hpp>
+#include <SDL/SDL.h>
 
 int main(int argc, char* argv[])
 {
